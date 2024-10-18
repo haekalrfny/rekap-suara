@@ -55,7 +55,11 @@ export default function Home() {
                 isFull={false}
               />
             </div>
-            <img src="./people.svg" alt="people" className="w-full md:w-[500px]" />
+            <img
+              src="./people.svg"
+              alt="people"
+              className="w-full md:w-[500px]"
+            />
           </div>
         )}
       </div>
@@ -74,12 +78,12 @@ export default function Home() {
           </div>
           {loading ? (
             <SaksiTextLoading />
-          ) : (
+          ) : totalSaksi != 0 ? (
             <p className="text-center font-light mt-4 text-gray-600 max-w-[90%]">
               <b className="text-black">{totalSaksi}</b> saksi telah menginput
               suara <b className="text-black">{formattedLastUpdated}</b>
             </p>
-          )}
+          ) : null}
         </>
       )}
     </div>

@@ -23,8 +23,7 @@ export default function PaslonDetail() {
   const [item, setItem] = useState({});
   const [data, setData] = useState(null);
   const [totalSuara, setTotalSuara] = useState(0);
-  const [totalPeserta, setTotalPeserta] = useState(0);
-  const [percentage, setPercentage] = useState(0);
+  const [totalSaksi, setTotalSaksi] = useState(0);
 
   useEffect(() => {
     getDataById();
@@ -35,15 +34,6 @@ export default function PaslonDetail() {
   useEffect(() => {
     getSuaraTotalPaslonDetail();
   }, [id]);
-
-  useEffect(() => {
-    const newPercentage = calculatePercentage(totalSuara, totalPeserta);
-    const timeout = setTimeout(() => {
-      setPercentage(newPercentage);
-    }, 100);
-
-    return () => clearTimeout(timeout);
-  }, [totalSuara, totalPeserta]);
 
   if (!token) return <Navigate to="/login" />;
 
@@ -86,7 +76,7 @@ export default function PaslonDetail() {
       .then((res) => {
         setLoading(false);
         setTotalSuara(res.data["Total Suara"]);
-        setTotalPeserta(res.data["Total Peserta"]);
+        setTotalSaksi(res.data["Total Saksi"]);
       })
       .catch(() => setLoading(false));
   };
@@ -124,6 +114,8 @@ export default function PaslonDetail() {
       ? "bg-green-100 text-green-500"
       : "bg-gray-100 text-gray-500";
 
+      console.log(data)
+
   return (
     <div className="w-full flex flex-col items-center md:pt-6 pb-10 gap-10">
       <div className="w-[90%] sm:w-2/4 flex flex-col gap-6">
@@ -154,7 +146,9 @@ export default function PaslonDetail() {
         </div>
 
         <div className="flex gap-6 font-medium text-sm text-gray-600">
-          <p>{totalSuara} Suara ( {percentage.toFixed(0)}%)</p>
+          <p>
+            {totalSuara} Suara dari {totalSaksi} Saksi
+          </p>
         </div>
 
         <div className="w-full flex flex-col md:flex-row gap-6">
@@ -163,7 +157,7 @@ export default function PaslonDetail() {
               kecamatan ? "md:w-1/2" : "md:w-full"
             } space-y-3`}
           >
-            <h1 className="font-semibold text-xl">Suara tiap Daerah</h1>
+            <h1 className="font-semibold text-xl">Daerah</h1>
             <Dropdown
               label="Kecamatan"
               options={kecamatanOptions}
@@ -191,24 +185,24 @@ export default function PaslonDetail() {
 
           {kecamatan && (
             <div className="w-full md:w-1/2 space-y-3">
-              <h1 className="font-semibold text-xl">Percentase Suara</h1>
+              <h1 className="font-semibold text-xl">Total Inputan</h1>
               <ProgressBar
-                text={`Kecamatan ${data?.kecamatan}`}
-                current={data?.totalSuaraKecamatan}
-                total={data?.totalPesertaKecamatan}
+                text={`Desa`}
+                current={data?.totalDesaWithSuara}
+                total={data?.totalDesa}
               />
               {desa && (
                 <ProgressBar
-                  text={`Desa ${data?.desa}`}
-                  current={data?.totalSuaraDesa}
-                  total={data?.totalPesertaDesa}
+                  text={'TPS'}
+                  current={data?.totalTpsWithSuara}
+                  total={data?.totalTPS}
                 />
               )}
               {tps && (
                 <ProgressBar
-                  text={`${data?.kodeTPS}`}
-                  current={data?.totalSuaraTPS}
-                  total={data?.totalPesertaTPS}
+                  text={`Suara`}
+                  current={data?.totalSuaraSahPerPaslon}
+                  total={data?.totalSuaraSahPerSelectedTPS}
                 />
               )}
             </div>

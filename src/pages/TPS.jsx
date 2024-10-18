@@ -8,6 +8,8 @@ import { useTokenContext } from "../context/TokenContext";
 import Cookies from "js-cookie";
 import instance from "../api/api";
 import ModalDetail from "../components/TPS/ModalDetail";
+import { useStateContext } from "../context/StateContext";
+import HeadingLoad from "../components/Load/HeadingLoad";
 
 export default function TPS() {
   const [data, setData] = useState([]);
@@ -18,6 +20,7 @@ export default function TPS() {
   const [showModal, setShowModal] = useState(false);
   const [id, setId] = useState(null);
   const { token } = useTokenContext();
+  const { setLoading, loading } = useStateContext();
 
   if (!token) {
     return <Navigate to="/login" />;
@@ -32,6 +35,7 @@ export default function TPS() {
   }, [page, searchQuery]);
 
   const getTPS = () => {
+    setLoading(true);
     let config = {
       method: "get",
       url: "/tps/page",
@@ -40,12 +44,20 @@ export default function TPS() {
       },
       params: { page, filter: searchQuery },
     };
-    instance.request(config).then((res) => {
-      setData(res.data.result);
-      setPage(res.data.page);
-      setPages(res.data.totalPage);
-      setRows(res.data.totalRows);
-    });
+    instance
+      .request(config)
+      .then((res) => {
+        setData(res.data.result);
+        setPage(res.data.page);
+        setPages(res.data.totalPage);
+        setRows(res.data.totalRows);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+      })
+      .finally(() => setLoading(false));
   };
 
   const openModal = (_id) => {
@@ -57,18 +69,22 @@ export default function TPS() {
     <>
       <div className="w-full flex flex-col items-center md:pt-6 pb-10 gap-6">
         <div className="w-[90%] sm:w-2/4 flex flex-col gap-6">
-          <div className="space-y-3">
-            <h1 className="font-bold text-3xl">TPS</h1>
-            <p className="font-light text-gray-600">
-              Data rekapitulasi suara di Tempat Pemungutan Suara (TPS) dari
-              seluruh wilayah Kabupaten Bandung Barat
-            </p>
-            <Search
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              setCurrentPage={setPage}
-            />
-          </div>
+          {loading ? (
+            <HeadingLoad />
+          ) : (
+            <div className="space-y-3">
+              <h1 className="font-bold text-3xl">TPS</h1>
+              <p className="font-light text-gray-600">
+                Data rekapitulasi suara di Tempat Pemungutan Suara (TPS) dari
+                seluruh wilayah Kabupaten Bandung Barat
+              </p>
+              <Search
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                setCurrentPage={setPage}
+              />
+            </div>
+          )}
         </div>
         <div className="w-full flex flex-col max-w-[90%] gap-3">
           <DesktopTPS data={data} openModal={openModal} />

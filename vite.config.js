@@ -7,7 +7,7 @@ export default defineConfig({
     outDir: "dist",
   },
   server: {
-    middlewareMode: true, 
     historyApiFallback: true,
+    port: 3001,
   },
 });

@@ -24,6 +24,8 @@ export default function ModalDetail({ id, onCancel }) {
     });
   };
 
+  
+
   return (
     <>
       <div className="w-full h-screen flex items-center justify-center fixed z-10 inset-0 bg-black bg-opacity-30">
@@ -51,30 +53,23 @@ export default function ModalDetail({ id, onCancel }) {
                 </div>
                 <hr />
                 <div className="flex justify-between items-center">
-                  <span className="font-medium">Jumlah Peserta</span>
-                  <span className="text-gray-600">
-                    {data?.tps?.jumlahPeserta}
-                  </span>
-                </div>
-                <hr />
-                <div className="flex justify-between items-center">
                   <span className="font-medium">Suara Sah</span>
                   <span className="text-gray-600">
-                    {data?.tps?.jumlahSuaraSah}
+                    {data?.tps?.jumlahSuaraSah} Suara
                   </span>
                 </div>
                 <hr />
                 <div className="flex justify-between items-center">
                   <span className="font-medium">Suara Tidak Sah</span>
                   <span className="text-gray-600">
-                    {data?.tps?.jumlahSuaraTidakSah}
+                    {data?.tps?.jumlahSuaraTidakSah} Suara
                   </span>
                 </div>
                 <hr />
                 <div className="flex justify-between items-center">
-                  <span className="font-medium">Suara Tidak Terpakai</span>
+                  <span className="font-medium">Total Suara</span>
                   <span className="text-gray-600">
-                    {data?.tps?.jumlahSuaraTidakTerpakai}
+                    {data?.tps?.jumlahTotal} Pemilih
                   </span>
                 </div>
                 <hr />
@@ -83,9 +78,9 @@ export default function ModalDetail({ id, onCancel }) {
                 {data?.suaraPaslon?.map((paslon, index) => (
                   <ProgressBar
                     key={index}
-                    text={paslon?.paslon?.panggilan}
+                    text={`(${paslon?.paslon?.noUrut}) `+ paslon?.paslon?.panggilan }
                     current={paslon?.jumlahSuaraSah}
-                    total={data?.tps?.jumlahPeserta}
+                    total={data?.tps?.jumlahSuaraSah}
                   />
                 ))}
               </div>

@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import Button from "../Button";
+import { useStateContext } from "../../context/StateContext";
+import PaslonCardLoad from "../Load/PaslonCardLoad";
 
 export default function PaslonCard({ item }) {
+  const { loading } = useStateContext();
   const bgColor =
     item.noUrut === 1
       ? "bg-orange-100 text-orange-500"
@@ -14,52 +17,56 @@ export default function PaslonCard({ item }) {
       : "bg-gray-100 text-gray-500";
 
   return (
-    <div>
-      <div className="rounded-md bg-white shadow p-6 flex flex-col justify-between gap-3">
-        <div className="space-y-3">
-          <div>
-            <p
-              className={`text-xs py-0.5 px-3 w-max rounded-full ${bgColor} font-semibold`}
-            >
-              No Urut {item.noUrut}
-            </p>
-          </div>
-          <div>
-            <p className="font-medium text-lg">
-              {item.namaCalonKetua} - {item.namaWakilKetua}
-            </p>
-          </div>
-        </div>
-        <div className="flex justify-between items-end">
+    <>
+      {loading ? (
+        <PaslonCardLoad />
+      ) : (
+        <div className="rounded-md bg-white shadow p-6 flex flex-col justify-between gap-3">
           <div className="space-y-3">
-            <p className="font-medium">Partai Pengusung :</p>
-            {item.partai && item.partai.length > 0 ? (
-              <div className="flex gap-2">
-                {item.partai.map((i, idx) => (
-                  <div key={idx} className="aspect-square w-8">
-                    <img
-                      src={i.image}
-                      alt={i.nama}
-                      className="object-contain w-full h-full"
-                    />
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-gray-500">Independen</p>
-            )}
+            <div>
+              <p
+                className={`text-xs py-0.5 px-3 w-max rounded-full ${bgColor} font-semibold`}
+              >
+                No Urut {item.noUrut}
+              </p>
+            </div>
+            <div>
+              <p className="font-medium text-lg">
+                {item.namaCalonKetua} - {item.namaWakilKetua}
+              </p>
+            </div>
           </div>
-          <Button
-            text={"Detail"}
-            onClick={() => {
-              window.location.href = `/paslon/${item._id}`;
-            }}
-            outline={true}
-            size={"sm"}
-            isFull={false}
-          />
+          <div className="flex justify-between items-end">
+            <div className="space-y-3">
+              <p className="font-medium">Partai Pengusung :</p>
+              {item.partai && item.partai.length > 0 ? (
+                <div className="flex gap-2">
+                  {item.partai.map((i, idx) => (
+                    <div key={idx} className="aspect-square w-8">
+                      <img
+                        src={i.image}
+                        alt={i.nama}
+                        className="object-contain w-full h-full"
+                      />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500">Independen</p>
+              )}
+            </div>
+            <Button
+              text={"Detail"}
+              onClick={() => {
+                window.location.href = `/paslon/${item._id}`;
+              }}
+              outline={true}
+              size={"sm"}
+              isFull={false}
+            />
+          </div>
         </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 }

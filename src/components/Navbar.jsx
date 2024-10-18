@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FiChevronDown, FiMenu } from "react-icons/fi";
+import { IoMdTime } from "react-icons/io";
+
 import { AiOutlineClose } from "react-icons/ai";
 import Cookies from "js-cookie";
 import Button from "./Button";
@@ -249,14 +251,22 @@ const Navbar = () => {
           </li>
         )}
         {token && (
-          <li>
-            <Button
-              text={"Akun"}
-              size={"sm"}
-              outline={true}
-              onClick={() => (window.location.href = "/akun")}
-            />
-          </li>
+          <>
+            <li>
+              <Button
+                text={<IoMdTime className="text-xl" />}
+                outline={true}
+                onClick={() => (window.location.href = "/riwayat")}
+              />
+            </li>
+            <li>
+              <Button
+                text={"Akun"}
+                size={"sm"}
+                onClick={() => (window.location.href = "/akun")}
+              />
+            </li>
+          </>
         )}
       </ul>
     </div>

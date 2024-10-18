@@ -21,12 +21,13 @@ import { StateContext } from "../src/context/StateContext";
 import { NotifProvider } from "../src/context/NotifContext";
 import { DatabaseProvider } from "./context/DatabaseContext";
 import { TokenContext } from "./context/TokenContext";
+import Riwayat from "./pages/Riwayat";
 
 export default function App() {
   return (
     <TokenContext>
-      <DatabaseProvider>
-        <StateContext>
+      <StateContext>
+        <DatabaseProvider>
           <NotifProvider>
             <Router>
               <Routes>
@@ -37,14 +38,15 @@ export default function App() {
                   <Route index path="/paslon" element={<Paslon />} />
                   <Route index path="/paslon/:id" element={<PaslonDetail />} />
                   <Route index path="/akun" element={<Akun />} />
+                  <Route index path="riwayat" element={<Riwayat />} />
                 </Route>
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />
               </Routes>
             </Router>
           </NotifProvider>
-        </StateContext>
-      </DatabaseProvider>
+        </DatabaseProvider>
+      </StateContext>
     </TokenContext>
   );
 }

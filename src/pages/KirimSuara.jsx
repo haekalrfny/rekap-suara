@@ -9,11 +9,12 @@ import instance from "../api/api";
 import { useStateContext } from "../context/StateContext";
 import { Navigate } from "react-router-dom";
 import { useTokenContext } from "../context/TokenContext";
+import HeadingLoad from "../components/Load/HeadingLoad";
 
 export default function KirimSuara() {
   const { token } = useTokenContext();
   const { tpsData, paslonData } = useDatabaseContext();
-  const { setLoadingButton } = useStateContext();
+  const { setLoadingButton, loading, setLoading } = useStateContext();
   const [desa, setDesa] = useState("");
   const [kecamatan, setKecamatan] = useState("");
   const [tps, setTps] = useState("");
@@ -23,7 +24,6 @@ export default function KirimSuara() {
     Array(paslonData.length).fill(0)
   );
   const [jumlahSuaraTidakSah, setJumlahSuaraTidakSah] = useState("");
-  const [jumlahSuaraTidakTerpakai, setJumlahSuaraTidakTerpakai] = useState("");
 
   const showNotification = useNotif();
 
@@ -48,10 +48,12 @@ export default function KirimSuara() {
   const handleSuara = (e) => {
     e.preventDefault();
     setLoadingButton(true);
+    setLoading(true);
 
     if (!tps || !image || suaraPaslon.length !== 5) {
       showNotification("Data belum lengkap", "error");
       setLoadingButton(false);
+      setLoading(false);
       return;
     }
 
@@ -76,19 +78,22 @@ export default function KirimSuara() {
         setLoadingButton(false);
         setTimeout(() => window.location.reload(), 1000);
         if (totalSuaraSah) updateTps(totalSuaraSah);
+        setLoading(false);
       })
       .catch((err) => {
         showNotification("Gagal mengirim", "error");
         setLoadingButton(false);
         console.log(err);
-      });
+        setLoading(false);
+      })
+      .finally(() => setLoading(false));
   };
 
   const updateTps = (suaraSah) => {
     const data = {
       jumlahSuaraSah: suaraSah,
       jumlahSuaraTidakSah,
-      jumlahSuaraTidakTerpakai,
+      jumlahTotal: Number(suaraSah) + Number(jumlahSuaraTidakSah),
     };
 
     instance
@@ -99,17 +104,20 @@ export default function KirimSuara() {
   };
 
   const handleAddSuara = (index, paslonId, jumlahSuaraSah) => {
-    if (!paslonId || jumlahSuaraSah <= 0) return;
+    if (!paslonId) return;
 
     setSuaraPaslon((prev) => {
       const updatedSuara = [...prev];
-      updatedSuara[index] = { paslon: paslonId, jumlahSuaraSah };
+      updatedSuara[index] = {
+        paslon: paslonId,
+        jumlahSuaraSah: jumlahSuaraSah === "" ? "" : jumlahSuaraSah || 0,
+      };
       return updatedSuara;
     });
 
     setJumlahSuara((prev) => {
       const updatedJumlah = [...prev];
-      updatedJumlah[index] = jumlahSuaraSah;
+      updatedJumlah[index] = jumlahSuaraSah === "" ? "" : jumlahSuaraSah || 0;
       return updatedJumlah;
     });
   };
@@ -117,14 +125,18 @@ export default function KirimSuara() {
   return (
     <div className="w-full flex justify-center md:pt-6 pb-10">
       <div className="w-[90%] sm:w-2/4 flex flex-col gap-6">
-        <div className="space-y-3">
-          <h1 className="font-bold text-3xl">Kirim Suara</h1>
-          <p className="font-light text-gray-600">
-            Silakan Inputkan Rekap Suara dari Setiap Tempat Pemungutan Suara
-            (TPS) dengan Cermat dan Sesuai Data Asli untuk Memastikan Akurasi
-            dalam Penghitungan Suara
-          </p>
-        </div>
+        {loading ? (
+          <HeadingLoad />
+        ) : (
+          <div className="space-y-3">
+            <h1 className="font-bold text-3xl">Kirim Suara</h1>
+            <p className="font-light text-gray-600">
+              Silakan Inputkan Rekap Suara dari Setiap Tempat Pemungutan Suara
+              (TPS) dengan Cermat dan Sesuai Data Asli untuk Memastikan Akurasi
+              dalam Penghitungan Suara
+            </p>
+          </div>
+        )}
         <form onSubmit={handleSuara} className="flex flex-col gap-3">
           <Dropdown
             label="Kecamatan"
@@ -163,7 +175,7 @@ export default function KirimSuara() {
                         label="Paslon"
                         name={`paslon-${index}`}
                         type="text"
-                        value={paslon.namaCalonKetua}
+                        value={paslon.panggilan}
                         readOnly
                         required
                       />
@@ -192,14 +204,7 @@ export default function KirimSuara() {
                 label="Jumlah Suara Tidak Sah"
                 placeholder="Jumlah Suara Tidak Sah"
               />
-              <Input
-                name="jumlahSuaraTidakTerpakai"
-                value={jumlahSuaraTidakTerpakai}
-                setValue={setJumlahSuaraTidakTerpakai}
-                type="number"
-                label="Jumlah Suara Tidak Terpakai"
-                placeholder="Jumlah Suara Tidak Terpakai"
-              />
+
               <Input
                 name="image"
                 label="Formulir"

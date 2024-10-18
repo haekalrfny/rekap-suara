@@ -25,14 +25,14 @@ export default function Paginate({ handlePageClick, data, page, pages, rows }) {
         previousLabel={<PiCaretLeftBold />}
         nextLabel={<PiCaretRightBold />}
         pageCount={pages}
-        marginPagesDisplayed={2}
+        marginPagesDisplayed={1}
         pageRangeDisplayed={2}
         onPageChange={handlePageClick}
-        containerClassName="flex space-x-6 justify-center md:justify-start items-center text-xl md:text-sm"
-        pageLinkClassName="px-3 py-1 hover:bg-gray-200 hover:text-black rounded-md duration-150"
-        previousLinkClassName="px-3 py-1 text-black duration-150"
-        nextLinkClassName="px-3 md:px-4 py-1 text-black duration-150"
-        activeLinkClassName="px-3 py-1 bg-black text-gray-200 rounded-md hover:bg-black"
+        containerClassName="flex space-x-3 justify-center md:justify-start items-center text-xl md:text-sm"
+        pageLinkClassName="px-2 py-1 hover:bg-gray-200 hover:text-black rounded-md duration-150"
+        previousLinkClassName="px-2 py-1 text-black duration-150"
+        nextLinkClassName="px-2 md:px-3 py-1 text-black duration-150"
+        activeLinkClassName="px-2 py-1 bg-black text-gray-200 rounded-md hover:bg-black"
       />
     </div>
   );
