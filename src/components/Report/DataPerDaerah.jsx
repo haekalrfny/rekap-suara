@@ -32,6 +32,11 @@ export default function DataPerDaerah() {
       <h2 className="text-2xl font-semibold">Data per Daerah</h2>
       <p className="text-gray-600 mb-4">Jumlah Suara yang Telah Diterima</p>
       <ProgressBar
+        text={"Dapil"}
+        current={data?.totalDapilWithSuara}
+        total={data?.totalDapil}
+      />
+      <ProgressBar
         text={"Kecamatan"}
         current={data?.totalKecamatanWithSuara}
         total={data?.totalKecamatan}

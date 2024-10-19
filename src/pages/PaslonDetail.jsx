@@ -19,6 +19,7 @@ export default function PaslonDetail() {
   const navigate = useNavigate();
   const [desa, setDesa] = useState("");
   const [kecamatan, setKecamatan] = useState("");
+  const [dapil, setDapil] = useState("");
   const [tps, setTps] = useState("");
   const [item, setItem] = useState({});
   const [data, setData] = useState(null);
@@ -30,7 +31,7 @@ export default function PaslonDetail() {
   }, [id]);
   useEffect(() => {
     getSuaraPaslonDetail();
-  }, [tps, kecamatan, desa, id]);
+  }, [dapil, tps, kecamatan, desa, id]);
   useEffect(() => {
     getSuaraTotalPaslonDetail();
   }, [id]);
@@ -57,7 +58,7 @@ export default function PaslonDetail() {
       method: "get",
       url: `/report/daerah`,
       headers: { Authorization: `Bearer ${Cookies.get("token")}` },
-      params: { kecamatan, desa, kodeTPS: tps, paslonId: id },
+      params: { dapil, kecamatan, desa, kodeTPS: tps, paslonId: id },
     })
       .then((res) => {
         setLoading(false);
@@ -89,9 +90,15 @@ export default function PaslonDetail() {
     setTimeout(() => setLoadingButton(false), 200);
   };
 
-  const kecamatanOptions = [...new Set(tpsData.map((tp) => tp.kecamatan))].map(
-    (kec) => ({ label: kec, value: kec })
+  const dapilOptions = [...new Set(tpsData.map((tp) => tp.dapil))].map(
+    (dap) => ({ label: dap, value: dap })
   );
+
+  const kecamatanOptions = [
+    ...new Set(
+      tpsData.filter((tp) => tp.dapil === dapil).map((tp) => tp.kecamatan)
+    ),
+  ].map((kec) => ({ label: kec, value: kec }));
 
   const desaOptions = [
     ...new Set(
@@ -113,8 +120,6 @@ export default function PaslonDetail() {
       : item.noUrut === 4
       ? "bg-green-100 text-green-500"
       : "bg-gray-100 text-gray-500";
-
-      console.log(data)
 
   return (
     <div className="w-full flex flex-col items-center md:pt-6 pb-10 gap-10">
@@ -159,6 +164,13 @@ export default function PaslonDetail() {
           >
             <h1 className="font-semibold text-xl">Daerah</h1>
             <Dropdown
+              label="Dapil"
+              options={dapilOptions}
+              value={dapil}
+              setValue={setDapil}
+              required
+            />
+            <Dropdown
               label="Kecamatan"
               options={kecamatanOptions}
               value={kecamatan}
@@ -183,17 +195,24 @@ export default function PaslonDetail() {
             />
           </div>
 
-          {kecamatan && (
+          {dapil && (
             <div className="w-full md:w-1/2 space-y-3">
               <h1 className="font-semibold text-xl">Total Inputan</h1>
               <ProgressBar
-                text={`Desa`}
-                current={data?.totalDesaWithSuara}
-                total={data?.totalDesa}
+                text="Kecamatan"
+                current={data?.totalKecamatanWithSuara}
+                total={data?.totalKecamatan}
               />
+              {kecamatan && (
+                <ProgressBar
+                  text={`Desa`}
+                  current={data?.totalDesaWithSuara}
+                  total={data?.totalDesa}
+                />
+              )}
               {desa && (
                 <ProgressBar
-                  text={'TPS'}
+                  text={"TPS"}
                   current={data?.totalTpsWithSuara}
                   total={data?.totalTPS}
                 />

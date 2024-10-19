@@ -4,6 +4,8 @@ import { useDatabaseContext } from "../context/DatabaseContext";
 import { useTokenContext } from "../context/TokenContext";
 import { formatNumber } from "../utils/formatNumber";
 import { BsArrowRightShort } from "react-icons/bs";
+import { FaFile } from "react-icons/fa6";
+import { BsSend } from "react-icons/bs";
 import { formatDistanceToNow, parseISO, setDefaultOptions } from "date-fns";
 import { id } from "date-fns/locale";
 import Button from "../components/Button";
@@ -16,7 +18,7 @@ import DataPerDaerah from "../components/Report/DataPerDaerah";
 setDefaultOptions({ locale: id });
 
 export default function Home() {
-  const { token } = useTokenContext();
+  const { token, admin } = useTokenContext();
   const { suaraByPaslon } = useDatabaseContext();
   const { loading } = useStateContext();
   const totalSaksi = formatNumber(suaraByPaslon[0]?.["Total Saksi"] || 0);
@@ -62,9 +64,25 @@ export default function Home() {
             />
           </div>
         )}
+
+        {token && !admin && (
+          <div className="flex flex-col justify-center items-center ">
+            <Button
+              text={
+                <div className="flex items-center">
+                  <p>Kirim Suara</p>
+                  <BsSend className="ml-2" />
+                </div>
+              }
+              onClick={() => (window.location.href = "/kirim-suara")}
+              isFull={false}
+              outline={true}
+            />
+          </div>
+        )}
       </div>
 
-      {token && (
+      {token && admin && (
         <>
           <div className="sm:w-2/3 flex flex-col lg:flex-row justify-between gap-4 mt-8">
             <Charts

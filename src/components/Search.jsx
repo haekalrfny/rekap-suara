@@ -17,7 +17,7 @@ export default function Search({
       <input
         id="search"
         type="text"
-        placeholder="Cari TPS, Desa, atau Kecamatan..."
+        placeholder="Cari TPS, Desa, Kecamatan atau Dapil..."
         value={searchQuery}
         onChange={handleSearch}
         className="border-b text-base md:text-sm border-gray-300 w-full py-2 focus:outline-none focus:border-gray-900"

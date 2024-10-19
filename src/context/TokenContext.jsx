@@ -6,6 +6,7 @@ const Context = createContext();
 
 export const TokenContext = ({ children }) => {
   const [token, setToken] = useState({});
+  const [admin, setAdmin] = useState(false);
 
   useEffect(() => {
     const checkToken = () => {
@@ -20,6 +21,7 @@ export const TokenContext = ({ children }) => {
       instance(config)
         .then((res) => {
           setToken(res.data);
+          setAdmin(res.data.role === "admin" ? true : false);
         })
         .catch((err) => {
           console.log(err);
@@ -33,6 +35,7 @@ export const TokenContext = ({ children }) => {
       value={{
         token,
         setToken,
+        admin,
       }}
     >
       {children}

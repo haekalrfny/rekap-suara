@@ -17,6 +17,7 @@ export default function KirimSuara() {
   const { setLoadingButton, loading, setLoading } = useStateContext();
   const [desa, setDesa] = useState("");
   const [kecamatan, setKecamatan] = useState("");
+  const [dapil, setDapil] = useState("");
   const [tps, setTps] = useState("");
   const [suaraPaslon, setSuaraPaslon] = useState([]);
   const [image, setImage] = useState(null);
@@ -31,9 +32,15 @@ export default function KirimSuara() {
     return <Navigate to="/login" />;
   }
 
-  const kecamatanOptions = [...new Set(tpsData.map((tp) => tp.kecamatan))].map(
-    (kec) => ({ label: kec, value: kec })
+  const dapilOptions = [...new Set(tpsData.map((tp) => tp.dapil))].map(
+    (dap) => ({ label: dap, value: dap })
   );
+
+  const kecamatanOptions = [
+    ...new Set(
+      tpsData.filter((tp) => tp.dapil === dapil).map((tp) => tp.kecamatan)
+    ),
+  ].map((kec) => ({ label: kec, value: kec }));
 
   const desaOptions = [
     ...new Set(
@@ -138,6 +145,13 @@ export default function KirimSuara() {
           </div>
         )}
         <form onSubmit={handleSuara} className="flex flex-col gap-3">
+        <Dropdown
+            label="Dapil"
+            options={dapilOptions}
+            value={dapil}
+            setValue={setDapil}
+            required
+          />
           <Dropdown
             label="Kecamatan"
             options={kecamatanOptions}

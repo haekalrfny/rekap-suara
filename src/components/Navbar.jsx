@@ -9,7 +9,7 @@ import Button from "./Button";
 import { useTokenContext } from "../context/TokenContext";
 
 const Navbar = () => {
-  const { token } = useTokenContext();
+  const { token, admin } = useTokenContext();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -30,6 +30,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     Cookies.remove("token");
+    Cookies.remove("_id");
     window.location.reload();
   };
 
@@ -105,43 +106,45 @@ const Navbar = () => {
             </Link>
           </div>
         </li>
-        <li className="relative" ref={desktopDropdownRef}>
-          <div
-            className="flex items-center cursor-pointer"
-            onClick={toggleDesktopDropdown}
-          >
-            <span className="hover:text-gray-800">Informasi</span>
-            <FiChevronDown
-              className={`ml-1 transition-transform ${
-                dropdownOpen ? "rotate-180" : ""
-              }`}
-            />
-          </div>
-          {dropdownOpen && (
-            <div className="absolute left-0 mt-1 w-40 bg-white border rounded-md shadow-lg z-10">
-              <Link
-                to={token ? "/tps" : "/login"}
-                className="block px-4 py-2 hover:bg-gray-100"
-                onClick={() => {
-                  setDropdownOpen(false);
-                  setMobileMenuOpen(false);
-                }}
-              >
-                TPS
-              </Link>
-              <Link
-                to="/paslon"
-                className="block px-4 py-2 hover:bg-gray-100"
-                onClick={() => {
-                  setDropdownOpen(false);
-                  setMobileMenuOpen(false);
-                }}
-              >
-                Paslon
-              </Link>
+        {admin && (
+          <li className="relative" ref={desktopDropdownRef}>
+            <div
+              className="flex items-center cursor-pointer"
+              onClick={toggleDesktopDropdown}
+            >
+              <span className="hover:text-gray-800">Informasi</span>
+              <FiChevronDown
+                className={`ml-1 transition-transform ${
+                  dropdownOpen ? "rotate-180" : ""
+                }`}
+              />
             </div>
-          )}
-        </li>
+            {dropdownOpen && (
+              <div className="absolute left-0 mt-1 w-40 bg-white border rounded-md shadow-lg z-10">
+                <Link
+                  to={token ? "/tps" : "/login"}
+                  className="block px-4 py-2 hover:bg-gray-100"
+                  onClick={() => {
+                    setDropdownOpen(false);
+                    setMobileMenuOpen(false);
+                  }}
+                >
+                  TPS
+                </Link>
+                <Link
+                  to="/paslon"
+                  className="block px-4 py-2 hover:bg-gray-100"
+                  onClick={() => {
+                    setDropdownOpen(false);
+                    setMobileMenuOpen(false);
+                  }}
+                >
+                  Paslon
+                </Link>
+              </div>
+            )}
+          </li>
+        )}
       </ul>
 
       {/* Menu Mobile */}
@@ -174,43 +177,45 @@ const Navbar = () => {
                 Kirim Suara
               </Link>
             </li>
-            <li className="relative" ref={mobileDropdownRef}>
-              <div
-                className="flex items-center cursor-pointer"
-                onClick={toggleMobileDropdown}
-              >
-                <span className="hover:text-gray-400">Informasi</span>
-                <FiChevronDown
-                  className={`ml-1 transition-transform ${
-                    mobileDropdownOpen ? "rotate-180" : ""
-                  }`}
-                />
-              </div>
-              {mobileDropdownOpen && (
-                <div>
-                  <Link
-                    to={token ? "/tps" : "/login"}
-                    className="block  py-1.5 rounded hover:bg-gray-100"
-                    onClick={() => {
-                      setMobileDropdownOpen(false);
-                      setMobileMenuOpen(false);
-                    }}
-                  >
-                    - TPS
-                  </Link>
-                  <Link
-                    to="/paslon"
-                    className="block  py-1.5 rounded hover:bg-gray-100"
-                    onClick={() => {
-                      setMobileDropdownOpen(false);
-                      setMobileMenuOpen(false);
-                    }}
-                  >
-                    - Paslon
-                  </Link>
+            {admin && (
+              <li className="relative" ref={mobileDropdownRef}>
+                <div
+                  className="flex items-center cursor-pointer"
+                  onClick={toggleMobileDropdown}
+                >
+                  <span className="hover:text-gray-400">Informasi</span>
+                  <FiChevronDown
+                    className={`ml-1 transition-transform ${
+                      mobileDropdownOpen ? "rotate-180" : ""
+                    }`}
+                  />
                 </div>
-              )}
-            </li>
+                {mobileDropdownOpen && (
+                  <div>
+                    <Link
+                      to={token ? "/tps" : "/login"}
+                      className="block  py-1.5 rounded hover:bg-gray-100"
+                      onClick={() => {
+                        setMobileDropdownOpen(false);
+                        setMobileMenuOpen(false);
+                      }}
+                    >
+                      - TPS
+                    </Link>
+                    <Link
+                      to="/paslon"
+                      className="block  py-1.5 rounded hover:bg-gray-100"
+                      onClick={() => {
+                        setMobileDropdownOpen(false);
+                        setMobileMenuOpen(false);
+                      }}
+                    >
+                      - Paslon
+                    </Link>
+                  </div>
+                )}
+              </li>
+            )}
             {!token && (
               <li>
                 <Link
@@ -252,13 +257,15 @@ const Navbar = () => {
         )}
         {token && (
           <>
-            <li>
-              <Button
-                text={<IoMdTime className="text-xl" />}
-                outline={true}
-                onClick={() => (window.location.href = "/riwayat")}
-              />
-            </li>
+            {!admin && (
+              <li>
+                <Button
+                  text={<IoMdTime className="text-xl" />}
+                  outline={true}
+                  onClick={() => (window.location.href = "/riwayat")}
+                />
+              </li>
+            )}
             <li>
               <Button
                 text={"Akun"}
