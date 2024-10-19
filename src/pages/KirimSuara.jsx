@@ -32,21 +32,25 @@ export default function KirimSuara() {
     return <Navigate to="/login" />;
   }
 
-  const dapilOptions = [...new Set(tpsData.map((tp) => tp.dapil))].map(
-    (dap) => ({ label: dap, value: dap })
-  );
+  const dapilOptions = [...new Set(tpsData.map((tp) => tp.dapil))]
+    .sort((a, b) => a.localeCompare(b))
+    .map((dap) => ({ label: dap, value: dap }));
 
   const kecamatanOptions = [
     ...new Set(
       tpsData.filter((tp) => tp.dapil === dapil).map((tp) => tp.kecamatan)
     ),
-  ].map((kec) => ({ label: kec, value: kec }));
+  ]
+    .sort((a, b) => a.localeCompare(b))
+    .map((kec) => ({ label: kec, value: kec }));
 
   const desaOptions = [
     ...new Set(
       tpsData.filter((tp) => tp.kecamatan === kecamatan).map((tp) => tp.desa)
     ),
-  ].map((desa) => ({ label: desa, value: desa }));
+  ]
+    .sort((a, b) => a.localeCompare(b))
+    .map((desa) => ({ label: desa, value: desa }));
 
   const tpsOptions = tpsData
     .filter((tp) => tp.desa === desa)
@@ -145,7 +149,7 @@ export default function KirimSuara() {
           </div>
         )}
         <form onSubmit={handleSuara} className="flex flex-col gap-3">
-        <Dropdown
+          <Dropdown
             label="Dapil"
             options={dapilOptions}
             value={dapil}

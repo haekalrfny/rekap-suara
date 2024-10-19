@@ -69,22 +69,25 @@ export default function TPS() {
     <>
       <div className="w-full flex flex-col items-center md:pt-6 pb-10 gap-6">
         <div className="w-[90%] sm:w-2/4 flex flex-col gap-6">
-          {loading ? (
-            <HeadingLoad />
-          ) : (
-            <div className="space-y-3">
-              <h1 className="font-bold text-3xl">TPS</h1>
-              <p className="font-light text-gray-600">
-                Data rekapitulasi suara di Tempat Pemungutan Suara (TPS) dari
-                seluruh wilayah Kabupaten Bandung Barat
-              </p>
-              <Search
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-                setCurrentPage={setPage}
-              />
-            </div>
-          )}
+          <div className="space-y-3">
+            {loading ? (
+              <HeadingLoad />
+            ) : (
+              <>
+                <h1 className="font-bold text-3xl">TPS</h1>
+                <p className="font-light text-gray-600">
+                  Data rekapitulasi suara di Tempat Pemungutan Suara (TPS) dari
+                  seluruh wilayah Kabupaten Bandung Barat
+                </p>
+              </>
+            )}
+
+            <Search
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              setCurrentPage={setPage}
+            />
+          </div>
         </div>
         <div className="w-full flex flex-col max-w-[90%] gap-3">
           <DesktopTPS data={data} openModal={openModal} />

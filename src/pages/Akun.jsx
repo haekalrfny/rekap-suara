@@ -16,6 +16,7 @@ export default function Akun() {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [role, setRole] = useState("");
   const showNotification = useNotif();
   const navigate = useNavigate();
 
@@ -42,6 +43,7 @@ export default function Akun() {
         setLoading(false);
         setUsername(res.data.username);
         setName(res.data.name);
+        setRole(res.data.role === "user" ? "Saksi" : "Admin");
       })
       .catch((err) => {
         setLoading(false);
@@ -100,7 +102,12 @@ export default function Akun() {
           </p>
         </div>
         <form className="flex flex-col gap-3">
-          <h1 className="font-semibold text-xl">Data diri</h1>
+          <div className="flex items-center justify-between">
+            <h1 className="font-semibold text-xl">Data diri </h1>
+            <span className="text-gray-500 font-light text-sm py-0.5 px-3 rounded-xl border">
+              {role}
+            </span>
+          </div>
           <Input
             value={username}
             setValue={setUsername}
