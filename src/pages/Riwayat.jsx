@@ -7,24 +7,80 @@ import Cookies from "js-cookie";
 export default function Riwayat() {
   const { loading } = useStateContext();
   const [data, setData] = useState([]);
-  const id = Cookies.get("_id");
+  const userId = Cookies.get("_id");
 
   useEffect(() => {
-    const getRiwayat = () => {
-      let config = {
+    const fetchRiwayat = async () => {
+      const config = {
         method: "get",
-        url: `/suara/user/${id}`,
+        url: `/suara/user/${userId}`,
         headers: {
           Authorization: `Bearer ${Cookies.get("token")}`,
         },
       };
-      instance(config).then((res) => {
-        console.log(res.data);
-        setData(res.data);
-      });
+      const res = await instance(config);
+      setData(res.data);
     };
-    getRiwayat();
-  }, []);
+    fetchRiwayat();
+  }, [userId]);
+
+  const renderRiwayatItem = (item) => (
+    <div key={item._id} className="space-y-3">
+      <p className="text-sm text-gray-600 mb-2">
+        {new Date(item.createdAt).toLocaleString("id-ID", {
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        })}
+      </p>
+      <div className="space-y-2">
+        {[
+          "Dapil",
+          "Kecamatan",
+          "Desa",
+          "TPS",
+          "Total Suara Sah",
+          "Suara Tidak Sah",
+        ].map((label, idx) => (
+          <div key={idx} className="flex items-center justify-between">
+            <p className="font-medium text-gray-700">{label}</p>
+            <p className="text-gray-600">
+              {label === "TPS"
+                ? `TPS ${item.tps?.kodeTPS}`
+                : label === "Total Suara Sah"
+                ? `${item.tps?.jumlahSuaraSah} Suara`
+                : label === "Suara Tidak Sah"
+                ? `${item.tps?.jumlahSuaraTidakSah} Suara`
+                : item.tps?.[label.toLowerCase()]}
+            </p>
+          </div>
+        ))}
+      </div>
+      <div className="overflow-hidden rounded-xl border">
+        <table className="table-auto w-full text-justify text-base md:text-sm">
+          <thead>
+            <tr>
+              <td className="border font-semibold px-4 py-2">Paslon</td>
+              <td className="border font-semibold px-4 py-2">Suara</td>
+            </tr>
+          </thead>
+          <tbody className="text-gray-600">
+            {item.suaraPaslon.map((suara, index) => (
+              <tr key={index}>
+                <td className="border px-4 py-2">{suara.paslon?.panggilan}</td>
+                <td className="border px-4 py-2">
+                  {suara.jumlahSuaraSah} Suara
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
 
   return (
     <div className="w-full flex justify-center md:pt-6 pb-10">
@@ -40,80 +96,15 @@ export default function Riwayat() {
           </div>
         )}
         <div className="space-y-3">
-          {data.map((i, idx) => (
-            <div key={idx} className="space-y-3">
-              <p className="text-sm text-gray-600 mb-2">
-                {new Date(i.createdAt).toLocaleDateString("id-ID", {
-                  day: "2-digit",
-                  month: "long",
-                  year: "numeric",
-                })}
-                ,{" "}
-                {new Date(i.createdAt).toLocaleTimeString("id-ID", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  second: "2-digit",
-                  hour12: false,
-                })}
+          {data.length === 0 ? (
+            <div className="w-full h-64 flex items-center justify-center">
+              <p className="font-light text-gray-600">
+                Belum memiliki riwayat
               </p>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <p className="font-medium text-gray-700">Dapil</p>
-                  <p className="text-gray-600">{i.tps?.dapil}</p>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <p className="font-medium text-gray-700">Kecamatan</p>
-                  <p className="text-gray-600">{i.tps?.kecamatan}</p>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <p className="font-medium text-gray-700">Desa</p>
-                  <p className="text-gray-600">{i.tps?.desa}</p>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <p className="font-medium text-gray-700">TPS</p>
-                  <p className="text-gray-600">TPS {i.tps?.kodeTPS}</p>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <p className="font-medium text-gray-700">Total Suara Sah</p>
-                  <p className="text-gray-600">{i.tps?.jumlahSuaraSah} Suara</p>
-                </div>
-                <div className="flex items-center justify-between">
-                  <p className="font-medium text-gray-700">Suara Tidak Sah</p>
-                  <p className="text-gray-600">
-                    {i.tps?.jumlahSuaraTidakSah} Suara
-                  </p>
-                </div>
-              </div>
-              <div className="overflow-hidden rounded-xl border">
-                <table className="table-auto w-full text-justify text-base md:text-sm">
-                  <thead>
-                    <tr>
-                      <td className="border font-semibold px-4 py-2">
-                        Paslon
-                      </td>
-                      <td className="border font-semibold px-4 py-2">Suara</td>
-                    </tr>
-                  </thead>
-                  <tbody className="text-gray-600">
-                    {i.suaraPaslon.map((item, index) => (
-                      <tr key={index}>
-                        <td className="border px-4 py-2">
-                          {item.paslon?.panggilan}
-                        </td>
-                        <td className="border px-4 py-2">
-                          {item.jumlahSuaraSah} Suara
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
             </div>
-          ))}
+          ) : (
+            data.map(renderRiwayatItem)
+          )}
         </div>
       </div>
     </div>
