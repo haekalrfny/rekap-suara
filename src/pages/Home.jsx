@@ -30,7 +30,7 @@ export default function Home() {
       <JumbotronLoading />
     ) : (
       <>
-        <h1 className="text-5xl md:text-6xl font-semibold">Rekap Suara</h1>
+        <h1 className="text-5xl md:text-6xl font-semibold">Dilan.tik</h1>
         <p className="font-light text-gray-600">
           Merekap dan Memonitor Suara Rakyat untuk Mewujudkan Pemimpin yang
           Berkualitas di Pilkada Bandung Barat 2024
@@ -65,7 +65,7 @@ export default function Home() {
             </>
           ) : admin ? (
             <>
-              <div className="sm:w-2/3 flex flex-col lg:flex-row justify-between gap-4 mt-8">
+              <div className=" flex flex-col lg:flex-row justify-between gap-4 mt-8">
                 <Charts
                   title="Data per Paslon"
                   subtitle="Total suara paslon yang Telah Diterima"
@@ -86,6 +86,7 @@ export default function Home() {
               ) : null}
             </>
           ) : (
+            token &&
             renderButton(
               <>
                 <p>Kirim Suara</p>
@@ -94,11 +95,13 @@ export default function Home() {
               () => (window.location.href = "/kirim-suara")
             )
           )}
-          <img
-            src="./people.svg"
-            alt="people"
-            className="w-full md:w-[500px]"
-          />
+          {!admin && (
+            <img
+              src="./people.svg"
+              alt="people"
+              className="w-full md:w-[500px]"
+            />
+          )}
         </div>
       </div>
     </div>

@@ -71,7 +71,7 @@ const Navbar = () => {
   return (
     <div className="h-20 flex justify-between items-center px-6">
       <ul className="hidden md:flex">
-        <li className="font-semibold">Rekap Suara</li>
+        <li className="font-semibold">Dilan.tik</li>
       </ul>
 
       {/* Menu Mobile */}
@@ -95,17 +95,18 @@ const Navbar = () => {
             Beranda
           </Link>
         </li>
-
-        <li>
-          <div className="flex items-center cursor-pointer">
-            <Link
-              to={token ? "/kirim-suara" : "/login"}
-              className="hover:text-gray-800"
-            >
-              Kirim Suara
-            </Link>
-          </div>
-        </li>
+        {!admin && (
+          <li>
+            <div className="flex items-center cursor-pointer">
+              <Link
+                to={token ? "/kirim-suara" : "/login"}
+                className="hover:text-gray-800"
+              >
+                Kirim Suara
+              </Link>
+            </div>
+          </li>
+        )}
         {admin && (
           <li className="relative" ref={desktopDropdownRef}>
             <div
@@ -145,6 +146,18 @@ const Navbar = () => {
             )}
           </li>
         )}
+        {!admin && (
+          <li>
+            <div className="flex items-center cursor-pointer">
+              <Link
+                to={token ? "/riwayat" : "/login"}
+                className="hover:text-gray-800"
+              >
+                Riwayat
+              </Link>
+            </div>
+          </li>
+        )}
       </ul>
 
       {/* Menu Mobile */}
@@ -168,15 +181,17 @@ const Navbar = () => {
                 Beranda
               </Link>
             </li>
-            <li>
-              <Link
-                to={token ? "/kirim-suara" : "/login"}
-                className="hover:text-gray-400"
-                onClick={toggleMobileMenu}
-              >
-                Kirim Suara
-              </Link>
-            </li>
+            {!admin && (
+              <li>
+                <Link
+                  to={token ? "/kirim-suara" : "/login"}
+                  className="hover:text-gray-400"
+                  onClick={toggleMobileMenu}
+                >
+                  Kirim Suara
+                </Link>
+              </li>
+            )}
             {admin && (
               <li className="relative" ref={mobileDropdownRef}>
                 <div
@@ -216,6 +231,17 @@ const Navbar = () => {
                 )}
               </li>
             )}
+            {!admin && (
+              <li>
+                <Link
+                  to={token ? "/riwayat" : "/login"}
+                  className="hover:text-gray-400"
+                  onClick={toggleMobileMenu}
+                >
+                  Riwayat
+                </Link>
+              </li>
+            )}
             {!token && (
               <li>
                 <Link
@@ -234,7 +260,7 @@ const Navbar = () => {
                     handleLogout();
                     toggleMobileMenu();
                   }}
-                  className="border bg-black text-white hover:bg-white hover:border-black hover:text-black text-base md:text-xs py-2 px-4 rounded-lg cursor-pointer block text-center"
+                  className="border bg-black text-white hover:bg-white hover:border-black hover:text-black text-base md:text-xs py-2 px-4 rounded-lg cursor-pointer block text-center w-full"
                 >
                   Keluar
                 </button>
@@ -257,15 +283,6 @@ const Navbar = () => {
         )}
         {token && (
           <>
-            {!admin && (
-              <li>
-                <Button
-                  text={<IoMdTime className="text-xl" />}
-                  outline={true}
-                  onClick={() => (window.location.href = "/riwayat")}
-                />
-              </li>
-            )}
             <li>
               <Button
                 text={"Akun"}

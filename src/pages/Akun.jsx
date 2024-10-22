@@ -9,14 +9,10 @@ import { useTokenContext } from "../context/TokenContext";
 import { useNotif } from "../context/NotifContext";
 
 export default function Akun() {
-  const { token } = useTokenContext();
+  const { token, admin } = useTokenContext();
   const id = Cookies.get("_id");
-  const { setLoading, setLoadingButton } = useStateContext();
-  const [username, setUsername] = useState("");
-  const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [role, setRole] = useState("");
+  const { setLoading } = useStateContext();
+  const [data, setData] = useState(null);
   const showNotification = useNotif();
   const navigate = useNavigate();
 
@@ -41,9 +37,7 @@ export default function Akun() {
     instance(config)
       .then((res) => {
         setLoading(false);
-        setUsername(res.data.username);
-        setName(res.data.name);
-        setRole(res.data.role === "user" ? "Saksi" : "Admin");
+        setData(res.data);
       })
       .catch((err) => {
         setLoading(false);
@@ -51,45 +45,14 @@ export default function Akun() {
       });
   };
 
-  const updateUser = () => {
-    setLoadingButton(true);
-    if (password !== confirmPassword) {
-      showNotification("Password dan Konfirmasi Password tidak sama", "error");
-      setLoadingButton(false);
-      return;
-    }
-
-    let data = {
-      username,
-      name,
-      password,
-    };
-
-    let config = {
-      method: "patch",
-      url: `/user/update/${id}`,
-      headers: { Authorization: `Bearer ${Cookies.get("token")}` },
-      data,
-    };
-
-    instance(config)
-      .then((res) => {
-        showNotification("Akun terupdate", "success");
-        window.alert("Akun terupdate");
-        setLoadingButton(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        showNotification("Akun gagal diupdate", "error");
-        setLoadingButton(false);
-      });
-  };
-
   const logout = () => {
+    showNotification("Logout Berhasil", "success");
     navigate("/");
-    Cookies.remove("token");
-    Cookies.remove("_id");
-    window.location.reload();
+    setTimeout(() => {
+      Cookies.remove("token");
+      Cookies.remove("_id");
+      window.location.reload();
+    }, 500);
   };
 
   return (
@@ -97,52 +60,52 @@ export default function Akun() {
       <div className="w-[90%] sm:w-2/4 flex flex-col gap-6">
         <div className="space-y-3">
           <h1 className="font-bold text-3xl">Akun</h1>
-          <p className="font-light text-gray-600">
-            Akun yang digunakan untuk login
-          </p>
+          <p className="font-light text-gray-600">Akun yang anda gunakan</p>
         </div>
         <form className="flex flex-col gap-3">
-          <div className="flex items-center justify-between">
-            <h1 className="font-semibold text-xl">Data diri </h1>
-            <span className="text-gray-500 font-light text-sm py-0.5 px-3 rounded-xl border">
-              {role}
-            </span>
+          <div>
+            <h1 className="font-semibold text-xl">Akun anda</h1>
           </div>
-          <Input
-            value={username}
-            setValue={setUsername}
-            name="username"
-            label={"Username"}
-            type={"text"}
-            placeholder={"Username"}
-          />
-          <Input
-            value={name}
-            setValue={setName}
-            name="name"
-            label={"Nama Lengkap"}
-            type={"text"}
-            placeholder={"Nama Lengkap"}
-          />
-          <Input
-            value={password}
-            setValue={setPassword}
-            name="password"
-            label={"Password"}
-            type={"password"}
-            placeholder={"Password"}
-          />
-          <Input
-            value={confirmPassword}
-            setValue={setConfirmPassword}
-            name="confirmPassword"
-            label={"Confirm Password"}
-            type={"password"}
-            placeholder={"Confirm Password"}
-          />
-          <div className="flex flex-col md:flex-row gap-3">
-            <Button text={"Ubah"} onClick={updateUser} outline={true} />
-            <Button text={"Logout"} onClick={logout} />
+          <div className="flex flex-col gap-6">
+            <div className="flex items-center justify-between">
+              <p className="font-medium">Username</p>
+              <p className="font-light text-gray-500">{data?.username}</p>
+            </div>
+            {!admin && (
+              <>
+                <div className="flex items-center justify-between">
+                  <p className="font-medium">Dapil</p>
+                  <p className="font-light text-gray-500">{data?.dapil}</p>
+                </div>
+                <div className="flex items-center justify-between">
+                  <p className="font-medium">Kecamatan</p>
+                  <p className="font-light text-gray-500">{data?.kecamatan}</p>
+                </div>
+                <div className="flex items-center justify-between">
+                  <p className="font-medium">Desa</p>
+                  <p className="font-light text-gray-500">{data?.desa}</p>
+                </div>
+                <div className="flex items-center justify-between">
+                  <p className="font-medium">TPS</p>
+                  <p className="font-light text-gray-500">
+                    TPS {data?.kodeTPS}
+                  </p>
+                </div>
+              </>
+            )}
+            <div className="flex items-center justify-between">
+              <p className="font-medium">Role</p>
+              <p
+                className={`py-0.5 px-3 font-medium text-sm rounded-xl ${
+                  data?.role === "admin"
+                    ? "bg-red-100 text-red-500"
+                    : "bg-gray-100 text-gray-500"
+                }`}
+              >
+                {data?.role === "user" ? "Saksi" : "Admin"}
+              </p>
+            </div>
+            <Button text={"Keluar"} onClick={logout} />
           </div>
         </form>
       </div>

@@ -20,11 +20,11 @@ export default function Charts({ title, subtitle, data, name, value, color }) {
       {loading ? (
         <ChartLoading />
       ) : (
-        <div className="p-6">
+        <div className="p-6 w-full">
           <h2 className="text-2xl font-semibold mb-2">{title}</h2>
           <p className="text-gray-600 mb-4">{subtitle}</p>
           {!data || data.length === 0 ? (
-            <div className="w-full h-[150px] flex items-center justify-center">
+            <div className="w-full h-[200px] flex items-center justify-center">
               <p className="text-gray-500 text-sm">Data tidak ada</p>
             </div>
           ) : (

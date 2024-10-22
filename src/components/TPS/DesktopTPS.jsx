@@ -14,13 +14,13 @@ export default function DesktopTPS({ data, openModal }) {
           <table className="table-auto w-full text-center text-sm">
             <thead>
               <tr className="font-medium">
-                <td className=" border-b px-4 py-2">Dapil</td>
-                <td className=" border-b px-4 py-2">Kecamatan</td>
-                <td className=" border-b px-4 py-2">Desa</td>
-                <td className=" border-b px-4 py-2">Nomor TPS</td>
-                <td className=" border-b px-4 py-2">Suara Sah</td>
-                <td className=" border-b px-4 py-2">Suara Tidak Sah</td>
-                <td className=" border-b px-4 py-2">Total Suara</td>
+                <td className=" border-b px-4 py-2">DAPIL</td>
+                <td className=" border-b px-4 py-2">KECAMATAN</td>
+                <td className=" border-b px-4 py-2">DESA</td>
+                <td className=" border-b px-4 py-2">NOMOR TPS</td>
+                <td className=" border-b px-4 py-2">SUARA SAH</td>
+                <td className=" border-b px-4 py-2">SUARA TIDAK SAH</td>
+                <td className=" border-b px-4 py-2">TOTAL SUARA</td>
                 <td className=" border-b px-4 py-2">Detail</td>
               </tr>
             </thead>

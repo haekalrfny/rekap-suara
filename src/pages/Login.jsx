@@ -43,6 +43,7 @@ export default function Login() {
         expires.setDate(expires.getDate() + 7);
         Cookies.set("token", token, { expires });
         Cookies.set("_id", user._id, { expires });
+        Cookies.set("username", user.username, { expires });
         showNotification("Berhasil Masuk", "success");
         setLoadingButton(false);
         setTimeout(() => {
@@ -52,7 +53,7 @@ export default function Login() {
       })
       .catch((err) => {
         setLoadingButton(false);
-        showNotification(err.response.data, "error");
+        showNotification("Gagal Login", "error");
         console.log(err);
       })
       .finally(() => setLoadingButton(false));
@@ -87,21 +88,6 @@ export default function Login() {
 
           <Button text={"Masuk"} onClick={handleLogin} />
         </form>
-        <div className="mt-3 text-sm">
-          <p>
-            <a href="/forgot-password" className="hover:underline">
-              Lupa Password?
-            </a>
-          </p>
-        </div>
-        <div className="mt-3 text-sm">
-          <p>
-            Belum punya akun?{" "}
-            <a href="/register" className="underline">
-              Daftar
-            </a>
-          </p>
-        </div>
       </div>
     </div>
   );

@@ -25,7 +25,7 @@ const ProgressBar = ({ text, current, total, size }) => {
       </p>
 
       <div
-        className={`relative w-full bg-gray-300 rounded-full ${
+        className={`relative w-full bg-gray-300 rounded-full overflow-hidden ${
           size === "xs" ? "h-3" : "h-4"
         }`}
       >
