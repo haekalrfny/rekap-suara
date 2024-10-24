@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import ProgressBar from "../ProgressBar";
 import Cookies from "js-cookie";
 import instance from "../../api/api";
-export default function DataPerDaerah() {
+export default function DataPerDaerah({ setValue }) {
   const [data, setData] = useState(null);
+  console.log(data)
 
   useEffect(() => {
     getReportPerDaerah();
@@ -21,6 +22,7 @@ export default function DataPerDaerah() {
       .request(config)
       .then((res) => {
         setData(res.data);
+        setValue(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -47,9 +49,9 @@ export default function DataPerDaerah() {
         total={data?.totalDesa}
       />
       <ProgressBar
-        text={"Saksi"}
-        current={data?.totalSaksiWithSuara}
-        total={data?.totalSaksi}
+        text={"TPS"}
+        current={data?.totalTPSWithSuara}
+        total={data?.totalTPS}
       />
       <p className="text-sm  mt-1">
         *data hanya untuk wilayah Kab. Bandung Barat

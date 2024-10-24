@@ -49,8 +49,6 @@ export default function KirimSuara() {
       });
   };
 
-  console.log(data?._id)
-
   const handleSuara = (e) => {
     e.preventDefault();
     setLoadingButton(true);

@@ -80,7 +80,7 @@ const Navbar = () => {
           <FiMenu className="text-2xl" />
         </button>
         <span className="ml-4 text-xl md:text-base font-semibold">
-          Rekap Suara
+          Dilan.tik
         </span>
       </div>
 
@@ -165,7 +165,7 @@ const Navbar = () => {
         <div className="fixed top-0 left-0 w-full h-full bg-white z-20 md:hidden">
           <div className="flex justify-between items-center p-4 border-b">
             <span className="font-semibold text-xl md:text-base">
-              Rekap Suara
+              Dilan.tik
             </span>
             <button onClick={toggleMobileMenu}>
               <AiOutlineClose className="text-2xl" />

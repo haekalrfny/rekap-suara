@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Charts from "../components/Charts";
 import { useDatabaseContext } from "../context/DatabaseContext";
 import { useTokenContext } from "../context/TokenContext";
@@ -19,7 +19,7 @@ export default function Home() {
   const { token, admin } = useTokenContext();
   const { suaraByPaslon } = useDatabaseContext();
   const { loading } = useStateContext();
-  const totalSaksi = formatNumber(suaraByPaslon[0]?.["Total Saksi"] || 0);
+  const [data, setData] = useState(null);
   const lastUpdated = suaraByPaslon[0]?.["Last Updated"];
   const formattedLastUpdated = lastUpdated
     ? formatDistanceToNow(parseISO(lastUpdated), { addSuffix: true })
@@ -73,14 +73,20 @@ export default function Home() {
                   name="Panggilan"
                   value="Total Suara"
                 />
-                {loading ? <ChartLoading /> : <DataPerDaerah />}
+                {loading ? (
+                  <ChartLoading />
+                ) : (
+                  <DataPerDaerah setValue={setData} />
+                )}
               </div>
               {loading ? (
                 <SaksiTextLoading />
-              ) : totalSaksi ? (
+              ) : data && data?.totalSaksi > 0 ? (
                 <p className="text-center font-light mt-4 text-gray-600 max-w-[90%]">
-                  <b className="text-black">{totalSaksi}</b> saksi telah
-                  menginput suara{" "}
+                  <b className="text-black">
+                    {data?.totalSaksiWithSuara} dari {data?.totalSaksi}
+                  </b>{" "}
+                  saksi telah menginput suara{" "}
                   <b className="text-black">{formattedLastUpdated}</b>
                 </p>
               ) : null}

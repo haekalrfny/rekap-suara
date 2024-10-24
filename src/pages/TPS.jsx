@@ -10,6 +10,7 @@ import instance from "../api/api";
 import ModalDetail from "../components/TPS/ModalDetail";
 import { useStateContext } from "../context/StateContext";
 import HeadingLoad from "../components/Load/HeadingLoad";
+import Button from "../components/Button";
 
 export default function TPS() {
   const [data, setData] = useState([]);
@@ -20,7 +21,7 @@ export default function TPS() {
   const [showModal, setShowModal] = useState(false);
   const [id, setId] = useState(null);
   const { token } = useTokenContext();
-  const { setLoading, loading } = useStateContext();
+  const { setLoading, loading, setLoadingButton } = useStateContext();
 
   if (!token) {
     return <Navigate to="/login" />;
@@ -65,6 +66,37 @@ export default function TPS() {
     setShowModal(true);
   };
 
+  const downloadTPS = () => {
+    setLoadingButton(true);
+    let config = {
+      method: "get",
+      url: "/tps/downloadExcel",
+      headers: {
+        Authorization: `Bearer ${Cookies.get("token")}`,
+      },
+      responseType: "blob",
+    };
+
+    instance
+      .request(config)
+      .then((res) => {
+        const url = window.URL.createObjectURL(new Blob([res.data]));
+        const link = document.createElement("a");
+        link.href = url;
+
+        link.setAttribute("download", "TPS.xlsx");
+        document.body.appendChild(link);
+        link.click();
+
+        link.parentNode.removeChild(link);
+        setLoadingButton(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoadingButton(false);
+      });
+  };
+
   return (
     <>
       <div className="w-full flex flex-col items-center md:pt-6 pb-10 gap-6">
@@ -81,7 +113,12 @@ export default function TPS() {
                 </p>
               </>
             )}
-
+            <Button
+              text={"Download TPS"}
+              onClick={downloadTPS}
+              isFull={false}
+              size={"sm"}
+            />
             <Search
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}

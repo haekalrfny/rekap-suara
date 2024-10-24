@@ -10,6 +10,12 @@ export default function Search({ setSearchQuery, setCurrentPage }) {
     setCurrentPage(0);
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
   return (
     <div>
       <label htmlFor="search" className="text-sm font-medium mb-1 text-black">
@@ -22,9 +28,15 @@ export default function Search({ setSearchQuery, setCurrentPage }) {
           placeholder="Cari TPS, Desa, Kecamatan atau Dapil..."
           value={tempQuery}
           onChange={(e) => setTempQuery(e.target.value)}
+          onKeyDown={handleKeyDown}
           className="border-b text-base md:text-sm border-gray-300 w-full py-2 focus:outline-none focus:border-gray-900"
         />
-        <Button text={<PiMagnifyingGlassBold/>} onClick={handleSearch} outline={true} isFull={false}/>
+        <Button
+          text={<PiMagnifyingGlassBold />}
+          onClick={handleSearch}
+          outline={true}
+          isFull={false}
+        />
       </div>
     </div>
   );
