@@ -39,13 +39,13 @@ export default function Home() {
       <h1 className="text-5xl md:text-6xl font-semibold">Beranda</h1>
     );
 
-  const renderButton = (text, onClick) => (
+  const renderButton = (text, onClick, login = false) => (
     <Button
       text={
-        <div className="flex items-center  justify-between gap-1">{text}</div>
+        <div className="flex items-center justify-between gap-1">{text}</div>
       }
       onClick={onClick}
-      isFull={true}
+      isFull={login ? true : false}
       outline={!admin}
     />
   );
@@ -98,27 +98,30 @@ export default function Home() {
             token && (
               <div className="flex flex-col gap-4  w-full">
                 <p className="font-medium">Menu</p>
-                <div className="flex flex-col md:flex-row  gap-3">
+                <div className="flex flex-col md:flex-row gap-3">
                   {renderButton(
                     <>
                       <p>Absen</p>
                       <BsPersonCheck />
                     </>,
-                    () => navigate("/absen")
+                    () => navigate("/absen"),
+                    true
                   )}
                   {renderButton(
                     <>
                       <p>Kirim Suara</p>
                       <BsSend className="ml-2" />
                     </>,
-                    () => navigate("/kirim-suara")
+                    () => navigate("/kirim-suara"),
+                    true
                   )}
                   {renderButton(
                     <>
                       <p>Riwayat</p>
                       <BsClockHistory className="ml-2" />
                     </>,
-                    () => navigate("/riwayat")
+                    () => navigate("/riwayat"),
+                    true
                   )}
                 </div>
               </div>
