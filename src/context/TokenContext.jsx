@@ -6,7 +6,10 @@ const Context = createContext();
 
 export const TokenContext = ({ children }) => {
   const [token, setToken] = useState({});
+  const id = Cookies.get("_id");
   const [admin, setAdmin] = useState(false);
+  const [attending, setAttending] = useState(false);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const checkToken = () => {
@@ -30,12 +33,36 @@ export const TokenContext = ({ children }) => {
     checkToken();
   }, [token]);
 
+  useEffect(() => {
+    const getDataById = () => {
+      let config = {
+        method: "get",
+        url: `/user/${id}`,
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      };
+
+      instance(config)
+        .then((res) => {
+          setAttending(res.data.isAttending);
+          setUser(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+    getDataById();
+  }, [id]);
+
   return (
     <Context.Provider
       value={{
         token,
         setToken,
         admin,
+        user,
+        attending,
       }}
     >
       {children}

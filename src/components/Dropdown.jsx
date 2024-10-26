@@ -8,6 +8,7 @@ export default function Dropdown({
   options,
   required,
   isDisabled = false,
+  isMobile,
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -32,7 +33,12 @@ export default function Dropdown({
 
   return (
     <div className="relative mb-4" ref={dropdownRef}>
-      <label htmlFor={name} className="text-sm font-medium mb-1 text-black">
+      <label
+        htmlFor={name}
+        className={`${
+          isMobile ? "text-xl md:text-sm " : "text-sm"
+        } font-medium mb-1 text-black`}
+      >
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       <div className="relative">

@@ -22,6 +22,7 @@ import { NotifProvider } from "../src/context/NotifContext";
 import { DatabaseProvider } from "./context/DatabaseContext";
 import { TokenContext } from "./context/TokenContext";
 import Riwayat from "./pages/Riwayat";
+import Absen from "./pages/Absen";
 
 export default function App() {
   return (
@@ -38,7 +39,8 @@ export default function App() {
                   <Route index path="/paslon" element={<Paslon />} />
                   <Route index path="/paslon/:id" element={<PaslonDetail />} />
                   <Route index path="/akun" element={<Akun />} />
-                  <Route index path="riwayat" element={<Riwayat />} />
+                  <Route index path="/riwayat" element={<Riwayat />} />
+                  <Route index path="/absen" element={<Absen />} />
                 </Route>
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />

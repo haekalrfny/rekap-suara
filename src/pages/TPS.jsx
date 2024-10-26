@@ -11,6 +11,7 @@ import ModalDetail from "../components/TPS/ModalDetail";
 import { useStateContext } from "../context/StateContext";
 import HeadingLoad from "../components/Load/HeadingLoad";
 import Button from "../components/Button";
+import { useNotif } from "../context/NotifContext";
 
 export default function TPS() {
   const [data, setData] = useState([]);
@@ -22,8 +23,10 @@ export default function TPS() {
   const [id, setId] = useState(null);
   const { token } = useTokenContext();
   const { setLoading, loading, setLoadingButton } = useStateContext();
+  const showNotification = useNotif();
 
-  if (!token) {
+  if (!token && !Cookies.get("token")) {
+    showNotification("Anda harus login terlebih dahulu", "error");
     return <Navigate to="/login" />;
   }
 

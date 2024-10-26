@@ -12,7 +12,7 @@ import HeadingLoad from "../components/Load/HeadingLoad";
 import Label from "../components/Label";
 
 export default function KirimSuara() {
-  const { token } = useTokenContext();
+  const { token, attending } = useTokenContext();
   const { paslonData } = useDatabaseContext();
   const { setLoadingButton, loading, setLoading } = useStateContext();
   const [data, setData] = useState(null);
@@ -24,7 +24,11 @@ export default function KirimSuara() {
   const [jumlahSuaraTidakSah, setJumlahSuaraTidakSah] = useState("");
   const showNotification = useNotif();
 
-  if (!token) {
+  if ((!token && !Cookies.get("token")) || !attending) {
+    showNotification(
+      !token ? "Anda harus login terlebih dahulu" : "Anda belum mengisi absen",
+      "error"
+    );
     return <Navigate to="/login" />;
   }
 
@@ -142,10 +146,30 @@ export default function KirimSuara() {
           </div>
         )}
         <form onSubmit={handleSuara} className="flex flex-col gap-3">
-          <Label title={"Dapil"} value={data?.dapil} isAuto={true} />
-          <Label title={"Kecamatan"} value={data?.kecamatan} isAuto={true} />
-          <Label title={"Desa"} value={data?.desa} isAuto={true} />
-          <Label title={"TPS"} value={data?.kodeTPS} isAuto={true} />
+          <Label
+            title={"Dapil"}
+            value={data?.dapil}
+            isAuto={true}
+            isMobile={true}
+          />
+          <Label
+            title={"Kecamatan"}
+            value={data?.kecamatan}
+            isAuto={true}
+            isMobile={true}
+          />
+          <Label
+            title={"Desa"}
+            value={data?.desa}
+            isAuto={true}
+            isMobile={true}
+          />
+          <Label
+            title={"TPS"}
+            value={data?.kodeTPS}
+            isAuto={true}
+            isMobile={true}
+          />
 
           {data && (
             <>
@@ -153,6 +177,7 @@ export default function KirimSuara() {
                 {paslonData.map((paslon, index) => (
                   <div key={paslon._id} className="w-full flex flex-col gap-3">
                     <Input
+                      isMobile={true}
                       label={paslon?.panggilan}
                       name={`jumlah-${index}`}
                       type="number"
@@ -173,6 +198,7 @@ export default function KirimSuara() {
                 type="number"
                 label="Jumlah Suara Tidak Sah"
                 placeholder="Jumlah Suara Tidak Sah"
+                isMobile={true}
               />
 
               <Input
@@ -180,6 +206,7 @@ export default function KirimSuara() {
                 label="Formulir C1"
                 type="file"
                 setValue={setImage}
+                isMobile={true}
                 required
               />
             </>

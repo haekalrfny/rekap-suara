@@ -3,20 +3,19 @@ import { useParams, useNavigate, Navigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import instance from "../api/api";
 import { useStateContext } from "../context/StateContext";
-import { PiCaretLeftBold } from "react-icons/pi";
 import Dropdown from "../components/Dropdown";
 import { useDatabaseContext } from "../context/DatabaseContext";
 import ProgressBar from "../components/ProgressBar";
 import Button from "../components/Button";
 import { useTokenContext } from "../context/TokenContext";
-import { calculatePercentage } from "../utils/formatPercent";
+import BackButton from "../components/BackButton";
+import { useNotif } from "../context/NotifContext";
 
 export default function PaslonDetail() {
   const { tpsData } = useDatabaseContext();
   const { token } = useTokenContext();
   const { setLoading, setLoadingButton } = useStateContext();
   const { id } = useParams();
-  const navigate = useNavigate();
   const [desa, setDesa] = useState("");
   const [kecamatan, setKecamatan] = useState("");
   const [dapil, setDapil] = useState("");
@@ -25,6 +24,7 @@ export default function PaslonDetail() {
   const [data, setData] = useState(null);
   const [totalSuara, setTotalSuara] = useState(0);
   const [totalSaksi, setTotalSaksi] = useState(0);
+  const { showNotification } = useNotif();
 
   useEffect(() => {
     getDataById();
@@ -36,7 +36,10 @@ export default function PaslonDetail() {
     getSuaraTotalPaslonDetail();
   }, [id]);
 
-  if (!token) return <Navigate to="/login" />;
+  if (!token && !Cookies.get("token")) {
+    showNotification("Anda harus login terlebih dahulu", "error");
+    return <Navigate to="/login" />;
+  }
 
   const getDataById = () => {
     setLoading(true);
@@ -233,13 +236,7 @@ export default function PaslonDetail() {
         </div>
 
         <Button text="Reset" onClick={setReset} outline />
-        <button
-          onClick={() => navigate("/paslon")}
-          className="text-base font-semibold text-gray-500 hover:text-gray-700 flex items-center gap-2"
-        >
-          <PiCaretLeftBold className="text-lg" />
-          Back
-        </button>
+        <BackButton url={"/paslon"} />
       </div>
     </div>
   );

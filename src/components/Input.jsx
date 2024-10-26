@@ -10,6 +10,7 @@ export default function Input({
   type,
   placeholder,
   required,
+  isMobile,
 }) {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [fileName, setFileName] = useState("");
@@ -26,7 +27,12 @@ export default function Input({
 
   return (
     <div>
-      <label htmlFor={name} className="text-sm font-medium mb-1 text-black">
+      <label
+        htmlFor={name}
+        className={`${
+          isMobile ? "text-xl md:text-sm " : "text-sm"
+        } font-medium mb-1 text-black uppercase`}
+      >
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       <div className="relative mb-4">

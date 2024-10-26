@@ -9,7 +9,7 @@ export default function Image({ url, onCancel }) {
       <img
         src={url}
         alt={url}
-        className="max-w-[90%]"
+        className="max-w-[90%] max-h-[90%] object-contain"
         onClick={(e) => e.stopPropagation()}
       />
     </div>

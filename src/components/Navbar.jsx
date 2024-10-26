@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FiChevronDown, FiMenu } from "react-icons/fi";
-import { IoMdTime } from "react-icons/io";
 
 import { AiOutlineClose } from "react-icons/ai";
 import Cookies from "js-cookie";
@@ -31,10 +30,10 @@ const Navbar = () => {
   const handleLogout = () => {
     Cookies.remove("token");
     Cookies.remove("_id");
+    Cookies.remove("username");
     window.location.reload();
   };
 
-  // Close desktop dropdown when clicking outside of it
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -51,7 +50,6 @@ const Navbar = () => {
     };
   }, []);
 
-  // Close mobile dropdown when clicking outside of it
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -71,7 +69,7 @@ const Navbar = () => {
   return (
     <div className="h-20 flex justify-between items-center px-6">
       <ul className="hidden md:flex">
-        <li className="font-semibold">Dilan.tik</li>
+        <li className="font-semibold">Kosongan</li>
       </ul>
 
       {/* Menu Mobile */}
@@ -80,7 +78,7 @@ const Navbar = () => {
           <FiMenu className="text-2xl" />
         </button>
         <span className="ml-4 text-xl md:text-base font-semibold">
-          Dilan.tik
+          Kosongan
         </span>
       </div>
 
@@ -164,9 +162,7 @@ const Navbar = () => {
       {mobileMenuOpen && (
         <div className="fixed top-0 left-0 w-full h-full bg-white z-20 md:hidden">
           <div className="flex justify-between items-center p-4 border-b">
-            <span className="font-semibold text-xl md:text-base">
-              Dilan.tik
-            </span>
+            <span className="font-semibold text-xl md:text-base">Kosongan</span>
             <button onClick={toggleMobileMenu}>
               <AiOutlineClose className="text-2xl" />
             </button>

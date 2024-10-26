@@ -3,11 +3,21 @@ import HeadingLoad from "../components/Load/HeadingLoad";
 import { useStateContext } from "../context/StateContext";
 import instance from "../api/api";
 import Cookies from "js-cookie";
+import { useNotif } from "../context/NotifContext";
+import { Navigate } from "react-router-dom";
+import { useTokenContext } from "../context/TokenContext";
 
 export default function Riwayat() {
+  const { token } = useTokenContext();
   const { loading } = useStateContext();
   const [data, setData] = useState([]);
   const userId = Cookies.get("_id");
+  const showNotification = useNotif();
+
+  if (!token && !Cookies.get("token")) {
+    showNotification("Anda harus login terlebih dahulu", "error");
+    return <Navigate to="/login" />;
+  }
 
   useEffect(() => {
     const fetchRiwayat = async () => {
@@ -98,9 +108,7 @@ export default function Riwayat() {
         <div className="space-y-3">
           {data.length === 0 ? (
             <div className="w-full h-64 flex items-center justify-center">
-              <p className="font-light text-gray-600">
-                Belum memiliki riwayat
-              </p>
+              <p className="font-light text-gray-600">Belum memiliki riwayat</p>
             </div>
           ) : (
             data.map(renderRiwayatItem)

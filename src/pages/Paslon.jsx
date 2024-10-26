@@ -8,16 +8,18 @@ import HeadingLoad from "../components/Load/HeadingLoad";
 import Button from "../components/Button";
 import Cookies from "js-cookie";
 import instance from "../api/api";
+import { useNotif } from "../context/NotifContext";
 
 export default function Paslon() {
   const { paslonData } = useDatabaseContext();
   const { token } = useTokenContext();
   const { loading, setLoadingButton } = useStateContext();
+  const showNotification = useNotif();
 
-  if (!token) {
+  if (!token && !Cookies.get("token")) {
+    showNotification("Anda harus login terlebih dahulu", "error");
     return <Navigate to="/login" />;
   }
-
   const downloadPaslonByTPS = () => {
     setLoadingButton(true);
     let config = {
