@@ -9,6 +9,7 @@ export const TokenContext = ({ children }) => {
   const id = Cookies.get("_id");
   const [admin, setAdmin] = useState(false);
   const [attending, setAttending] = useState(false);
+  const [isFilled, setIsFilled] = useState(null);
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -55,6 +56,21 @@ export const TokenContext = ({ children }) => {
     getDataById();
   }, [id]);
 
+  useEffect(() => {
+    const fetchRiwayat = async () => {
+      const config = {
+        method: "get",
+        url: `/suara/user/${id}`,
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      };
+      const res = await instance(config);
+      setIsFilled(res.data);
+    };
+    fetchRiwayat();
+  }, [id]);
+
   return (
     <Context.Provider
       value={{
@@ -63,6 +79,7 @@ export const TokenContext = ({ children }) => {
         admin,
         user,
         attending,
+        isFilled,
       }}
     >
       {children}

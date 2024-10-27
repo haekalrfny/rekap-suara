@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom"; // Import useNavigate
 import Charts from "../components/Charts";
 import { useDatabaseContext } from "../context/DatabaseContext";
 import { useTokenContext } from "../context/TokenContext";
-import { formatNumber } from "../utils/formatNumber";
 import {
   BsArrowRightShort,
   BsClockHistory,
