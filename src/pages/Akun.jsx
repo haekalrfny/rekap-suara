@@ -20,7 +20,7 @@ export default function Akun() {
     showNotification("Anda harus login terlebih dahulu", "error");
     return <Navigate to="/login" />;
   }
-  
+
   const logout = () => {
     showNotification("Logout Berhasil", "success");
     navigate("/");

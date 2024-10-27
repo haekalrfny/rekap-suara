@@ -35,7 +35,7 @@ export default function Home() {
     loading ? (
       <JumbotronLoading />
     ) : (
-      <h1 className="text-5xl md:text-6xl font-semibold">Beranda</h1>
+      <h1 className="text-5xl md:text-6xl font-semibold">Satu Hati</h1>
     );
 
   const renderButton = (text, onClick, login = false) => (

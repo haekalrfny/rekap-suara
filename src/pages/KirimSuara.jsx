@@ -146,92 +146,74 @@ export default function KirimSuara() {
             </p>
           </div>
         )}
-        {!isFilled ? (
-          <form onSubmit={handleSuara} className="flex flex-col gap-3">
-            <Label
-              title={"Dapil"}
-              value={data?.dapil}
-              isAuto={true}
-              isMobile={true}
-            />
-            <Label
-              title={"Kecamatan"}
-              value={data?.kecamatan}
-              isAuto={true}
-              isMobile={true}
-            />
-            <Label
-              title={"Desa"}
-              value={data?.desa}
-              isAuto={true}
-              isMobile={true}
-            />
-            <Label
-              title={"TPS"}
-              value={data?.kodeTPS}
-              isAuto={true}
-              isMobile={true}
-            />
 
-            {data && (
-              <>
-                <div className="flex flex-col gap-3">
-                  {paslonData.map((paslon, index) => (
-                    <div
-                      key={paslon._id}
-                      className="w-full flex flex-col gap-3"
-                    >
-                      <Input
-                        isMobile={true}
-                        label={`${paslon?.panggilan} (Nomor Urut ${paslon?.noUrut})`}
-                        name={`jumlah-${index}`}
-                        type="number"
-                        setValue={(e) =>
-                          handleAddSuara(index, paslon._id, parseInt(e) || 0)
-                        }
-                        value={jumlahSuara[index]}
-                        required
-                        placeholder="Suara Sah"
-                      />
-                    </div>
-                  ))}
-                </div>
-                <Input
-                  name="jumlahSuaraTidakSah"
-                  value={jumlahSuaraTidakSah}
-                  setValue={setJumlahSuaraTidakSah}
-                  type="number"
-                  label="Suara Tidak Sah"
-                  placeholder="Suara Tidak Sah"
-                  isMobile={true}
-                />
+        <form onSubmit={handleSuara} className="flex flex-col gap-3">
+          <Label
+            title={"Dapil"}
+            value={data?.dapil}
+            isAuto={true}
+            isMobile={true}
+          />
+          <Label
+            title={"Kecamatan"}
+            value={data?.kecamatan}
+            isAuto={true}
+            isMobile={true}
+          />
+          <Label
+            title={"Desa"}
+            value={data?.desa}
+            isAuto={true}
+            isMobile={true}
+          />
+          <Label
+            title={"TPS"}
+            value={data?.kodeTPS}
+            isAuto={true}
+            isMobile={true}
+          />
 
-                <Input
-                  name="image"
-                  label="Formulir C1"
-                  type="file"
-                  setValue={setImage}
-                  isMobile={true}
-                  required
-                />
-              </>
-            )}
-            <Button text="Kirim" onClick={handleSuara} />
-          </form>
-        ) : (
-          <div className="flex flex-col gap-3">
-            <div className="w-full h-64 flex items-center justify-center">
-              <p className="font-light text-gray-600">
-                Anda Sudah Mengirim Suara
-              </p>
-            </div>
-            <BackButton
-              url={"/"}
-              anotherUrl={"/riwayat"}
-              textAnother={"Riwayat"}
-            />
-          </div>
-        )}
+          {data && (
+            <>
+              <div className="flex flex-col gap-3">
+                {paslonData.map((paslon, index) => (
+                  <div key={paslon._id} className="w-full flex flex-col gap-3">
+                    <Input
+                      isMobile={true}
+                      label={`${paslon?.panggilan} (Nomor Urut ${paslon?.noUrut})`}
+                      name={`jumlah-${index}`}
+                      type="number"
+                      setValue={(e) =>
+                        handleAddSuara(index, paslon._id, parseInt(e) || 0)
+                      }
+                      value={jumlahSuara[index]}
+                      required
+                      placeholder="Suara Sah"
+                    />
+                  </div>
+                ))}
+              </div>
+              <Input
+                name="jumlahSuaraTidakSah"
+                value={jumlahSuaraTidakSah}
+                setValue={setJumlahSuaraTidakSah}
+                type="number"
+                label="Suara Tidak Sah"
+                placeholder="Suara Tidak Sah"
+                isMobile={true}
+              />
+              <Input
+                name="image"
+                label="Formulir C1"
+                type="file"
+                setValue={setImage}
+                isMobile={true}
+                required
+              />
+            </>
+          )}
+          <Button text="Kirim" onClick={handleSuara} />
+        </form>
       </div>
     </div>
   );
