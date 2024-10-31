@@ -21,7 +21,7 @@ export default function TPS() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [id, setId] = useState(null);
-  const { token } = useTokenContext();
+  const { token, user } = useTokenContext();
   const { setLoading, loading, setLoadingButton } = useStateContext();
   const showNotification = useNotif();
 
@@ -36,17 +36,21 @@ export default function TPS() {
 
   useEffect(() => {
     getTPS();
-  }, [page, searchQuery]);
+  }, [page, searchQuery, user]);
 
   const getTPS = () => {
     setLoading(true);
     let config = {
       method: "get",
-      url: "/tps/page",
+      url: `/tps${user?.kecamatan ? "/kecamatan" : ""}/page`,
       headers: {
         Authorization: `Bearer ${Cookies.get("token")}`,
       },
-      params: { page, filter: searchQuery },
+      params: {
+        page,
+        filter: searchQuery,
+        kecamatan: user?.kecamatan,
+      },
     };
     instance
       .request(config)
@@ -73,10 +77,13 @@ export default function TPS() {
     setLoadingButton(true);
     let config = {
       method: "get",
-      url: "/tps/downloadExcel",
+      url: `/tps/${
+        user?.kecamatan ? "downloadExcelByKecamatan" : "downloadExcel"
+      }`,
       headers: {
         Authorization: `Bearer ${Cookies.get("token")}`,
       },
+      params: { kecamatan: user?.kecamatan },
       responseType: "blob",
     };
 
@@ -109,10 +116,13 @@ export default function TPS() {
               <HeadingLoad />
             ) : (
               <>
-                <h1 className="font-bold text-3xl">TPS</h1>
+                <h1 className="font-bold text-3xl">
+                  TPS {user?.kecamatan ? user?.kecamatan : ""}
+                </h1>
                 <p className="font-light text-gray-600">
-                  Data rekapitulasi suara di Tempat Pemungutan Suara (TPS) dari
-                  seluruh wilayah Kabupaten Bandung Barat
+                  Data rekapitulasi suara di Tempat Pemungutan Suara (TPS) dari{" "}
+                  {user?.kecamatan ? "Kecamatan " + user?.kecamatan : "Semua"}{" "}
+                  wilayah Kabupaten Bandung Barat
                 </p>
               </>
             )}

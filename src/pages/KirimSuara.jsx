@@ -20,7 +20,7 @@ export default function KirimSuara() {
   const [suaraPaslon, setSuaraPaslon] = useState([]);
   const [image, setImage] = useState(null);
   const [jumlahSuara, setJumlahSuara] = useState(
-    Array(paslonData.length).fill(0)
+    Array(paslonData.length).fill("")
   );
   const [jumlahSuaraTidakSah, setJumlahSuaraTidakSah] = useState("");
   const showNotification = useNotif();
@@ -32,6 +32,8 @@ export default function KirimSuara() {
     );
     return <Navigate to="/login" />;
   }
+
+  console.log(suaraPaslon)
 
   useEffect(() => {
     getDataById();
@@ -182,7 +184,7 @@ export default function KirimSuara() {
                       isMobile={true}
                       label={`${paslon?.panggilan} (Nomor Urut ${paslon?.noUrut})`}
                       name={`jumlah-${index}`}
-                      type="number"
+                      type="text"
                       setValue={(e) =>
                         handleAddSuara(index, paslon._id, parseInt(e) || 0)
                       }

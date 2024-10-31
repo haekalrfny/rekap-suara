@@ -12,7 +12,7 @@ import { useNotif } from "../context/NotifContext";
 
 export default function Paslon() {
   const { paslonData } = useDatabaseContext();
-  const { token } = useTokenContext();
+  const { token, user } = useTokenContext();
   const { loading, setLoadingButton } = useStateContext();
   const showNotification = useNotif();
 
@@ -24,10 +24,15 @@ export default function Paslon() {
     setLoadingButton(true);
     let config = {
       method: "get",
-      url: "/tps/downloadExcelPaslonByTPS",
+      url: `/tps/${
+        user?.kecamatan
+          ? "downloadExcelPaslonByKecamatan"
+          : "downloadExcelPaslonByTPS"
+      }`,
       headers: {
         Authorization: `Bearer ${Cookies.get("token")}`,
       },
+      params: { kecamatan: user?.kecamatan },
       responseType: "blob",
     };
 

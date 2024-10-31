@@ -61,11 +61,18 @@ export default function PaslonDetail() {
       method: "get",
       url: `/report/daerah`,
       headers: { Authorization: `Bearer ${Cookies.get("token")}` },
-      params: { dapil, kecamatan, desa, kodeTPS: tps, paslonId: id },
+      params: {
+        dapil,
+        kecamatan,
+        desa,
+        kodeTPS: tps,
+        paslonId: id,
+      },
     })
       .then((res) => {
         setLoading(false);
         setData(res.data);
+        console.log(res.data);
       })
       .catch(() => setLoading(false));
   };
@@ -74,7 +81,7 @@ export default function PaslonDetail() {
     setLoading(true);
     instance({
       method: "get",
-      url: `/suara/${id}`,
+      url: `/suara/paslon/${id}`,
       headers: { Authorization: `Bearer ${Cookies.get("token")}` },
     })
       .then((res) => {
@@ -163,13 +170,14 @@ export default function PaslonDetail() {
           </p>
         </div>
 
-        <div className="w-full flex flex-col md:flex-row gap-6">
+        {/* <div className="w-full flex flex-col md:flex-row gap-6">
           <div
             className={`w-full ${
               kecamatan ? "md:w-1/2" : "md:w-full"
             } space-y-3`}
           >
             <h1 className="font-semibold text-xl">Daerah</h1>
+
             <Dropdown
               label="Dapil"
               options={dapilOptions}
@@ -183,7 +191,9 @@ export default function PaslonDetail() {
               value={kecamatan}
               setValue={setKecamatan}
               required
+              isDisabled={!dapil}
             />
+
             <Dropdown
               label="Desa"
               options={desaOptions}
@@ -235,7 +245,7 @@ export default function PaslonDetail() {
           )}
         </div>
 
-        <Button text="Reset" onClick={setReset} outline />
+        <Button text="Reset" onClick={setReset} outline /> */}
         <BackButton url={"/paslon"} />
       </div>
     </div>

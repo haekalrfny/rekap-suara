@@ -1,18 +1,18 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import instance from "../api/api";
 import Cookies from "js-cookie";
-import { useStateContext } from "./StateContext"; // Import useStateContext
+import { useStateContext } from "./StateContext";
 
 const DatabaseContext = createContext();
 
 export const DatabaseProvider = ({ children }) => {
-  const { setLoading } = useStateContext(); // Akses setLoading dari StateContext
+  const { setLoading } = useStateContext();
   const [tpsData, setTpsData] = useState([]);
   const [suaraByPaslon, setSuaraByPaslon] = useState([]);
   const [paslonData, setPaslonData] = useState([]);
 
   useEffect(() => {
-    setLoading(true); // Set loading ke true sebelum fetch
+    setLoading(true);
     fetchData("/tps", setTpsData);
     fetchData("/paslon", setPaslonData);
     fetchData("/suara/byPaslon", setSuaraByPaslon);

@@ -69,7 +69,7 @@ const Navbar = () => {
   return (
     <div className="h-20 flex justify-between items-center px-6">
       <ul className="hidden md:flex">
-        <li className="font-semibold">Satu Hati</li>
+        <li className="font-semibold">Satuhati</li>
       </ul>
 
       {/* Menu Mobile */}
@@ -78,7 +78,7 @@ const Navbar = () => {
           <FiMenu className="text-2xl" />
         </button>
         <span className="ml-4 text-xl md:text-base font-semibold">
-          Satu Hati
+          Satuhati
         </span>
       </div>
 
@@ -162,7 +162,9 @@ const Navbar = () => {
       {mobileMenuOpen && (
         <div className="fixed top-0 left-0 w-full h-full bg-white z-20 md:hidden">
           <div className="flex justify-between items-center p-4 border-b">
-            <span className="font-semibold text-xl md:text-base">Satu Hati</span>
+            <span className="font-semibold text-xl md:text-base">
+              Satuhati
+            </span>
             <button onClick={toggleMobileMenu}>
               <AiOutlineClose className="text-2xl" />
             </button>

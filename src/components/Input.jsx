@@ -30,8 +30,8 @@ export default function Input({
       <label
         htmlFor={name}
         className={`${
-          isMobile ? "text-xl md:text-sm " : "text-sm"
-        } font-medium mb-1 text-black uppercase`}
+          isMobile ? "text-xl md:text-sm uppercase" : "text-sm"
+        } font-medium mb-1 text-black`}
       >
         {label} {required && <span className="text-red-500">*</span>}
       </label>

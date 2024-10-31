@@ -78,6 +78,8 @@ export default function Register() {
       .finally(() => setLoadingButton(false));
   };
 
+  
+
   return (
     <div className="w-full h-screen flex justify-center items-center">
       {isModalOpen && (
