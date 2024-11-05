@@ -24,8 +24,6 @@ export default function ModalDetail({ id, onCancel }) {
     });
   };
 
-  
-
   return (
     <>
       <div className="w-full h-screen flex items-center justify-center fixed z-10 inset-0 bg-black bg-opacity-30">
@@ -67,6 +65,13 @@ export default function ModalDetail({ id, onCancel }) {
                 </div>
                 <hr />
                 <div className="flex justify-between items-center">
+                  <span className="font-medium">Suara Tidak Terpakai</span>
+                  <span className="text-gray-600">
+                    {data?.tps?.jumlahSuaraTidakTerpakai} Suara
+                  </span>
+                </div>
+                <hr />
+                <div className="flex justify-between items-center">
                   <span className="font-medium">Total Suara</span>
                   <span className="text-gray-600">
                     {data?.tps?.jumlahTotal} Pemilih
@@ -78,7 +83,9 @@ export default function ModalDetail({ id, onCancel }) {
                 {data?.suaraPaslon?.map((paslon, index) => (
                   <ProgressBar
                     key={index}
-                    text={`(${paslon?.paslon?.noUrut}) `+ paslon?.paslon?.panggilan }
+                    text={
+                      `(${paslon?.paslon?.noUrut}) ` + paslon?.paslon?.panggilan
+                    }
                     current={paslon?.jumlahSuaraSah}
                     total={data?.tps?.jumlahSuaraSah}
                   />

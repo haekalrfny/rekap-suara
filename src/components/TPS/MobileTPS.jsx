@@ -2,7 +2,6 @@ import React from "react";
 import Button from "../Button";
 
 export default function MobileTPS({ data, openModal }) {
-  console.log(data);
   return (
     <div className="w-full block space-y-4 md:hidden">
       {data.map((item, index) => (

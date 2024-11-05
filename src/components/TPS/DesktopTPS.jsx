@@ -20,6 +20,7 @@ export default function DesktopTPS({ data, openModal }) {
                 <td className=" border-b px-4 py-2">NOMOR TPS</td>
                 <td className=" border-b px-4 py-2">SUARA SAH</td>
                 <td className=" border-b px-4 py-2">SUARA TIDAK SAH</td>
+                <td className=" border-b px-4 py-2">SUARA TIDAK TERPAKAI</td>
                 <td className=" border-b px-4 py-2">TOTAL SUARA</td>
                 <td className=" border-b px-4 py-2">Detail</td>
               </tr>
@@ -34,6 +35,9 @@ export default function DesktopTPS({ data, openModal }) {
                   <td className=" border-b px-4 py-2">{item.jumlahSuaraSah}</td>
                   <td className=" border-b px-4 py-2">
                     {item.jumlahSuaraTidakSah}
+                  </td>
+                  <td className=" border-b px-4 py-2">
+                    {item.jumlahSuaraTidakTerpakai}
                   </td>
                   <td className=" border-b px-4 py-2">{item.jumlahTotal}</td>
                   <td className="border-b flex items-center justify-center px-4 py-2">
