@@ -26,18 +26,18 @@ const ProgressBar = ({ text, current, total, size }) => {
 
       <div
         className={`relative w-full bg-gray-300 rounded-full overflow-hidden ${
-          size === "xs" ? "h-3" : "h-4"
+          size === "xs" ? "h-3" : "h-5"
         }`}
       >
         <div
           className={`bg-black ${
-            size === "xs" ? "h-3" : "h-4"
+            size === "xs" ? "h-3" : "h-5"
           } rounded-full transition-all duration-1000 flex items-center justify-center`}
           style={{ width: `${percentage}%` }}
         >
           <span
             className={`absolute inset-0 ${
-              size === "xs" ? "-top-0.5" : ""
+              size === "xs" ? "-top-0.5" : "top-0.5"
             }  text-center ${textColor} ${
               size === "xs" ? "text-[7px]" : "text-xs"
             }`}

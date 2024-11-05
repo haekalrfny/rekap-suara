@@ -56,12 +56,12 @@ export default function Home() {
 
   return (
     <div className="w-full flex flex-col items-center md:pt-6 pb-10">
-      <div className="w-[90%] sm:w-2/3 flex flex-col gap-6 text-center">
+      <div className="w-[90%] sm:w-2/3 flex flex-col gap-6">
         {loading ? (
           <JumbotronLoading />
         ) : (
-          <div className="space-y-6">
-            <h1 className="text-5xl md:text-6xl font-semibold">Satuhati</h1>
+          <div className="space-y-6 text-center">
+            <h1 className="text-5xl md:text-6xl font-semibold">hijisora</h1>
             <p className="text-gray-600 font-light">
               Kepemimpinan bukan soal kekuasaan, tapi soal tanggung jawab.
               Pemimpin yang jujur dan amanah adalah cermin kemajuan rakyatnya.
