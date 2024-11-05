@@ -27,13 +27,6 @@ const Navbar = () => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
 
-  const handleLogout = () => {
-    Cookies.remove("token");
-    Cookies.remove("_id");
-    Cookies.remove("username");
-    window.location.reload();
-  };
-
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -162,9 +155,7 @@ const Navbar = () => {
       {mobileMenuOpen && (
         <div className="fixed top-0 left-0 w-full h-full bg-white z-20 md:hidden">
           <div className="flex justify-between items-center p-4 border-b">
-            <span className="font-semibold text-xl md:text-base">
-              Satuhati
-            </span>
+            <span className="font-semibold text-xl md:text-base">Satuhati</span>
             <button onClick={toggleMobileMenu}>
               <AiOutlineClose className="text-2xl" />
             </button>
@@ -249,19 +240,6 @@ const Navbar = () => {
                 >
                   Masuk
                 </Link>
-              </li>
-            )}
-            {token && (
-              <li>
-                <button
-                  onClick={() => {
-                    handleLogout();
-                    toggleMobileMenu();
-                  }}
-                  className="border bg-black text-white hover:bg-white hover:border-black hover:text-black text-base md:text-xs py-2 px-4 rounded-lg cursor-pointer block text-center w-full"
-                >
-                  Keluar
-                </button>
               </li>
             )}
           </ul>

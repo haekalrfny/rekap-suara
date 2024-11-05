@@ -39,7 +39,6 @@ export default function Riwayat() {
   }, [userId]);
 
   const renderImage = (img, item) => {
-    console.log(item);
     setImage(img);
     setShowImage(true);
   };
@@ -62,8 +61,10 @@ export default function Riwayat() {
           "Kecamatan",
           "Desa",
           "TPS",
-          "Total Suara Sah",
+          "Suara Sah",
           "Suara Tidak Sah",
+          "Suara Tidak Terpakai",
+          "Total Kertas Suara",
           "Formulir C1",
         ].map((label, idx) => (
           <div key={idx} className="flex items-center justify-between">
@@ -71,10 +72,14 @@ export default function Riwayat() {
             <p className="text-gray-600">
               {label === "TPS" ? (
                 `TPS ${item.tps?.kodeTPS}`
-              ) : label === "Total Suara Sah" ? (
+              ) : label === "Suara Sah" ? (
                 `${item.tps?.jumlahSuaraSah} Suara`
               ) : label === "Suara Tidak Sah" ? (
                 `${item.tps?.jumlahSuaraTidakSah} Suara`
+              ) : label === "Suara Tidak Terpakai" ? (
+                `${item.tps?.jumlahSuaraTidakTerpakai} Suara`
+              ) : label === "Total Kertas Suara" ? (
+                `${item.tps?.jumlahTotal} Kertas`
               ) : label === "Formulir C1" ? (
                 <div className="flex items-center gap-1">
                   <a>Lihat</a>
@@ -114,12 +119,12 @@ export default function Riwayat() {
           </tbody>
         </table>
       </div>
-      <p className="font-light">
+      <p className="font-light text-gray-500">
         Ada kesalahan data? hubungi nomor ini :{" "}
         <a
           href={`https://wa.me/6285797945972?text=Username%20:%20${item?.user?.username}`}
           target="_blank"
-          className="hover:underline"
+          className="text-black underline"
         >
           xxxx-xxxx-xxxx
         </a>

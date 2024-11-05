@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTokenContext } from "../context/TokenContext";
 import { useStateContext } from "../context/StateContext";
 import { Navigate, useNavigate } from "react-router-dom";
@@ -14,7 +14,8 @@ import BackButton from "../components/BackButton";
 export default function Absen() {
   const { token, attending } = useTokenContext();
   const { setLoadingButton, loading } = useStateContext();
-  const [isAttended, setIsAttended] = useState(false);
+  const [data, setData] = useState(null);
+  const [suara, setSuara] = useState(0);
   const [image, setImage] = useState(null);
   const showNotification = useNotif();
   const navigate = useNavigate();
@@ -27,6 +28,13 @@ export default function Absen() {
   const handleAbsen = (e) => {
     e.preventDefault();
     setLoadingButton(true);
+
+    if (!image && !suara) {
+      showNotification("Data belum lengkap", "error");
+      setLoadingButton(false);
+      return false;
+    }
+
     instance
       .request({
         method: "patch",
@@ -35,11 +43,12 @@ export default function Absen() {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${Cookies.get("token")}`,
         },
-        data: { isAttending: isAttended, image },
+        data: { isAttending: true, image },
       })
       .then((res) => {
         showNotification("Absen Berhasil", "success");
         setLoadingButton(false);
+        updateTps();
         navigate("/");
         setTimeout(() => {
           window.location.reload();
@@ -47,8 +56,43 @@ export default function Absen() {
       })
       .catch((err) => {
         showNotification("Absen Gagal", "error");
+        console.log(err);
         setLoadingButton(false);
       });
+  };
+
+  useEffect(() => {
+    getDataById();
+  }, []);
+
+  const getDataById = () => {
+    let config = {
+      method: "get",
+      url: `/tps/by/username/${Cookies.get("username")}`,
+      headers: {
+        Authorization: `Bearer ${Cookies.get("token")}`,
+      },
+    };
+    instance
+      .request(config)
+      .then((res) => {
+        setData(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const updateTps = () => {
+    const dataJson = {
+      jumlahTotal: suara,
+    };
+
+    instance
+      .patch(`/tps/update/${data?._id}`, dataJson, {
+        headers: { Authorization: `Bearer ${Cookies.get("token")}` },
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -73,24 +117,19 @@ export default function Absen() {
           </>
         ) : (
           <form className="flex flex-col gap-3" onSubmit={handleAbsen}>
-            <Dropdown
-              value={isAttended}
-              setValue={setIsAttended}
-              name={"isAttended"}
-              label={"Status"}
-              options={[
-                { value: true, label: "Hadir" },
-                { value: false, label: "Tidak Hadir" },
-              ]}
-              required={true}
-              isMobile={true}
+            <Input
+              name="Jumlah Kertas Suara"
+              label="Jumlah Kertas Suara"
+              type="text"
+              setValue={setSuara}
+              placeholder={"Jumlah Kertas Suara"}
+              required
             />
             <Input
               name="image"
               label="Bukti Kehadiran"
               type="file"
               setValue={setImage}
-              isMobile={true}
               required
             />
             <Button text={"Kirim"} onClick={handleAbsen} />

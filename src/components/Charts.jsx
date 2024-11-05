@@ -1,20 +1,40 @@
 import React from "react";
 import {
-  LineChart,
-  Line,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   Legend,
   ResponsiveContainer,
+  LabelList,
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+  AreaChart,
+  Area,
+  RadialBarChart,
+  RadialBar,
+  ScatterChart,
+  Scatter,
+  ComposedChart,
+  Treemap,
+  Sankey,
+  RadarChart,
+  Radar,
+  PolarGrid,
 } from "recharts";
-import Loading from "./Loading";
 import { useStateContext } from "../context/StateContext";
 import ChartLoading from "./Load/ChartLoading";
 
-export default function Charts({ title, subtitle, data, name, value, color }) {
+const colors = ["#C2410C", "#1D4ED8", "#B91C1C", "#15803D", "#374151"];
+
+export default function Charts({ title, subtitle, data, name, value, type }) {
   const { loading } = useStateContext();
+
   return (
     <>
       {loading ? (
@@ -29,20 +49,140 @@ export default function Charts({ title, subtitle, data, name, value, color }) {
             </div>
           ) : (
             <div className="min-w-[90%] md:min-w-[400px]">
-              <ResponsiveContainer width="100%" height={200}>
-                <LineChart data={data}>
-                  <CartesianGrid strokeDasharray="1 1" />
-                  <XAxis dataKey={name} tick={{ fontSize: 10 }} />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Line
-                    type="bump"
+              <ResponsiveContainer width="100%" height={250}>
+                {type === "bar" ? (
+                  <BarChart data={data}>
+                    <CartesianGrid strokeDasharray="1 1" />
+                    <XAxis dataKey={name} tick={{ fontSize: 10 }} />
+                    <YAxis domain={[0, "dataMax + 10%"]} />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey={value}>
+                      <LabelList dataKey={value} position="top" />
+                      {data.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={colors[index % colors.length]}
+                        />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                ) : type === "line" ? (
+                  <LineChart data={data}>
+                    <CartesianGrid strokeDasharray="1 1" />
+                    <XAxis dataKey={name} tick={{ fontSize: 10 }} />
+                    <YAxis domain={[0, "dataMax + 10%"]} />
+                    <Tooltip />
+                    <Legend />
+                    <Line type="monotone" dataKey={value} stroke={colors[0]}>
+                      <LabelList dataKey={value} position="top" />
+                    </Line>
+                  </LineChart>
+                ) : type === "pie" ? (
+                  <PieChart>
+                    <Tooltip />
+                    <Legend />
+                    <Pie
+                      data={data}
+                      dataKey={value}
+                      nameKey={name}
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={80}
+                      fill="#000"
+                      label
+                    >
+                      {data.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={colors[index % colors.length]}
+                        />
+                      ))}
+                    </Pie>
+                  </PieChart>
+                ) : type === "area" ? (
+                  <AreaChart data={data}>
+                    <CartesianGrid strokeDasharray="1 1" />
+                    <XAxis dataKey={name} tick={{ fontSize: 10 }} />
+                    <YAxis domain={[0, "dataMax + 10%"]} />
+                    <Tooltip />
+                    <Legend />
+                    <Area
+                      type="monotone"
+                      dataKey={value}
+                      stroke={colors[0]}
+                      fillOpacity={0.5}
+                      fill={colors[0]}
+                    />
+                  </AreaChart>
+                ) : type === "radialbar" ? (
+                  <RadialBarChart
+                    width={250}
+                    height={250}
+                    innerRadius="10%"
+                    outerRadius="80%"
+                    data={data}
+                  >
+                    <RadialBar
+                      minAngle={15}
+                      background
+                      clockWise={true}
+                      dataKey={value}
+                      fill={colors[0]}
+                    />
+                    <Tooltip />
+                  </RadialBarChart>
+                ) : type === "scatter" ? (
+                  <ScatterChart>
+                    <CartesianGrid />
+                    <XAxis dataKey={name} />
+                    <YAxis />
+                    <Tooltip />
+                    <Scatter name="Data Points" data={data} fill={colors[0]} />
+                  </ScatterChart>
+                ) : type === "composed" ? (
+                  <ComposedChart data={data}>
+                    <XAxis dataKey={name} />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey={value} fill={colors[0]} />
+                    <Line type="monotone" dataKey={value} stroke={colors[1]} />
+                  </ComposedChart>
+                ) : type === "treemap" ? (
+                  <Treemap
+                    width={400}
+                    height={250}
+                    data={data}
                     dataKey={value}
-                    stroke={color || "black"}
-                    activeDot={{ r: 8 }}
+                    aspectRatio={1}
+                    stroke="#fff"
+                    fill={colors[0]}
                   />
-                </LineChart>
+                ) : type === "sankey" ? (
+                  <Sankey
+                    width={400}
+                    height={250}
+                    data={data}
+                    node={{ color: colors[0] }}
+                    link={{ color: colors[0] }}
+                  />
+                ) : type === "radar" ? (
+                  <RadarChart outerRadius={90} data={data}>
+                    <PolarGrid stroke="#d1d5db" />
+                    <Radar
+                      name={name}
+                      dataKey={value}
+                      stroke={colors[0]}
+                      fill={colors[0]}
+                      fillOpacity={0.6}
+                    />
+                    <Tooltip />
+                    <Legend />
+                  </RadarChart>
+                ) : (
+                  <div className="text-red-500">Chart type tidak dikenal</div>
+                )}
               </ResponsiveContainer>
             </div>
           )}

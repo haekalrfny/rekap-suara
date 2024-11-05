@@ -13,16 +13,29 @@ import Label from "../components/Label";
 import BackButton from "../components/BackButton";
 
 export default function KirimSuara() {
-  const { token, attending, isFilled } = useTokenContext();
+  const { token, attending } = useTokenContext();
   const { paslonData } = useDatabaseContext();
   const { setLoadingButton, loading, setLoading } = useStateContext();
+  const userId = Cookies.get("_id");
   const [data, setData] = useState(null);
+  const [riwayat, setRiwayat] = useState([]);
   const [suaraPaslon, setSuaraPaslon] = useState([]);
   const [image, setImage] = useState(null);
   const [jumlahSuara, setJumlahSuara] = useState(
     Array(paslonData.length).fill("")
   );
   const [jumlahSuaraTidakSah, setJumlahSuaraTidakSah] = useState("");
+  const [jumlahSuaraTercatat, setJumlahSuaraTercatat] = useState(0);
+
+  useEffect(() => {
+    const jumlahSuaraTidakSahNum = parseInt(jumlahSuaraTidakSah) || 0;
+    const jumlahSuaraNum = jumlahSuara.map((suara) => parseInt(suara) || 0);
+
+    setJumlahSuaraTercatat(
+      jumlahSuaraNum.reduce((a, b) => a + b, 0) + jumlahSuaraTidakSahNum
+    );
+  }, [jumlahSuara, jumlahSuaraTidakSah]);
+
   const showNotification = useNotif();
 
   if ((!token && !Cookies.get("token")) || !attending) {
@@ -33,11 +46,10 @@ export default function KirimSuara() {
     return <Navigate to="/login" />;
   }
 
-  console.log(suaraPaslon)
-
   useEffect(() => {
     getDataById();
   }, []);
+
   const getDataById = () => {
     let config = {
       method: "get",
@@ -94,7 +106,6 @@ export default function KirimSuara() {
       .catch((err) => {
         showNotification("Gagal mengirim", "error");
         setLoadingButton(false);
-        console.log(err);
         setLoading(false);
       })
       .finally(() => setLoading(false));
@@ -104,7 +115,10 @@ export default function KirimSuara() {
     const dataJson = {
       jumlahSuaraSah: suaraSah,
       jumlahSuaraTidakSah,
-      jumlahTotal: Number(suaraSah) + Number(jumlahSuaraTidakSah),
+      jumlahSuaraTidakTerpakai:
+        data?.jumlahTotal === jumlahSuaraTercatat
+          ? 0
+          : data?.jumlahTotal - jumlahSuaraTercatat,
     };
 
     instance
@@ -133,6 +147,21 @@ export default function KirimSuara() {
     });
   };
 
+  useEffect(() => {
+    const fetchRiwayat = async () => {
+      const config = {
+        method: "get",
+        url: `/suara/user/${userId}`,
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      };
+      const res = await instance(config);
+      setRiwayat(res.data);
+    };
+    fetchRiwayat();
+  }, [userId]);
+
   return (
     <div className="w-full flex justify-center md:pt-6 pb-10">
       <div className="w-[90%] sm:w-2/4 flex flex-col gap-6">
@@ -149,73 +178,96 @@ export default function KirimSuara() {
           </div>
         )}
 
-        <form onSubmit={handleSuara} className="flex flex-col gap-3">
-          <Label
-            title={"Dapil"}
-            value={data?.dapil}
-            isAuto={true}
-            isMobile={true}
-          />
-          <Label
-            title={"Kecamatan"}
-            value={data?.kecamatan}
-            isAuto={true}
-            isMobile={true}
-          />
-          <Label
-            title={"Desa"}
-            value={data?.desa}
-            isAuto={true}
-            isMobile={true}
-          />
-          <Label
-            title={"TPS"}
-            value={data?.kodeTPS}
-            isAuto={true}
-            isMobile={true}
-          />
+        {riwayat.length >= 1 ? (
+          <div>
+            <h1 className="font-medium text-lg">Anda telah mengirim suara</h1>
+            <p className="text-gray-500 font-light">
+              Anda hanya bisa mengirim suara satu kali, untuk perubahan data
+              bisa hubungi nomor ini :{" "}
+              <a
+                href="https://wa.me/6285797945972"
+                target="_blank"
+                className="text-black underline"
+              >
+                xxxx-xxxx-xxxx
+              </a>
+            </p>
+          </div>
+        ) : (
+          <form onSubmit={handleSuara} className="flex flex-col gap-3">
+            <Label
+              title={"Dapil"}
+              value={data?.dapil}
+              isAuto={true}
+              isMobile={true}
+            />
+            <Label
+              title={"Kecamatan"}
+              value={data?.kecamatan}
+              isAuto={true}
+              isMobile={true}
+            />
+            <Label
+              title={"Desa"}
+              value={data?.desa}
+              isAuto={true}
+              isMobile={true}
+            />
+            <Label
+              title={"TPS"}
+              value={data?.kodeTPS}
+              isAuto={true}
+              isMobile={true}
+            />
 
-          {data && (
-            <>
-              <div className="flex flex-col gap-3">
-                {paslonData.map((paslon, index) => (
-                  <div key={paslon._id} className="w-full flex flex-col gap-3">
-                    <Input
-                      isMobile={true}
-                      label={`${paslon?.panggilan} (Nomor Urut ${paslon?.noUrut})`}
-                      name={`jumlah-${index}`}
-                      type="text"
-                      setValue={(e) =>
-                        handleAddSuara(index, paslon._id, parseInt(e) || 0)
-                      }
-                      value={jumlahSuara[index]}
-                      required
-                      placeholder="Suara Sah"
-                    />
-                  </div>
-                ))}
-              </div>
-              <Input
-                name="jumlahSuaraTidakSah"
-                value={jumlahSuaraTidakSah}
-                setValue={setJumlahSuaraTidakSah}
-                type="number"
-                label="Suara Tidak Sah"
-                placeholder="Suara Tidak Sah"
-                isMobile={true}
-              />
-              <Input
-                name="image"
-                label="Formulir C1"
-                type="file"
-                setValue={setImage}
-                isMobile={true}
-                required
-              />
-            </>
-          )}
-          <Button text="Kirim" onClick={handleSuara} />
-        </form>
+            {data && (
+              <>
+                <div className="flex flex-col gap-3">
+                  {paslonData.map((paslon, index) => (
+                    <div
+                      key={paslon._id}
+                      className="w-full flex flex-col gap-3"
+                    >
+                      <Input
+                        isMobile={true}
+                        label={`${paslon?.panggilan} (Nomor Urut ${paslon?.noUrut})`}
+                        name={`jumlah-${index}`}
+                        type="text"
+                        setValue={(e) =>
+                          handleAddSuara(index, paslon._id, parseInt(e) || 0)
+                        }
+                        value={jumlahSuara[index]}
+                        required
+                        placeholder="Suara Sah"
+                      />
+                    </div>
+                  ))}
+                </div>
+                <Input
+                  name="jumlahSuaraTidakSah"
+                  value={jumlahSuaraTidakSah}
+                  setValue={setJumlahSuaraTidakSah}
+                  type="number"
+                  label="Suara Tidak Sah"
+                  placeholder="Suara Tidak Sah"
+                  isMobile={true}
+                />
+                <Input
+                  name="image"
+                  label="Formulir C1"
+                  type="file"
+                  setValue={setImage}
+                  isMobile={true}
+                  required
+                />
+              </>
+            )}
+            <p>
+              ({jumlahSuaraTercatat}/{data?.jumlahTotal})
+            </p>
+            <Button text="Kirim" onClick={handleSuara} />
+          </form>
+        )}
       </div>
     </div>
   );

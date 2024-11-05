@@ -21,7 +21,7 @@ export default function PaslonCard({ item }) {
       {loading ? (
         <PaslonCardLoad />
       ) : (
-        <div className="rounded-md bg-white shadow p-6 flex flex-col justify-between gap-3">
+        <div className="rounded-md bg-white shadow p-6 flex flex-col justify-between gap-3 transition-transform transform hover:scale-105 ">
           <div className="space-y-3">
             <div>
               <p
