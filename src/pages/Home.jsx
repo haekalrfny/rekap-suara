@@ -41,7 +41,6 @@ export default function Home() {
       text={<div className="flex items-center gap-1">{text}</div>}
       onClick={onClick}
       isFull={isFull}
-      outline={!admin}
     />
   );
 
@@ -56,15 +55,15 @@ export default function Home() {
 
   return (
     <div className="w-full flex flex-col items-center md:pt-6 pb-10">
-      <div className="w-[90%] sm:w-2/3 flex flex-col gap-6">
+      <div className=" sm:w-2/3 flex flex-col gap-12">
         {loading ? (
           <JumbotronLoading />
         ) : (
           <div className="space-y-6 text-center">
             <h1 className="text-5xl md:text-6xl font-semibold">hijisora</h1>
             <p className="text-gray-600 font-light">
-              Kepemimpinan bukan soal kekuasaan, tapi soal tanggung jawab.
-              Pemimpin yang jujur dan amanah adalah cermin kemajuan rakyatnya.
+              "Kepemimpinan bukan soal kekuasaan, tapi soal tanggung jawab.
+              Pemimpin yang jujur dan amanah adalah cermin kemajuan rakyatnya."
             </p>
           </div>
         )}
@@ -73,7 +72,7 @@ export default function Home() {
             <img
               src="./people.svg"
               alt="people"
-              className="w-full  md:w-[350px]"
+              className="w-[90%] md:w-[350px]"
             />
           </div>
         )}
@@ -88,7 +87,7 @@ export default function Home() {
             )}
           {admin && (
             <>
-              <div className="flex flex-col lg:flex-row justify-between gap-4 mt-8">
+              <div className="flex flex-col lg:flex-row justify-between gap-4">
                 <Charts
                   title={`Suara Paslon ${user?.kecamatan || "Seluruh"}`}
                   subtitle="Total suara paslon yang Telah Diterima"
@@ -117,13 +116,15 @@ export default function Home() {
                 )}
               </div>
               {!user?.kecamatan && !loading && (
-                <DataPerDaerah setValue={setData} />
+                <div className="w-full md:w-2/3">
+                  <DataPerDaerah setValue={setData} />
+                </div>
               )}
               {loading ? (
                 <SaksiTextLoading />
               ) : (
                 data?.totalSaksi > 0 && (
-                  <p className="text-center font-light mt-4 text-gray-600 max-w-[90%]">
+                  <p className="text-center font-light mt-4 text-gray-600 max-w-full md:max-w-[90%]">
                     <b className="text-black">
                       {data?.totalSaksiWithSuara} dari {data?.totalSaksi}
                     </b>{" "}

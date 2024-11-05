@@ -57,7 +57,7 @@ export default function DataPerDaerah({ setValue }) {
   return (
     <div className="w-full flex flex-col gap-2 p-6 md:min-w-[400px]">
       <h2 className="text-2xl font-semibold">
-        Data {user?.kecamatan ? user?.kecamatan : "Kab. Bandung Barat"}
+        Suara {user?.kecamatan ? user?.kecamatan : "Kab. Bandung Barat"}
       </h2>
       <p className="text-gray-600 mb-4">Jumlah Suara yang Telah Diterima</p>
       {!user?.kecamatan && (
