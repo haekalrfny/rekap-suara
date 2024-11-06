@@ -8,6 +8,7 @@ export const DatabaseProvider = ({ children }) => {
   const [tpsData, setTpsData] = useState([]);
   const [suaraByPaslon, setSuaraByPaslon] = useState([]);
   const [paslonData, setPaslonData] = useState([]);
+  const [pilgubPaslon, setPilgubPaslon] = useState([]);
   const [suaraByDapil, setSuaraByDapil] = useState([]);
 
   const fetchData = async (endpoint, setter) => {
@@ -26,11 +27,14 @@ export const DatabaseProvider = ({ children }) => {
   useEffect(() => {
     const fetchAllData = async () => {
       if (tpsData.length === 0) await fetchData("/tps", setTpsData);
-      if (paslonData.length === 0) await fetchData("/paslon", setPaslonData);
+      if (paslonData.length === 0)
+        await fetchData("/paslon/pilkada", setPaslonData);
+      if (pilgubPaslon.length === 0)
+        await fetchData("/paslon/pilgub", setPilgubPaslon);
       if (suaraByPaslon.length === 0)
-        await fetchData("/suara/byPaslon", setSuaraByPaslon);
+        await fetchData("/suara/pilkada/paslon", setSuaraByPaslon);
       if (suaraByDapil.length === 0)
-        await fetchData("/tps/dapil", setSuaraByDapil);
+        await fetchData("/tps/dapil/pilkada", setSuaraByDapil);
     };
 
     fetchAllData();
@@ -43,6 +47,7 @@ export const DatabaseProvider = ({ children }) => {
         paslonData,
         suaraByPaslon,
         suaraByDapil,
+        pilgubPaslon,
       }}
     >
       {children}

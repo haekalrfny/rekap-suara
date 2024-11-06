@@ -10,33 +10,16 @@ import { HiOutlineExternalLink } from "react-icons/hi";
 import Image from "../components/Image";
 
 export default function Riwayat() {
-  const { token } = useTokenContext();
+  const { token, isFilled } = useTokenContext();
   const [image, setImage] = useState(null);
   const [showImage, setShowImage] = useState(false);
   const { loading } = useStateContext();
-  const [data, setData] = useState([]);
-  const userId = Cookies.get("_id");
   const showNotification = useNotif();
 
   if (!token && !Cookies.get("token")) {
     showNotification("Anda harus login terlebih dahulu", "error");
     return <Navigate to="/login" />;
   }
-
-  useEffect(() => {
-    const fetchRiwayat = async () => {
-      const config = {
-        method: "get",
-        url: `/suara/user/${userId}`,
-        headers: {
-          Authorization: `Bearer ${Cookies.get("token")}`,
-        },
-      };
-      const res = await instance(config);
-      setData(res.data);
-    };
-    fetchRiwayat();
-  }, [userId]);
 
   const renderImage = (img, item) => {
     setImage(img);
@@ -64,8 +47,8 @@ export default function Riwayat() {
           "Suara Sah",
           "Suara Tidak Sah",
           "Suara Tidak Terpakai",
-          "Total Kertas Suara",
-          "Formulir C1",
+          "Kertas Suara",
+          "Formulir C1 Plano",
         ].map((label, idx) => (
           <div key={idx} className="flex items-center justify-between">
             <p className="font-medium text-gray-700">{label}</p>
@@ -73,14 +56,14 @@ export default function Riwayat() {
               {label === "TPS" ? (
                 `TPS ${item.tps?.kodeTPS}`
               ) : label === "Suara Sah" ? (
-                `${item.tps?.jumlahSuaraSah} Suara`
+                `${item.tps?.pilkada?.suaraSah} Suara`
               ) : label === "Suara Tidak Sah" ? (
-                `${item.tps?.jumlahSuaraTidakSah} Suara`
+                `${item.tps?.pilkada?.suaraTidakSah} Suara`
               ) : label === "Suara Tidak Terpakai" ? (
-                `${item.tps?.jumlahSuaraTidakTerpakai} Suara`
-              ) : label === "Total Kertas Suara" ? (
-                `${item.tps?.jumlahTotal} Kertas`
-              ) : label === "Formulir C1" ? (
+                `${item.tps?.pilkada?.suaraTidakTerpakai} Suara`
+              ) : label === "Kertas Suara" ? (
+                `${item.tps?.pilkada?.kertasSuara} Kertas`
+              ) : label === "Formulir C1 Plano" ? (
                 <div className="flex items-center gap-1">
                   <a>Lihat</a>
                   <div
@@ -112,7 +95,7 @@ export default function Riwayat() {
                   {suara.paslon?.panggilan} (No Urut {suara.paslon?.noUrut})
                 </td>
                 <td className="border px-4 py-2">
-                  {suara.jumlahSuaraSah} Suara
+                  {suara.suaraSah} Suara
                 </td>
               </tr>
             ))}
@@ -142,19 +125,19 @@ export default function Riwayat() {
             <div className="space-y-3">
               <h1 className="font-bold text-3xl">Riwayat</h1>
               <p className="font-light text-gray-600">
-                Riwayat Penghitungan Suara Anda
+                Riwayat Penghitungan Suara Pilkada Anda
               </p>
             </div>
           )}
           <div className="space-y-3">
-            {data.length === 0 ? (
+            {isFilled?.length === 0 ? (
               <div className="w-full h-64 flex items-center justify-center">
                 <p className="font-light text-gray-600">
                   Belum memiliki riwayat
                 </p>
               </div>
             ) : (
-              data.map(renderRiwayatItem)
+              isFilled?.map(renderRiwayatItem)
             )}
           </div>
         </div>

@@ -10,6 +10,7 @@ export const TokenContext = ({ children }) => {
   const [admin, setAdmin] = useState(false);
   const [attending, setAttending] = useState(false);
   const [isFilled, setIsFilled] = useState(null);
+  const [isFillPilgub, setIsFillPilgub] = useState(null);
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -46,7 +47,7 @@ export const TokenContext = ({ children }) => {
 
       instance(config)
         .then((res) => {
-          setAttending(res.data.isAttending);
+          setAttending(res.data.attandance);
           setUser(res.data);
         })
         .catch((err) => {
@@ -60,7 +61,7 @@ export const TokenContext = ({ children }) => {
     const fetchRiwayat = async () => {
       const config = {
         method: "get",
-        url: `/suara/user/${id}`,
+        url: `/suara/pilkada/user/${id}`,
         headers: {
           Authorization: `Bearer ${Cookies.get("token")}`,
         },
@@ -69,6 +70,21 @@ export const TokenContext = ({ children }) => {
       setIsFilled(res.data);
     };
     fetchRiwayat();
+  }, [id]);
+
+  useEffect(() => {
+    const fetchRiwayatPilgub = async () => {
+      const config = {
+        method: "get",
+        url: `/suara/pilgub/user/${id}`,
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      };
+      const res = await instance(config);
+      setIsFillPilgub(res.data);
+    };
+    fetchRiwayatPilgub();
   }, [id]);
 
   return (
@@ -80,6 +96,7 @@ export const TokenContext = ({ children }) => {
         user,
         attending,
         isFilled,
+        isFillPilgub,
       }}
     >
       {children}

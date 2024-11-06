@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
-import { FaExternalLinkAlt } from "react-icons/fa";
 import { HiOutlineExternalLink } from "react-icons/hi";
 import instance from "../api/api";
 import { useStateContext } from "../context/StateContext";
@@ -56,8 +55,8 @@ export default function Akun() {
                   <div className="flex items-center justify-between">
                     <p className="font-medium">Keterangan</p>
                     <p className="font-light text-gray-500 flex items-center gap-1">
-                      {user?.isAttending ? "Hadir" : "Tidak Hadir"}
-                      {user?.isAttending && user?.attendanceImage && (
+                      {user?.attandance ? "Hadir" : "Tidak Hadir"}
+                      {user?.attandance && user?.image && (
                         <div
                           onClick={() => setShowImage(true)}
                           className="p-0.5 rounded-md cursor-pointer hover:bg-gray-100"
@@ -69,22 +68,26 @@ export default function Akun() {
                   </div>
                   <div className="flex items-center justify-between">
                     <p className="font-medium">Dapil</p>
-                    <p className="font-light text-gray-500">{user?.dapil}</p>
+                    <p className="font-light text-gray-500">
+                      {user?.tps?.dapil}
+                    </p>
                   </div>
                   <div className="flex items-center justify-between">
                     <p className="font-medium">Kecamatan</p>
                     <p className="font-light text-gray-500">
-                      {user?.kecamatan}
+                      {user?.tps?.kecamatan}
                     </p>
                   </div>
                   <div className="flex items-center justify-between">
                     <p className="font-medium">Desa</p>
-                    <p className="font-light text-gray-500">{user?.desa}</p>
+                    <p className="font-light text-gray-500">
+                      {user?.tps?.desa}
+                    </p>
                   </div>
                   <div className="flex items-center justify-between">
                     <p className="font-medium">TPS</p>
                     <p className="font-light text-gray-500">
-                      TPS {user?.kodeTPS}
+                      TPS {user?.tps?.kodeTPS}
                     </p>
                   </div>
                 </>
@@ -108,7 +111,7 @@ export default function Akun() {
       </div>
       {showImage && (
         <Image
-          url={user?.attendanceImage}
+          url={user?.image}
           onCancel={() => setShowImage(false)}
         />
       )}

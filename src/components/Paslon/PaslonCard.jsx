@@ -32,7 +32,7 @@ export default function PaslonCard({ item }) {
             </div>
             <div>
               <p className="font-medium text-lg">
-                {item.namaCalonKetua} - {item.namaWakilKetua}
+                {item.ketua} - {item.wakilKetua}
               </p>
             </div>
           </div>

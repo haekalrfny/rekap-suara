@@ -42,14 +42,14 @@ export default function TPS() {
     setLoading(true);
     let config = {
       method: "get",
-      url: `/tps${user?.kecamatan ? "/kecamatan" : ""}/page`,
+      url: `/tps${user?.district ? "/kecamatan" : ""}/page`,
       headers: {
         Authorization: `Bearer ${Cookies.get("token")}`,
       },
       params: {
         page,
         filter: searchQuery,
-        kecamatan: user?.kecamatan,
+        kecamatan: user?.district,
       },
     };
     instance
@@ -77,13 +77,13 @@ export default function TPS() {
     setLoadingButton(true);
     let config = {
       method: "get",
-      url: `/tps/${
-        user?.kecamatan ? "downloadExcelByKecamatan" : "downloadExcel"
+      url: `/tps/excel/${
+        user?.district ? "kecamatan" : "tps"
       }`,
       headers: {
         Authorization: `Bearer ${Cookies.get("token")}`,
       },
-      params: { kecamatan: user?.kecamatan },
+      params: { kecamatan: user?.district },
       responseType: "blob",
     };
 
@@ -117,11 +117,11 @@ export default function TPS() {
             ) : (
               <>
                 <h1 className="font-bold text-3xl">
-                  TPS {user?.kecamatan ? user?.kecamatan : ""}
+                  TPS {user?.district ? user?.district : ""}
                 </h1>
                 <p className="font-light text-gray-600">
                   Data rekapitulasi suara di Tempat Pemungutan Suara (TPS) dari{" "}
-                  {user?.kecamatan ? "Kecamatan " + user?.kecamatan : "Semua"}{" "}
+                  {user?.district ? "Kecamatan " + user?.district : "Semua"}{" "}
                   wilayah Kabupaten Bandung Barat
                 </p>
               </>

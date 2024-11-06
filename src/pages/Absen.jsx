@@ -12,10 +12,10 @@ import Cookies from "js-cookie";
 import BackButton from "../components/BackButton";
 
 export default function Absen() {
-  const { token, attending } = useTokenContext();
+  const { token, attending, user } = useTokenContext();
   const { setLoadingButton, loading } = useStateContext();
-  const [data, setData] = useState(null);
-  const [suara, setSuara] = useState(0);
+  const [kertasPilkada, setKertasPilkada] = useState(0);
+  const [kertasPilgub, setKertasPilgub] = useState(0);
   const [image, setImage] = useState(null);
   const showNotification = useNotif();
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ export default function Absen() {
     e.preventDefault();
     setLoadingButton(true);
 
-    if (!image && !suara) {
+    if (!image && !kertasPilkada && !kertasPilgub) {
       showNotification("Data belum lengkap", "error");
       setLoadingButton(false);
       return false;
@@ -43,16 +43,12 @@ export default function Absen() {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${Cookies.get("token")}`,
         },
-        data: { isAttending: true, image },
+        data: { attandance: true, image },
       })
       .then((res) => {
         showNotification("Absen Berhasil", "success");
         setLoadingButton(false);
         updateTps();
-        navigate("/");
-        setTimeout(() => {
-          window.location.reload();
-        }, 500);
       })
       .catch((err) => {
         showNotification("Absen Gagal", "error");
@@ -61,36 +57,21 @@ export default function Absen() {
       });
   };
 
-  useEffect(() => {
-    getDataById();
-  }, []);
-
-  const getDataById = () => {
-    let config = {
-      method: "get",
-      url: `/tps/by/username/${Cookies.get("username")}`,
-      headers: {
-        Authorization: `Bearer ${Cookies.get("token")}`,
-      },
-    };
-    instance
-      .request(config)
-      .then((res) => {
-        setData(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
   const updateTps = () => {
     const dataJson = {
-      jumlahTotal: suara,
+      pilkada: { kertasSuara: kertasPilkada, user: user?._id },
+      pilgub: { kertasSuara: kertasPilgub, user: user?._id },
     };
 
     instance
-      .patch(`/tps/update/${data?._id}`, dataJson, {
+      .patch(`/tps/update/${user?.tps?._id}`, dataJson, {
         headers: { Authorization: `Bearer ${Cookies.get("token")}` },
+      })
+      .then((res) => {
+        navigate("/");
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
       })
       .catch((err) => console.log(err));
   };
@@ -109,20 +90,39 @@ export default function Absen() {
           </div>
         )}
         {attending ? (
-          <>
-            <p className="text-light text-gray-500 text-center h-20">
-              Anda Sudah Absen
-            </p>
+          <div className="space-y-6">
+            <div>
+              <h1 className="font-medium text-lg">Anda telah absen</h1>
+              <p className="text-gray-500 font-light">
+                Untuk perubahan data
+                bisa hubungi nomor ini :{" "}
+                <a
+                  href="https://wa.me/6285797945972"
+                  target="_blank"
+                  className="text-black underline"
+                >
+                  xxxx-xxxx-xxxx
+                </a>
+              </p>
+            </div>
             <BackButton url={"/"} />
-          </>
+          </div>
         ) : (
           <form className="flex flex-col gap-3" onSubmit={handleAbsen}>
             <Input
-              name="Jumlah Kertas Suara"
-              label="Jumlah Kertas Suara"
+              name="Kertas Suara Pilkada"
+              label="Kertas Suara Pilkada"
               type="text"
-              setValue={setSuara}
-              placeholder={"Jumlah Kertas Suara"}
+              setValue={setKertasPilkada}
+              placeholder={"Kertas Suara Pilkada"}
+              required
+            />
+            <Input
+              name="Kertas Suara Pilgub"
+              label="Kertas Suara Pilgub"
+              type="text"
+              setValue={setKertasPilgub}
+              placeholder={"Kertas Suara Pilgub"}
               required
             />
             <Input

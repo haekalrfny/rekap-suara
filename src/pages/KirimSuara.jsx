@@ -5,26 +5,21 @@ import Input from "../components/Input";
 import Button from "../components/Button";
 import Cookies from "js-cookie";
 import instance from "../api/api";
-import { useStateContext } from "../context/StateContext";
-import { Navigate } from "react-router-dom";
 import { useTokenContext } from "../context/TokenContext";
 import HeadingLoad from "../components/Load/HeadingLoad";
 import Label from "../components/Label";
 import BackButton from "../components/BackButton";
+import { Navigate } from "react-router-dom";
+import { useStateContext } from "../context/StateContext";
 
-export default function KirimSuara() {
-  const { token, attending } = useTokenContext();
-  const { paslonData } = useDatabaseContext();
+export default function KirimSuara({ type, name, paslon, fill }) {
+  const { token, attending, user } = useTokenContext();
   const { setLoadingButton, loading, setLoading } = useStateContext();
-  const userId = Cookies.get("_id");
-  const [data, setData] = useState(null);
-  const [riwayat, setRiwayat] = useState([]);
+
   const [suaraPaslon, setSuaraPaslon] = useState([]);
   const [image, setImage] = useState(null);
-  const [jumlahSuara, setJumlahSuara] = useState(
-    Array(paslonData.length).fill("")
-  );
-  const [jumlahSuaraTidakSah, setJumlahSuaraTidakSah] = useState("");
+  const [jumlahSuara, setJumlahSuara] = useState(Array(paslon.length).fill(""));
+  const [jumlahSuaraTidakSah, setJumlahSuaraTidakSah] = useState(0);
   const [jumlahSuaraTercatat, setJumlahSuaraTercatat] = useState(0);
 
   useEffect(() => {
@@ -46,51 +41,27 @@ export default function KirimSuara() {
     return <Navigate to="/login" />;
   }
 
-  useEffect(() => {
-    getDataById();
-  }, []);
-
-  const getDataById = () => {
-    let config = {
-      method: "get",
-      url: `/tps/by/username/${Cookies.get("username")}`,
-      headers: {
-        Authorization: `Bearer ${Cookies.get("token")}`,
-      },
-    };
-    instance
-      .request(config)
-      .then((res) => {
-        setData(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
   const handleSuara = (e) => {
     e.preventDefault();
     setLoadingButton(true);
     setLoading(true);
 
-    if (!data || !image || suaraPaslon.length !== 5) {
+    if (!user || !image || suaraPaslon.length !== paslon.length) {
       showNotification("Data belum lengkap", "error");
       setLoadingButton(false);
       setLoading(false);
       return;
     }
 
-    const totalSuaraSah = jumlahSuara.reduce((acc, curr) => acc + curr, 0);
-
     const formData = new FormData();
     formData.append("image", image);
-    formData.append("tps", data?._id);
+    formData.append("tps", user?.tps?._id);
     suaraPaslon.forEach((suara) =>
       formData.append("suaraPaslon[]", JSON.stringify(suara))
     );
 
     instance
-      .post("/suara", formData, {
+      .post(`/suara/${type}/create`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${Cookies.get("token")}`,
@@ -99,33 +70,14 @@ export default function KirimSuara() {
       .then(() => {
         showNotification("Suara terkirim", "success");
         setLoadingButton(false);
-        setTimeout(() => window.location.reload(), 1000);
-        if (totalSuaraSah) updateTps(totalSuaraSah);
         setLoading(false);
       })
-      .catch((err) => {
+      .catch(() => {
         showNotification("Gagal mengirim", "error");
         setLoadingButton(false);
         setLoading(false);
       })
       .finally(() => setLoading(false));
-  };
-
-  const updateTps = (suaraSah) => {
-    const dataJson = {
-      jumlahSuaraSah: suaraSah,
-      jumlahSuaraTidakSah,
-      jumlahSuaraTidakTerpakai:
-        data?.jumlahTotal === jumlahSuaraTercatat
-          ? 0
-          : data?.jumlahTotal - jumlahSuaraTercatat,
-    };
-
-    instance
-      .patch(`/tps/update/${data?._id}`, dataJson, {
-        headers: { Authorization: `Bearer ${Cookies.get("token")}` },
-      })
-      .catch((err) => console.log(err));
   };
 
   const handleAddSuara = (index, paslonId, jumlahSuaraSah) => {
@@ -135,7 +87,7 @@ export default function KirimSuara() {
       const updatedSuara = [...prev];
       updatedSuara[index] = {
         paslon: paslonId,
-        jumlahSuaraSah: jumlahSuaraSah === "" ? "" : jumlahSuaraSah || 0,
+        suaraSah: jumlahSuaraSah === "" ? "" : jumlahSuaraSah || 0,
       };
       return updatedSuara;
     });
@@ -147,21 +99,6 @@ export default function KirimSuara() {
     });
   };
 
-  useEffect(() => {
-    const fetchRiwayat = async () => {
-      const config = {
-        method: "get",
-        url: `/suara/user/${userId}`,
-        headers: {
-          Authorization: `Bearer ${Cookies.get("token")}`,
-        },
-      };
-      const res = await instance(config);
-      setRiwayat(res.data);
-    };
-    fetchRiwayat();
-  }, [userId]);
-
   return (
     <div className="w-full flex justify-center md:pt-6 pb-10">
       <div className="w-[90%] sm:w-2/4 flex flex-col gap-6">
@@ -169,103 +106,78 @@ export default function KirimSuara() {
           <HeadingLoad />
         ) : (
           <div className="space-y-3">
-            <h1 className="font-bold text-3xl">Kirim Suara</h1>
+            <h1 className="font-bold text-3xl">Suara {name}</h1>
             <p className="font-light text-gray-600">
-              Silakan Inputkan Rekap Suara dari Setiap Tempat Pemungutan Suara
-              (TPS) dengan Cermat dan Sesuai Data Asli untuk Memastikan Akurasi
-              dalam Penghitungan Suara
+              Silakan Inputkan Rekap Suara {name} dari Setiap Tempat Pemungutan
+              Suara (TPS) dengan Cermat dan Sesuai Data Asli untuk Memastikan
+              Akurasi dalam Penghitungan Suara
             </p>
           </div>
         )}
 
-        {riwayat.length >= 1 ? (
-          <div>
-            <h1 className="font-medium text-lg">Anda telah mengirim suara</h1>
-            <p className="text-gray-500 font-light">
-              Anda hanya bisa mengirim suara satu kali, untuk perubahan data
-              bisa hubungi nomor ini :{" "}
-              <a
-                href="https://wa.me/6285797945972"
-                target="_blank"
-                className="text-black underline"
-              >
-                xxxx-xxxx-xxxx
-              </a>
-            </p>
+        {fill.length >= 1 ? (
+          <div className="space-y-6">
+            <div>
+              <h1 className="font-medium text-lg">Anda telah mengirim suara</h1>
+              <p className="text-gray-500 font-light">
+                Anda hanya bisa mengirim suara satu kali, untuk perubahan data
+                bisa hubungi nomor ini :{" "}
+                <a
+                  href="https://wa.me/6285797945972"
+                  target="_blank"
+                  className="text-black underline"
+                >
+                  xxxx-xxxx-xxxx
+                </a>
+              </p>
+            </div>
+            <BackButton url={"/"} />
           </div>
         ) : (
           <form onSubmit={handleSuara} className="flex flex-col gap-3">
-            <Label
-              title={"Dapil"}
-              value={data?.dapil}
-              isAuto={true}
-              isMobile={true}
-            />
+            <Label title={"Dapil"} value={user?.tps?.dapil} isAuto={true} />
             <Label
               title={"Kecamatan"}
-              value={data?.kecamatan}
+              value={user?.tps?.kecamatan}
               isAuto={true}
-              isMobile={true}
             />
-            <Label
-              title={"Desa"}
-              value={data?.desa}
-              isAuto={true}
-              isMobile={true}
-            />
-            <Label
-              title={"TPS"}
-              value={data?.kodeTPS}
-              isAuto={true}
-              isMobile={true}
-            />
+            <Label title={"Desa"} value={user?.tps?.desa} isAuto={true} />
+            <Label title={"TPS"} value={user?.tps?.kodeTPS} isAuto={true} />
 
-            {data && (
-              <>
-                <div className="flex flex-col gap-3">
-                  {paslonData.map((paslon, index) => (
-                    <div
-                      key={paslon._id}
-                      className="w-full flex flex-col gap-3"
-                    >
-                      <Input
-                        isMobile={true}
-                        label={`${paslon?.panggilan} (Nomor Urut ${paslon?.noUrut})`}
-                        name={`jumlah-${index}`}
-                        type="text"
-                        setValue={(e) =>
-                          handleAddSuara(index, paslon._id, parseInt(e) || 0)
-                        }
-                        value={jumlahSuara[index]}
-                        required
-                        placeholder="Suara Sah"
-                      />
-                    </div>
-                  ))}
-                </div>
+            {paslon.map((item, index) => (
+              <div key={item._id} className="w-full flex flex-col gap-3">
                 <Input
-                  name="jumlahSuaraTidakSah"
-                  value={jumlahSuaraTidakSah}
-                  setValue={setJumlahSuaraTidakSah}
-                  type="number"
-                  label="Suara Tidak Sah"
-                  placeholder="Suara Tidak Sah"
-                  isMobile={true}
-                />
-                <Input
-                  name="image"
-                  label="Formulir C1"
-                  type="file"
-                  setValue={setImage}
-                  isMobile={true}
+                  label={`${item?.panggilan} (Nomor Urut ${item?.noUrut})`}
+                  name={`jumlah-${index}`}
+                  type="text"
+                  setValue={(e) =>
+                    handleAddSuara(index, item._id, parseInt(e) || 0)
+                  }
+                  value={jumlahSuara[index]}
                   required
+                  placeholder="Suara Sah"
                 />
-              </>
-            )}
+              </div>
+            ))}
+            <Input
+              name="jumlahSuaraTidakSah"
+              value={jumlahSuaraTidakSah}
+              setValue={setJumlahSuaraTidakSah}
+              type="number"
+              label="Suara Tidak Sah"
+              placeholder="Suara Tidak Sah"
+            />
+            <Input
+              name="image"
+              label="Formulir C1 Plano"
+              type="file"
+              setValue={setImage}
+              required
+            />
             <p>
-              ({jumlahSuaraTercatat}/{data?.jumlahTotal})
+              ({jumlahSuaraTercatat}/{user?.tps?.[type]?.kertasSuara}) Suara
             </p>
-            <Button text="Kirim" onClick={handleSuara} />
+            <Button text="Kirim" />
           </form>
         )}
       </div>

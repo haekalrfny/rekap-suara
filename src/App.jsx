@@ -23,6 +23,8 @@ import { DatabaseProvider } from "./context/DatabaseContext";
 import { TokenContext } from "./context/TokenContext";
 import Riwayat from "./pages/Riwayat";
 import Absen from "./pages/Absen";
+import Pilkada from "./pages/Pilkada";
+import Pilgub from "./pages/Pilgub";
 
 export default function App() {
   return (
@@ -34,7 +36,8 @@ export default function App() {
               <Routes>
                 <Route element={<LayoutWithSidebar />}>
                   <Route index path="/" element={<Home />} />
-                  <Route index path="/kirim-suara" element={<KirimSuara />} />
+                  <Route index path="/suara-pilkada" element={<Pilkada />} />
+                  <Route index path="/suara-pilgub" element={<Pilgub />} />
                   <Route index path="/tps" element={<TPS />} />
                   <Route index path="/paslon" element={<Paslon />} />
                   <Route index path="/paslon/:id" element={<PaslonDetail />} />

@@ -5,7 +5,7 @@ export default function Label({ title, value, isAuto, isMobile }) {
     <div>
       <label
         htmlFor={title}
-        className={` font-medium uppercase mb-1 text-black ${
+        className={` font-medium  mb-1 text-black ${
           isMobile ? "text-xl md:text-sm " : "text-sm"
         }`}
       >

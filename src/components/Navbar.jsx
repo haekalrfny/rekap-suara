@@ -62,7 +62,7 @@ const Navbar = () => {
   return (
     <div className="h-20 flex justify-between items-center px-6">
       <ul className="hidden md:flex">
-        <li className="font-semibold">hijisora</li>
+        <li className="font-semibold">temanbudi</li>
       </ul>
 
       {/* Menu Mobile */}
@@ -71,7 +71,7 @@ const Navbar = () => {
           <FiMenu className="text-2xl" />
         </button>
         <span className="ml-4 text-xl md:text-base font-semibold">
-          hijisora
+          temanbudi
         </span>
       </div>
 
@@ -87,16 +87,28 @@ const Navbar = () => {
           </Link>
         </li>
         {!admin && (
-          <li>
-            <div className="flex items-center cursor-pointer">
-              <Link
-                to={token ? "/kirim-suara" : "/login"}
-                className="hover:text-gray-800"
-              >
-                Kirim Suara
-              </Link>
-            </div>
-          </li>
+          <>
+            <li>
+              <div className="flex items-center cursor-pointer">
+                <Link
+                  to={token ? "/suara-pilkada" : "/login"}
+                  className="hover:text-gray-800"
+                >
+                  Pilkada
+                </Link>
+              </div>
+            </li>
+            <li>
+              <div className="flex items-center cursor-pointer">
+                <Link
+                  to={token ? "/suara-pilgub" : "/login"}
+                  className="hover:text-gray-800"
+                >
+                  Pilgub
+                </Link>
+              </div>
+            </li>
+          </>
         )}
         {admin && (
           <li className="relative" ref={desktopDropdownRef}>
@@ -155,7 +167,9 @@ const Navbar = () => {
       {mobileMenuOpen && (
         <div className="fixed top-0 left-0 w-full h-full bg-white z-20 md:hidden">
           <div className="flex justify-between items-center p-4 border-b">
-            <span className="font-semibold text-xl md:text-base">hijisora</span>
+            <span className="font-semibold text-xl md:text-base">
+              temanbudi
+            </span>
             <button onClick={toggleMobileMenu}>
               <AiOutlineClose className="text-2xl" />
             </button>
@@ -171,15 +185,26 @@ const Navbar = () => {
               </Link>
             </li>
             {!admin && (
-              <li>
-                <Link
-                  to={token ? "/kirim-suara" : "/login"}
-                  className="hover:text-gray-400"
-                  onClick={toggleMobileMenu}
-                >
-                  Kirim Suara
-                </Link>
-              </li>
+              <>
+                <li>
+                  <Link
+                    to={token ? "/suara-pilkada" : "/login"}
+                    className="hover:text-gray-400"
+                    onClick={toggleMobileMenu}
+                  >
+                    Pilkada
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to={token ? "/suara-pilgub" : "/login"}
+                    className="hover:text-gray-400"
+                    onClick={toggleMobileMenu}
+                  >
+                    Pilgub
+                  </Link>
+                </li>
+              </>
             )}
             {admin && (
               <li className="relative" ref={mobileDropdownRef}>

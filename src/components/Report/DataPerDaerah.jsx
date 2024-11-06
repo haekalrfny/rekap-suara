@@ -8,7 +8,7 @@ export default function DataPerDaerah({ setValue }) {
   const { user } = useTokenContext();
 
   useEffect(() => {
-    if (!user?.kecamatan) {
+    if (!user?.district) {
       getReportPerDaerah();
     } else {
       getReportPerKecamatan();
@@ -18,7 +18,7 @@ export default function DataPerDaerah({ setValue }) {
   const getReportPerDaerah = () => {
     let config = {
       method: "get",
-      url: "/tps/report/all",
+      url: "/tps/report/tps",
       headers: {
         Authorization: `Bearer ${Cookies.get("token")}`,
       },
@@ -38,7 +38,7 @@ export default function DataPerDaerah({ setValue }) {
     let config = {
       method: "get",
       url: "/tps/report/kecamatan",
-      params: { kecamatan: user?.kecamatan },
+      params: { kecamatan: user?.district },
       headers: {
         Authorization: `Bearer ${Cookies.get("token")}`,
       },
@@ -57,36 +57,36 @@ export default function DataPerDaerah({ setValue }) {
   return (
     <div className="w-full flex flex-col gap-2 p-6 md:min-w-[400px]">
       <h2 className="text-2xl font-semibold">
-        Suara {user?.kecamatan ? user?.kecamatan : "Kab. Bandung Barat"}
+        Suara {user?.district ? user?.district : "Kab. Bandung Barat"}
       </h2>
       <p className="text-gray-600 mb-4">Jumlah Suara yang Telah Diterima</p>
-      {!user?.kecamatan && (
+      {!user?.district && (
         <>
           <ProgressBar
             text={"Dapil"}
-            current={data?.totalDapilWithSuara}
-            total={data?.totalDapil}
+            current={data?.dapil.withSuara.pilkada}
+            total={data?.dapil.total}
           />
           <ProgressBar
             text={"Kecamatan"}
-            current={data?.totalKecamatanWithSuara}
-            total={data?.totalKecamatan}
+            current={data?.kecamatan.withSuara.pilkada}
+            total={data?.kecamatan.total}
           />
         </>
       )}
       <ProgressBar
         text={"Desa"}
-        current={data?.totalDesaWithSuara}
-        total={data?.totalDesa}
+        current={data?.desa.withSuara.pilkada}
+        total={data?.desa.total}
       />
       <ProgressBar
         text={"TPS"}
-        current={data?.totalTPSWithSuara}
-        total={data?.totalTPS}
+        current={data?.tps.withSuara.pilkada}
+        total={data?.tps.total}
       />
       <p className="text-sm  mt-1 lowercase">
         *data hanya untuk wilayah{" "}
-        {user?.kecamatan ? user?.kecamatan : "Kab. Bandung Barat"}
+        {user?.district ? user?.district : "Kab. Bandung Barat"}
       </p>
     </div>
   );

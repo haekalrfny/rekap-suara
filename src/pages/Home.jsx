@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState, useCallback } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   BsArrowRightShort,
   BsClockHistory,
@@ -29,7 +29,8 @@ export default function Home() {
   const { loading } = useStateContext();
   const [data, setData] = useState(null);
   const [suaraByPaslonByKecamatan, setSuaraByPaslonByKecamatan] = useState([]);
-  const lastUpdated = user?.kecamatan
+
+  const lastUpdated = user?.district
     ? suaraByPaslonByKecamatan[0]?.["Last Updated"]
     : suaraByPaslon[0]?.["Last Updated"];
   const formattedLastUpdated = lastUpdated
@@ -41,26 +42,37 @@ export default function Home() {
       text={<div className="flex items-center gap-1">{text}</div>}
       onClick={onClick}
       isFull={isFull}
+      outline
     />
   );
 
+  // useCallback to stabilize setData
+  const handleSetData = useCallback((newData) => {
+    setData(newData);
+  }, []);
+
+  // Effect to fetch data based on user district
   useEffect(() => {
-    instance
-      .get("/suara/byPaslon/kecamatan", {
-        params: { kecamatan: user?.kecamatan },
-        headers: { Authorization: `Bearer ${Cookies.get("token")}` },
-      })
-      .then((res) => setSuaraByPaslonByKecamatan(res.data));
-  }, [user]);
+    if (user?.district) {
+      setSuaraByPaslonByKecamatan([]); // Reset to avoid mixing data
+      instance
+        .get("/suara/pilkada/paslon/kecamatan", {
+          params: { kecamatan: user.district },
+          headers: { Authorization: `Bearer ${Cookies.get("token")}` },
+        })
+        .then((res) => setSuaraByPaslonByKecamatan(res.data))
+        .catch((err) => console.error("Error fetching data", err));
+    }
+  }, [user?.district]);
 
   return (
     <div className="w-full flex flex-col items-center md:pt-6 pb-10">
-      <div className=" sm:w-2/3 flex flex-col gap-12">
+      <div className="sm:w-2/3 flex flex-col gap-12">
         {loading ? (
           <JumbotronLoading />
         ) : (
           <div className="space-y-6 text-center">
-            <h1 className="text-5xl md:text-6xl font-semibold">hijisora</h1>
+            <h1 className="text-4xl md:text-5xl font-semibold">temanbudi</h1>
             <p className="text-gray-600 font-light">
               "Kepemimpinan bukan soal kekuasaan, tapi soal tanggung jawab.
               Pemimpin yang jujur dan amanah adalah cermin kemajuan rakyatnya."
@@ -89,20 +101,20 @@ export default function Home() {
             <>
               <div className="flex flex-col lg:flex-row justify-between gap-4">
                 <Charts
-                  title={`Suara Paslon ${user?.kecamatan || "Seluruh"}`}
+                  title={`Suara Paslon ${user?.district || "Seluruh"}`}
                   subtitle="Total suara paslon yang Telah Diterima"
                   data={
-                    user?.kecamatan ? suaraByPaslonByKecamatan : suaraByPaslon
+                    user?.district ? suaraByPaslonByKecamatan : suaraByPaslon
                   }
                   name="Panggilan"
                   value="Total Suara"
                   type="bar"
                 />
-                {user?.kecamatan ? (
+                {user?.district ? (
                   loading ? (
                     <ChartLoading />
                   ) : (
-                    <DataPerDaerah setValue={setData} />
+                    <DataPerDaerah setValue={handleSetData} />
                   )
                 ) : (
                   <Charts
@@ -115,18 +127,19 @@ export default function Home() {
                   />
                 )}
               </div>
-              {!user?.kecamatan && !loading && (
+              {!user?.district && !loading && (
                 <div className="w-full md:w-2/3">
-                  <DataPerDaerah setValue={setData} />
+                  <DataPerDaerah setValue={handleSetData} />
                 </div>
               )}
               {loading ? (
                 <SaksiTextLoading />
               ) : (
-                data?.totalSaksi > 0 && (
+                data?.saksi?.total > 0 && (
                   <p className="text-center font-light mt-4 text-gray-600 max-w-full md:max-w-[90%]">
                     <b className="text-black">
-                      {data?.totalSaksiWithSuara} dari {data?.totalSaksi}
+                      {data?.saksi?.withSuara?.pilkada} dari{" "}
+                      {data?.saksi?.total}
                     </b>{" "}
                     saksi telah menginput suara{" "}
                     <b className="text-black">{formattedLastUpdated}</b>
@@ -136,33 +149,34 @@ export default function Home() {
             </>
           )}
           {token && !admin && (
-            <div className="flex flex-col gap-4 w-full">
-              <p className="font-medium">Menu</p>
-              <div className="flex flex-col md:flex-row items-center justify-center gap-3">
-                {renderButton(
-                  <div className="flex justify-between w-full items-center">
-                    <p>Absen</p>
-                    <BsPersonCheck />
-                  </div>,
-                  () => navigate("/absen"),
-                  true
-                )}
-                {renderButton(
-                  <div className="flex justify-between w-full items-center">
-                    <p>Kirim Suara</p>
-                    <BsSend className="ml-2" />
-                  </div>,
-                  () => navigate("/kirim-suara"),
-                  true
-                )}
-                {renderButton(
-                  <div className="flex justify-between w-full items-center">
-                    <p>Riwayat</p>
-                    <BsClockHistory className="ml-2" />
-                  </div>,
-                  () => navigate("/riwayat"),
-                  true
-                )}
+            <div className="flex flex-col  items-center gap-4 w-full">
+              <p className="font-medium text-center">Menu</p>
+              <div className="flex flex-col gap-1 w-full md:w-2/3">
+                {[
+                  { label: "Absen", icon: <BsPersonCheck />, link: "/absen" },
+                  {
+                    label: "Pilkada",
+                    icon: <BsSend />,
+                    link: "/suara-pilkada",
+                  },
+                  { label: "Pilgub", icon: <BsSend />, link: "/suara-pilgub" },
+                  {
+                    label: "Riwayat",
+                    icon: <BsClockHistory />,
+                    link: "/riwayat",
+                  },
+                ].map((button, index) => (
+                  <React.Fragment key={index}>
+                    <NavLink
+                      to={button.link}
+                      className="hover:bg-gray-100 py-2 px-3 rounded-md flex items-center justify-between"
+                    >
+                      <p>{button.label}</p>
+                      {button.icon}
+                    </NavLink>
+                    {index < 3 && <hr />}
+                  </React.Fragment>
+                ))}
               </div>
             </div>
           )}

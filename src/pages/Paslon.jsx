@@ -24,15 +24,11 @@ export default function Paslon() {
     setLoadingButton(true);
     let config = {
       method: "get",
-      url: `/tps/${
-        user?.kecamatan
-          ? "downloadExcelPaslonByKecamatan"
-          : "downloadExcelPaslonByTPS"
-      }`,
+      url: `/tps/excel/paslon${user?.district ? "/kecamatan" : ""}/pilkada`,
       headers: {
         Authorization: `Bearer ${Cookies.get("token")}`,
       },
-      params: { kecamatan: user?.kecamatan },
+      params: { kecamatan: user?.district ? user?.district : "" },
       responseType: "blob",
     };
 
@@ -46,7 +42,6 @@ export default function Paslon() {
         link.setAttribute("download", "TPS Paslon.xlsx");
         document.body.appendChild(link);
         link.click();
-
         link.parentNode.removeChild(link);
         setLoadingButton(false);
       })

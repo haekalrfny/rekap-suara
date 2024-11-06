@@ -14,13 +14,14 @@ export default function ModalDetail({ id, onCancel }) {
   const getDataById = () => {
     let config = {
       method: "get",
-      url: `/suara/tps/${id}`,
+      url: `/suara/pilkada/tps/${id}`,
       headers: {
         Authorization: `Bearer ${Cookies.get("token")}`,
       },
     };
     instance.request(config).then((res) => {
-      setData(res.data[0]);
+      setData(res.data);
+      console.log(res.data);
     });
   };
 
@@ -53,28 +54,28 @@ export default function ModalDetail({ id, onCancel }) {
                 <div className="flex justify-between items-center">
                   <span className="font-medium">Suara Sah</span>
                   <span className="text-gray-600">
-                    {data?.tps?.jumlahSuaraSah} Suara
+                    {data?.tps?.pilkada?.suaraSah} Suara
                   </span>
                 </div>
                 <hr />
                 <div className="flex justify-between items-center">
                   <span className="font-medium">Suara Tidak Sah</span>
                   <span className="text-gray-600">
-                    {data?.tps?.jumlahSuaraTidakSah} Suara
+                    {data?.tps?.pilkada?.suaraTidakSah} Suara
                   </span>
                 </div>
                 <hr />
                 <div className="flex justify-between items-center">
                   <span className="font-medium">Suara Tidak Terpakai</span>
                   <span className="text-gray-600">
-                    {data?.tps?.jumlahSuaraTidakTerpakai} Suara
+                    {data?.tps?.pilkada?.suaraTidakTerpakai} Suara
                   </span>
                 </div>
                 <hr />
                 <div className="flex justify-between items-center">
-                  <span className="font-medium">Total Suara</span>
+                  <span className="font-medium">Kertas Suara</span>
                   <span className="text-gray-600">
-                    {data?.tps?.jumlahTotal} Pemilih
+                    {data?.tps?.pilkada?.kertasSuara} Kertas
                   </span>
                 </div>
                 <hr />
@@ -86,8 +87,8 @@ export default function ModalDetail({ id, onCancel }) {
                     text={
                       `(${paslon?.paslon?.noUrut}) ` + paslon?.paslon?.panggilan
                     }
-                    current={paslon?.jumlahSuaraSah}
-                    total={data?.tps?.jumlahSuaraSah}
+                    current={paslon?.suaraSah}
+                    total={data?.tps?.pilkada?.suaraSah}
                   />
                 ))}
               </div>
