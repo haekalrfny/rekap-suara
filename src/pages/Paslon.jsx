@@ -1,5 +1,4 @@
-import React from "react";
-import { useDatabaseContext } from "../context/DatabaseContext";
+import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import PaslonCard from "../components/Paslon/PaslonCard";
 import { useTokenContext } from "../context/TokenContext";
@@ -9,17 +8,40 @@ import Button from "../components/Button";
 import Cookies from "js-cookie";
 import instance from "../api/api";
 import { useNotif } from "../context/NotifContext";
+import { fetchPaslonData, fetchUserId } from "../functions/fetchData";
 
 export default function Paslon() {
-  const { paslonData } = useDatabaseContext();
-  const { token, user } = useTokenContext();
-  const { loading, setLoadingButton } = useStateContext();
+  const { token } = useTokenContext();
+  const { loading, setLoadingButton, setLoading } = useStateContext();
+  const [user, setUser] = useState(null);
+  const [paslon, setPaslon] = useState([]);
   const showNotification = useNotif();
 
   if (!token && !Cookies.get("token")) {
     showNotification("Anda harus login terlebih dahulu", "error");
     return <Navigate to="/login" />;
   }
+
+  useEffect(() => {
+    const getData = async () => {
+      setLoading(true);
+      const paslon = await fetchPaslonData();
+      setPaslon(paslon);
+      setLoading(false);
+    };
+    getData();
+  }, [setLoading]);
+
+  useEffect(() => {
+    const getData = async () => {
+      setLoading(true);
+      const item = await fetchUserId();
+      setUser(item.data);
+      setLoading(false);
+    };
+    getData();
+  }, [setLoading]);
+
   const downloadPaslonByTPS = () => {
     setLoadingButton(true);
     let config = {
@@ -74,7 +96,7 @@ export default function Paslon() {
         </div>
       </div>
       <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-[90%]">
-        {paslonData.map((item, index) => {
+        {paslon.map((item, index) => {
           return <PaslonCard item={item} key={index} />;
         })}
       </div>

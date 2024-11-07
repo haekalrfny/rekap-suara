@@ -1,25 +1,60 @@
 import React, { useEffect, useState } from "react";
 import HeadingLoad from "../components/Load/HeadingLoad";
 import { useStateContext } from "../context/StateContext";
-import instance from "../api/api";
 import Cookies from "js-cookie";
 import { useNotif } from "../context/NotifContext";
 import { Navigate } from "react-router-dom";
 import { useTokenContext } from "../context/TokenContext";
 import { HiOutlineExternalLink } from "react-icons/hi";
 import Image from "../components/Image";
+import Switch from "../components/Switch";
+import { fetchRiwayatPilbub, fetchRiwayatPilgub } from "../functions/fetchData";
 
 export default function Riwayat() {
-  const { token, isFilled } = useTokenContext();
+  const { token } = useTokenContext();
+  const [riwayatPilbub, setRiwayatPilbub] = useState([]);
+  const [riwayatPilgub, setRiwayatPilgub] = useState([]);
   const [image, setImage] = useState(null);
   const [showImage, setShowImage] = useState(false);
-  const { loading } = useStateContext();
+  const [type, setType] = useState("pilkada");
+  const { loading, setLoading } = useStateContext();
   const showNotification = useNotif();
 
   if (!token && !Cookies.get("token")) {
     showNotification("Anda harus login terlebih dahulu", "error");
     return <Navigate to="/login" />;
   }
+
+  useEffect(() => {
+    const getData = async () => {
+      setLoading(true);
+      const item = await fetchRiwayatPilbub();
+      setRiwayatPilbub(item);
+      setLoading(false);
+    };
+    getData();
+  }, [setLoading]);
+
+  useEffect(() => {
+    const getData = async () => {
+      setLoading(true);
+      const item = await fetchRiwayatPilgub();
+      setRiwayatPilgub(item);
+      setLoading(false);
+    };
+    getData();
+  }, [setLoading]);
+
+  const menuSwitch = [
+    {
+      name: "Pilkada KBB",
+      value: "pilkada",
+    },
+    {
+      name: "Pilkada Jabar",
+      value: "pilgub",
+    },
+  ];
 
   const renderImage = (img, item) => {
     setImage(img);
@@ -56,13 +91,13 @@ export default function Riwayat() {
               {label === "TPS" ? (
                 `TPS ${item.tps?.kodeTPS}`
               ) : label === "Suara Sah" ? (
-                `${item.tps?.pilkada?.suaraSah} Suara`
+                `${item.tps?.[type]?.suaraSah} Suara`
               ) : label === "Suara Tidak Sah" ? (
-                `${item.tps?.pilkada?.suaraTidakSah} Suara`
+                `${item.tps?.[type]?.suaraTidakSah} Suara`
               ) : label === "Suara Tidak Terpakai" ? (
-                `${item.tps?.pilkada?.suaraTidakTerpakai} Suara`
+                `${item.tps?.[type]?.suaraTidakTerpakai} Suara`
               ) : label === "Kertas Suara" ? (
-                `${item.tps?.pilkada?.kertasSuara} Kertas`
+                `${item.tps?.[type]?.kertasSuara} Kertas`
               ) : label === "Formulir C1 Plano" ? (
                 <div className="flex items-center gap-1">
                   <a>Lihat</a>
@@ -94,9 +129,7 @@ export default function Riwayat() {
                 <td className="border px-4 py-2">
                   {suara.paslon?.panggilan} (No Urut {suara.paslon?.noUrut})
                 </td>
-                <td className="border px-4 py-2">
-                  {suara.suaraSah} Suara
-                </td>
+                <td className="border px-4 py-2">{suara.suaraSah} Suara</td>
               </tr>
             ))}
           </tbody>
@@ -115,6 +148,8 @@ export default function Riwayat() {
     </div>
   );
 
+  const displayedRiwayat = type === "pilkada" ? riwayatPilbub : riwayatPilgub;
+
   return (
     <>
       <div className="w-full flex justify-center md:pt-6 pb-10">
@@ -129,15 +164,16 @@ export default function Riwayat() {
               </p>
             </div>
           )}
+          <Switch menu={menuSwitch} value={type} setValue={setType} />
           <div className="space-y-3">
-            {isFilled?.length === 0 ? (
+            {displayedRiwayat?.length === 0 || !displayedRiwayat ? (
               <div className="w-full h-64 flex items-center justify-center">
                 <p className="font-light text-gray-600">
                   Belum memiliki riwayat
                 </p>
               </div>
             ) : (
-              isFilled?.map(renderRiwayatItem)
+              displayedRiwayat?.map(renderRiwayatItem)
             )}
           </div>
         </div>

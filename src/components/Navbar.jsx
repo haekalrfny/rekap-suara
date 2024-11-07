@@ -91,20 +91,10 @@ const Navbar = () => {
             <li>
               <div className="flex items-center cursor-pointer">
                 <Link
-                  to={token ? "/suara-pilkada" : "/login"}
+                  to={token ? "/kirim-suara" : "/login"}
                   className="hover:text-gray-800"
                 >
-                  Pilkada
-                </Link>
-              </div>
-            </li>
-            <li>
-              <div className="flex items-center cursor-pointer">
-                <Link
-                  to={token ? "/suara-pilgub" : "/login"}
-                  className="hover:text-gray-800"
-                >
-                  Pilgub
+                  Kirim Suara
                 </Link>
               </div>
             </li>
@@ -188,20 +178,11 @@ const Navbar = () => {
               <>
                 <li>
                   <Link
-                    to={token ? "/suara-pilkada" : "/login"}
+                    to={token ? "/kirim-suara" : "/login"}
                     className="hover:text-gray-400"
                     onClick={toggleMobileMenu}
                   >
-                    Pilkada
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to={token ? "/suara-pilgub" : "/login"}
-                    className="hover:text-gray-400"
-                    onClick={toggleMobileMenu}
-                  >
-                    Pilgub
+                    Kirim Suara
                   </Link>
                 </li>
               </>

@@ -12,16 +12,18 @@ import { useStateContext } from "../context/StateContext";
 import HeadingLoad from "../components/Load/HeadingLoad";
 import Button from "../components/Button";
 import { useNotif } from "../context/NotifContext";
+import { fetchUserId } from "../functions/fetchData";
 
 export default function TPS() {
   const [data, setData] = useState([]);
   const [page, setPage] = useState(0);
   const [pages, setPages] = useState(0);
   const [rows, setRows] = useState(0);
+  const [user, setUser] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [id, setId] = useState(null);
-  const { token, user } = useTokenContext();
+  const { token } = useTokenContext();
   const { setLoading, loading, setLoadingButton } = useStateContext();
   const showNotification = useNotif();
 
@@ -37,6 +39,16 @@ export default function TPS() {
   useEffect(() => {
     getTPS();
   }, [page, searchQuery, user]);
+
+  useEffect(() => {
+    const getData = async () => {
+      setLoading(true);
+      const item = await fetchUserId();
+      setUser(item.data);
+      setLoading(false);
+    };
+    getData();
+  }, [setLoading]);
 
   const getTPS = () => {
     setLoading(true);
@@ -77,9 +89,7 @@ export default function TPS() {
     setLoadingButton(true);
     let config = {
       method: "get",
-      url: `/tps/excel/${
-        user?.district ? "kecamatan" : "tps"
-      }`,
+      url: `/tps/excel/${user?.district ? "kecamatan" : "tps"}`,
       headers: {
         Authorization: `Bearer ${Cookies.get("token")}`,
       },

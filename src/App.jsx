@@ -19,38 +19,33 @@ import Akun from "./pages/Akun";
 // context
 import { StateContext } from "../src/context/StateContext";
 import { NotifProvider } from "../src/context/NotifContext";
-import { DatabaseProvider } from "./context/DatabaseContext";
 import { TokenContext } from "./context/TokenContext";
 import Riwayat from "./pages/Riwayat";
 import Absen from "./pages/Absen";
-import Pilkada from "./pages/Pilkada";
-import Pilgub from "./pages/Pilgub";
 
 export default function App() {
   return (
     <TokenContext>
       <StateContext>
-        <DatabaseProvider>
-          <NotifProvider>
-            <Router>
-              <Routes>
-                <Route element={<LayoutWithSidebar />}>
-                  <Route index path="/" element={<Home />} />
-                  <Route index path="/suara-pilkada" element={<Pilkada />} />
-                  <Route index path="/suara-pilgub" element={<Pilgub />} />
-                  <Route index path="/tps" element={<TPS />} />
-                  <Route index path="/paslon" element={<Paslon />} />
-                  <Route index path="/paslon/:id" element={<PaslonDetail />} />
-                  <Route index path="/akun" element={<Akun />} />
-                  <Route index path="/riwayat" element={<Riwayat />} />
-                  <Route index path="/absen" element={<Absen />} />
-                </Route>
-                <Route path="/register" element={<Register />} />
-                <Route path="/login" element={<Login />} />
-              </Routes>
-            </Router>
-          </NotifProvider>
-        </DatabaseProvider>
+        <NotifProvider>
+          <Router>
+            <Routes>
+              <Route element={<LayoutWithSidebar />}>
+                <Route index path="/" element={<Home />} />
+
+                <Route index path="/kirim-suara" element={<KirimSuara />} />
+                <Route index path="/tps" element={<TPS />} />
+                <Route index path="/paslon" element={<Paslon />} />
+                <Route index path="/paslon/:id" element={<PaslonDetail />} />
+                <Route index path="/akun" element={<Akun />} />
+                <Route index path="/riwayat" element={<Riwayat />} />
+                <Route index path="/absen" element={<Absen />} />
+              </Route>
+              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<Login />} />
+            </Routes>
+          </Router>
+        </NotifProvider>
       </StateContext>
     </TokenContext>
   );

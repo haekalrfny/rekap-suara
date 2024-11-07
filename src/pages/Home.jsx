@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   BsArrowRightShort,
   BsClockHistory,
@@ -14,25 +14,62 @@ import SaksiTextLoading from "../components/Load/SaksiTextLoading";
 import JumbotronLoading from "../components/Load/JumbotronLoading";
 import ChartLoading from "../components/Load/ChartLoading";
 import DataPerDaerah from "../components/Report/DataPerDaerah";
-import { useDatabaseContext } from "../context/DatabaseContext";
 import { useTokenContext } from "../context/TokenContext";
 import { useStateContext } from "../context/StateContext";
+import {
+  fetchSuaraByPaslon,
+  fetchSuaraByDapil,
+  fetchUserId,
+} from "../functions/fetchData";
 import Cookies from "js-cookie";
 import instance from "../api/api";
+import Menu from "../components/Menu";
 
 setDefaultOptions({ locale: id });
 
 export default function Home() {
   const navigate = useNavigate();
-  const { token, admin, user } = useTokenContext();
-  const { suaraByPaslon, suaraByDapil } = useDatabaseContext();
-  const { loading } = useStateContext();
+  const { token, admin } = useTokenContext();
+  const { loading, setLoading } = useStateContext();
+  const [user, setUser] = useState(null);
   const [data, setData] = useState(null);
+  const [suaraPaslon, setSuaraPaslon] = useState([]);
+  const [suaraDapil, setSuaraDapil] = useState([]);
   const [suaraByPaslonByKecamatan, setSuaraByPaslonByKecamatan] = useState([]);
+
+  useEffect(() => {
+    const getData = async () => {
+      setLoading(true);
+      const paslon = await fetchSuaraByPaslon();
+      setSuaraPaslon(paslon);
+      setLoading(false);
+    };
+    getData();
+  }, [setLoading]);
+
+  useEffect(() => {
+    const getData = async () => {
+      setLoading(true);
+      const dapil = await fetchSuaraByDapil();
+      setSuaraDapil(dapil);
+      setLoading(false);
+    };
+    getData();
+  }, [setLoading]);
+
+  useEffect(() => {
+    const getData = async () => {
+      setLoading(true);
+      const item = await fetchUserId();
+      setUser(item.data);
+      setLoading(false);
+    };
+    getData();
+  }, [setLoading]);
 
   const lastUpdated = user?.district
     ? suaraByPaslonByKecamatan[0]?.["Last Updated"]
-    : suaraByPaslon[0]?.["Last Updated"];
+    : suaraPaslon[0]?.["Last Updated"];
   const formattedLastUpdated = lastUpdated
     ? formatDistanceToNow(parseISO(lastUpdated), { addSuffix: true })
     : "Belum ada data";
@@ -46,15 +83,13 @@ export default function Home() {
     />
   );
 
-  // useCallback to stabilize setData
   const handleSetData = useCallback((newData) => {
     setData(newData);
   }, []);
 
-  // Effect to fetch data based on user district
   useEffect(() => {
     if (user?.district) {
-      setSuaraByPaslonByKecamatan([]); // Reset to avoid mixing data
+      setSuaraByPaslonByKecamatan([]);
       instance
         .get("/suara/pilkada/paslon/kecamatan", {
           params: { kecamatan: user.district },
@@ -65,15 +100,29 @@ export default function Home() {
     }
   }, [user?.district]);
 
+  const menuData = [
+    { label: "Absensi", icon: <BsPersonCheck />, link: "/absen" },
+    {
+      label: "Kirim Suara",
+      icon: <BsSend />,
+      link: "/kirim-suara",
+    },
+    {
+      label: "Riwayat",
+      icon: <BsClockHistory />,
+      link: "/riwayat",
+    },
+  ];
+
   return (
-    <div className="w-full flex flex-col items-center md:pt-6 pb-10">
-      <div className="sm:w-2/3 flex flex-col gap-12">
+    <div className="w-full flex flex-col items-center py-10">
+      <div className="w-[90%] sm:w-2/3 flex flex-col gap-12">
         {loading ? (
           <JumbotronLoading />
         ) : (
-          <div className="space-y-6 text-center">
+          <div className="space-y-6 text-center ">
             <h1 className="text-4xl md:text-5xl font-semibold">temanbudi</h1>
-            <p className="text-gray-600 font-light">
+            <p className="text-gray-600 font-light ">
               "Kepemimpinan bukan soal kekuasaan, tapi soal tanggung jawab.
               Pemimpin yang jujur dan amanah adalah cermin kemajuan rakyatnya."
             </p>
@@ -103,9 +152,7 @@ export default function Home() {
                 <Charts
                   title={`Suara Paslon ${user?.district || "Seluruh"}`}
                   subtitle="Total suara paslon yang Telah Diterima"
-                  data={
-                    user?.district ? suaraByPaslonByKecamatan : suaraByPaslon
-                  }
+                  data={user?.district ? suaraByPaslonByKecamatan : suaraPaslon}
                   name="Panggilan"
                   value="Total Suara"
                   type="bar"
@@ -120,7 +167,7 @@ export default function Home() {
                   <Charts
                     title="Suara Tiap Dapil"
                     subtitle="Total suara tiap dapil"
-                    data={suaraByDapil}
+                    data={suaraDapil}
                     name="dapil"
                     value="suara"
                     type="pie"
@@ -135,8 +182,8 @@ export default function Home() {
               {loading ? (
                 <SaksiTextLoading />
               ) : (
-                data?.saksi?.total > 0 && (
-                  <p className="text-center font-light mt-4 text-gray-600 max-w-full md:max-w-[90%]">
+                !user?.district && (
+                  <p className="text-center font-light mt-4 text-gray-600 max-w-[90%]">
                     <b className="text-black">
                       {data?.saksi?.withSuara?.pilkada} dari{" "}
                       {data?.saksi?.total}
@@ -148,38 +195,7 @@ export default function Home() {
               )}
             </>
           )}
-          {token && !admin && (
-            <div className="flex flex-col  items-center gap-4 w-full">
-              <p className="font-medium text-center">Menu</p>
-              <div className="flex flex-col gap-1 w-full md:w-2/3">
-                {[
-                  { label: "Absen", icon: <BsPersonCheck />, link: "/absen" },
-                  {
-                    label: "Pilkada",
-                    icon: <BsSend />,
-                    link: "/suara-pilkada",
-                  },
-                  { label: "Pilgub", icon: <BsSend />, link: "/suara-pilgub" },
-                  {
-                    label: "Riwayat",
-                    icon: <BsClockHistory />,
-                    link: "/riwayat",
-                  },
-                ].map((button, index) => (
-                  <React.Fragment key={index}>
-                    <NavLink
-                      to={button.link}
-                      className="hover:bg-gray-100 py-2 px-3 rounded-md flex items-center justify-between"
-                    >
-                      <p>{button.label}</p>
-                      {button.icon}
-                    </NavLink>
-                    {index < 3 && <hr />}
-                  </React.Fragment>
-                ))}
-              </div>
-            </div>
-          )}
+          {token && !admin && <Menu data={menuData} />}
         </div>
       </div>
     </div>

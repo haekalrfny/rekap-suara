@@ -6,23 +6,21 @@ import Cookies from "js-cookie";
 import instance from "../api/api";
 import { useTokenContext } from "../context/TokenContext";
 import Label from "../components/Label";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useStateContext } from "../context/StateContext";
 import BackButton from "../components/BackButton";
 import {
-  fetchPilgubPaslon,
+  fetchPaslonData,
   fetchUserId,
-  fetchRiwayatPilgub,
+  fetchRiwayatPilbub,
 } from "../functions/fetchData";
 
-export default function Pilgub() {
+export default function Pilbub() {
   const { token, attending } = useTokenContext();
   const { setLoadingButton, setLoading } = useStateContext();
   const [paslon, setPaslon] = useState([]);
   const [user, setUser] = useState(null);
   const [riwayat, setRiwayat] = useState([]);
-
-  const navigate = useNavigate();
 
   const [suaraPaslon, setSuaraPaslon] = useState([]);
   const [image, setImage] = useState(null);
@@ -52,7 +50,7 @@ export default function Pilgub() {
   useEffect(() => {
     const getData = async () => {
       setLoading(true);
-      const paslon = await fetchPilgubPaslon();
+      const paslon = await fetchPaslonData();
       setPaslon(paslon);
       setLoading(false);
     };
@@ -72,7 +70,7 @@ export default function Pilgub() {
   useEffect(() => {
     const getData = async () => {
       setLoading(true);
-      const item = await fetchRiwayatPilgub();
+      const item = await fetchRiwayatPilbub();
       setRiwayat(item);
       setLoading(false);
     };
@@ -99,7 +97,7 @@ export default function Pilgub() {
     );
 
     instance
-      .post(`/suara/pilgub/create`, formData, {
+      .post(`/suara/pilkada/create`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${Cookies.get("token")}`,
@@ -140,12 +138,12 @@ export default function Pilgub() {
 
   const updateTps = () => {
     const dataJson = {
-      pilgub: {
+      pilkada: {
         suaraSah: jumlahSuaraTercatat,
         suaraTidakSah: jumlahSuaraTidakSah,
         suaraTidakTerpakai:
-          user?.tps?.pilgub?.kertasSuara - jumlahSuaraTercatat,
-        kertasSuara: user?.tps?.pilgub?.kertasSuara,
+          user?.tps?.pilkada?.kertasSuara - jumlahSuaraTercatat,
+        kertasSuara: user?.tps?.pilkada?.kertasSuara,
         user: user?._id,
       },
     };
@@ -219,7 +217,7 @@ export default function Pilgub() {
       />
 
       <p>
-        ({jumlahSuaraTercatat}/{user?.tps?.pilgub?.kertasSuara}) Suara
+        ({jumlahSuaraTercatat}/{user?.tps?.pilkada?.kertasSuara}) Suara
       </p>
 
       <Button text="Kirim" />

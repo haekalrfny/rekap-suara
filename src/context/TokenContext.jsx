@@ -9,9 +9,6 @@ export const TokenContext = ({ children }) => {
   const id = Cookies.get("_id");
   const [admin, setAdmin] = useState(false);
   const [attending, setAttending] = useState(false);
-  const [isFilled, setIsFilled] = useState(null);
-  const [isFillPilgub, setIsFillPilgub] = useState(null);
-  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const checkToken = () => {
@@ -48,7 +45,6 @@ export const TokenContext = ({ children }) => {
       instance(config)
         .then((res) => {
           setAttending(res.data.attandance);
-          setUser(res.data);
         })
         .catch((err) => {
           console.log(err);
@@ -57,46 +53,13 @@ export const TokenContext = ({ children }) => {
     getDataById();
   }, [id]);
 
-  useEffect(() => {
-    const fetchRiwayat = async () => {
-      const config = {
-        method: "get",
-        url: `/suara/pilkada/user/${id}`,
-        headers: {
-          Authorization: `Bearer ${Cookies.get("token")}`,
-        },
-      };
-      const res = await instance(config);
-      setIsFilled(res.data);
-    };
-    fetchRiwayat();
-  }, [id]);
-
-  useEffect(() => {
-    const fetchRiwayatPilgub = async () => {
-      const config = {
-        method: "get",
-        url: `/suara/pilgub/user/${id}`,
-        headers: {
-          Authorization: `Bearer ${Cookies.get("token")}`,
-        },
-      };
-      const res = await instance(config);
-      setIsFillPilgub(res.data);
-    };
-    fetchRiwayatPilgub();
-  }, [id]);
-
   return (
     <Context.Provider
       value={{
         token,
         setToken,
         admin,
-        user,
         attending,
-        isFilled,
-        isFillPilgub,
       }}
     >
       {children}

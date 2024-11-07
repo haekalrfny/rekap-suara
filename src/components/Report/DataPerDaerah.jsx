@@ -1,92 +1,68 @@
 import React, { useEffect, useState } from "react";
 import ProgressBar from "../ProgressBar";
-import Cookies from "js-cookie";
-import instance from "../../api/api";
-import { useTokenContext } from "../../context/TokenContext";
+import {
+  fetchUserId,
+  fetchReportTPSKecamatan,
+  fetchReportTPSDaerah,
+} from "../../functions/fetchData";
+
 export default function DataPerDaerah({ setValue }) {
   const [data, setData] = useState(null);
-  const { user } = useTokenContext();
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    if (!user?.district) {
-      getReportPerDaerah();
-    } else {
-      getReportPerKecamatan();
-    }
-  }, [user]);
-
-  const getReportPerDaerah = () => {
-    let config = {
-      method: "get",
-      url: "/tps/report/tps",
-      headers: {
-        Authorization: `Bearer ${Cookies.get("token")}`,
-      },
+    const fetchData = async () => {
+      if (user) {
+        const item = user.district
+          ? await fetchReportTPSKecamatan(user.district)
+          : await fetchReportTPSDaerah();
+        setData(item);
+        setValue(item);
+      }
     };
-    instance
-      .request(config)
-      .then((res) => {
-        setData(res.data);
-        setValue(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+    fetchData();
+  }, [user, setValue]);
 
-  const getReportPerKecamatan = () => {
-    let config = {
-      method: "get",
-      url: "/tps/report/kecamatan",
-      params: { kecamatan: user?.district },
-      headers: {
-        Authorization: `Bearer ${Cookies.get("token")}`,
-      },
+  useEffect(() => {
+    const loadUser = async () => {
+      const item = await fetchUserId();
+      setUser(item.data);
     };
-    instance
-      .request(config)
-      .then((res) => {
-        setData(res.data);
-        setValue(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+    loadUser();
+  }, []);
 
   return (
     <div className="w-full flex flex-col gap-2 p-6 md:min-w-[400px]">
       <h2 className="text-2xl font-semibold">
-        Suara {user?.district ? user?.district : "Kab. Bandung Barat"}
+        Suara {user?.district || "Kab. Bandung Barat"}
       </h2>
       <p className="text-gray-600 mb-4">Jumlah Suara yang Telah Diterima</p>
       {!user?.district && (
         <>
           <ProgressBar
-            text={"Dapil"}
+            text="Dapil"
             current={data?.dapil.withSuara.pilkada}
             total={data?.dapil.total}
           />
           <ProgressBar
-            text={"Kecamatan"}
+            text="Kecamatan"
             current={data?.kecamatan.withSuara.pilkada}
             total={data?.kecamatan.total}
           />
         </>
       )}
       <ProgressBar
-        text={"Desa"}
+        text="Desa"
         current={data?.desa.withSuara.pilkada}
         total={data?.desa.total}
       />
       <ProgressBar
-        text={"TPS"}
+        text="TPS"
         current={data?.tps.withSuara.pilkada}
         total={data?.tps.total}
       />
-      <p className="text-sm  mt-1 lowercase">
-        *data hanya untuk wilayah{" "}
-        {user?.district ? user?.district : "Kab. Bandung Barat"}
+      <p className="text-sm mt-1 lowercase">
+        *data hanya untuk wilayah {user?.district || "Kab. Bandung Barat"}
       </p>
     </div>
   );
