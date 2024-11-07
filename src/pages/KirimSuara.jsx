@@ -9,12 +9,14 @@ import { useTokenContext } from "../context/TokenContext";
 import HeadingLoad from "../components/Load/HeadingLoad";
 import Label from "../components/Label";
 import BackButton from "../components/BackButton";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useStateContext } from "../context/StateContext";
 
 export default function KirimSuara({ type, name, paslon, fill }) {
   const { token, attending, user } = useTokenContext();
   const { setLoadingButton, loading, setLoading } = useStateContext();
+
+  const navigate = useNavigate();
 
   const [suaraPaslon, setSuaraPaslon] = useState([]);
   const [image, setImage] = useState(null);
@@ -71,6 +73,7 @@ export default function KirimSuara({ type, name, paslon, fill }) {
         showNotification("Suara terkirim", "success");
         setLoadingButton(false);
         setLoading(false);
+        updateTps();
       })
       .catch(() => {
         showNotification("Gagal mengirim", "error");
@@ -97,6 +100,30 @@ export default function KirimSuara({ type, name, paslon, fill }) {
       updatedJumlah[index] = jumlahSuaraSah === "" ? "" : jumlahSuaraSah || 0;
       return updatedJumlah;
     });
+  };
+
+  const updateTps = () => {
+    const dataJson = {
+      [type]: {
+        suaraSah: jumlahSuaraTercatat,
+        suaraTidakSah: jumlahSuaraTidakSah,
+        suaraTidakTerpakai: user?.tps?.[type]?.kertasSuara - jumlahSuaraTercatat,
+        kertasSuara: user?.tps?.[type]?.kertasSuara,
+        user: user?._id,
+      },
+    };
+
+    instance
+      .patch(`/tps/update/${user?.tps?._id}`, dataJson, {
+        headers: { Authorization: `Bearer ${Cookies.get("token")}` },
+      })
+      .then(() => {
+        navigate("/");
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
