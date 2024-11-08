@@ -3,16 +3,21 @@ import React, { useEffect, useState } from "react";
 export default function Image({ url, onCancel }) {
   const [displayUrl, setDisplayUrl] = useState(null);
 
-  console.log(onCancel)
-
   useEffect(() => {
-    if (url instanceof File) {
-      const objectUrl = URL.createObjectURL(url);
+    let objectUrl = null;
+
+    if (url instanceof File || url instanceof Blob) {
+      objectUrl = URL.createObjectURL(url);
       setDisplayUrl(objectUrl);
-      return () => URL.revokeObjectURL(objectUrl);
     } else {
       setDisplayUrl(url);
     }
+
+    return () => {
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl);
+      }
+    };
   }, [url]);
 
   return (

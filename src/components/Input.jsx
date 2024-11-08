@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { GoEye, GoEyeClosed } from "react-icons/go";
 import { BsUpload } from "react-icons/bs";
+import imageCompression from "browser-image-compression"; // Import image compression library
 
 export default function Input({
   value,
@@ -19,10 +20,29 @@ export default function Input({
     setPasswordVisible(!passwordVisible);
   };
 
+  const compressImage = async (file) => {
+    const options = {
+      maxSizeMB: 1,
+      maxWidthOrHeight: 800,
+      useWebWorker: true,
+    };
+    try {
+      const compressedFile = await imageCompression(file, options);
+      setValue(compressedFile); // Set the compressed file as the value
+      setFileName(compressedFile.name); // Update the file name for display
+    } catch (error) {
+      console.error("Error compressing image", error);
+    }
+  };
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    setValue && setValue(file);
-    setFileName(file ? file.name : "Tidak ada file yang dipilih");
+    if (file && file.type.startsWith("image/")) {
+      compressImage(file); // Compress the image before setting it
+    } else {
+      setValue(file); // Set the file as it is if it's not an image
+      setFileName(file ? file.name : "Tidak ada file yang dipilih");
+    }
   };
 
   return (

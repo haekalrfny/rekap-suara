@@ -1,11 +1,25 @@
 import React, { useRef, useState } from "react";
 import Button from "./Button";
 import Image from "./Image";
-
+import imageCompression from "browser-image-compression";
 export default function InputImage({ value, setValue, required }) {
   const fileInputRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
   const [showImage, setShowImage] = useState(false);
+
+  const compressImage = async (file) => {
+    const options = {
+      maxSizeMB: 1,
+      maxWidthOrHeight: 800,
+      useWebWorker: true,
+    };
+    try {
+      const compressedFile = await imageCompression(file, options);
+      setValue(compressedFile);
+    } catch (error) {
+      console.error("Error compressing image", error);
+    }
+  };
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -15,14 +29,14 @@ export default function InputImage({ value, setValue, required }) {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
     if (file && file.type.startsWith("image/")) {
-      setValue(file);
+      compressImage(file);
     }
   };
 
   const handleChange = (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
-      setValue(file);
+      compressImage(file);
     }
   };
 
@@ -50,7 +64,15 @@ export default function InputImage({ value, setValue, required }) {
             {isHovered && (
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 ">
                 <div className="space-y-2">
-                  <Button text={"Ganti Foto"} onClick={handleClick} outline />
+                  <Button
+                    text={"Ganti Foto"}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleClick()
+                    }}
+                    outline
+                  />
                   <Button
                     text={"Lihat Foto"}
                     onClick={(e) => {
