@@ -1,11 +1,8 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  BsArrowRightShort,
-  BsClockHistory,
-  BsSend,
-  BsPersonCheck,
-} from "react-icons/bs";
+import { BsArrowRightShort, BsSendFill } from "react-icons/bs";
+import { FaUserCheck } from "react-icons/fa6";
+import { LuScroll, LuHistory } from "react-icons/lu";
 import { formatDistanceToNow, parseISO, setDefaultOptions } from "date-fns";
 import { id } from "date-fns/locale";
 import Charts from "../components/Charts";
@@ -24,6 +21,7 @@ import {
 import Cookies from "js-cookie";
 import instance from "../api/api";
 import Menu from "../components/Menu";
+import Loading from "../components/Loading";
 
 setDefaultOptions({ locale: id });
 
@@ -101,15 +99,20 @@ export default function Home() {
   }, [user?.district]);
 
   const menuData = [
-    { label: "Absensi", icon: <BsPersonCheck />, link: "/absen" },
+    { label: "Absensi", icon: <FaUserCheck />, link: "/absen" },
     {
-      label: "Kirim Suara",
-      icon: <BsSend />,
+      label: "Surat Suara",
+      icon: <LuScroll />,
+      link: "/kertas-suara",
+    },
+    {
+      label: "Suara Pilkada",
+      icon: <BsSendFill />,
       link: "/kirim-suara",
     },
     {
       label: "Riwayat",
-      icon: <BsClockHistory />,
+      icon: <LuHistory />,
       link: "/riwayat",
     },
   ];
@@ -128,14 +131,20 @@ export default function Home() {
             </p>
           </div>
         )}
-        {!admin && (
-          <div className="flex items-center justify-center">
-            <img
-              src="./people.svg"
-              alt="people"
-              className="w-[90%] md:w-[350px]"
-            />
+        {loading ? (
+          <div className="w-full h-64">
+            <Loading />
           </div>
+        ) : (
+          !admin && (
+            <div className="flex items-center justify-center">
+              <img
+                src="./people.svg"
+                alt="people"
+                className="w-[90%] md:w-[350px]"
+              />
+            </div>
+          )
         )}
         <div className="flex flex-col justify-center items-center gap-10">
           {!token &&

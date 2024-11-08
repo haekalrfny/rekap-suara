@@ -1,9 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FiChevronDown, FiMenu } from "react-icons/fi";
-
 import { AiOutlineClose } from "react-icons/ai";
-import Cookies from "js-cookie";
 import Button from "./Button";
 import { useTokenContext } from "../context/TokenContext";
 
@@ -91,10 +89,30 @@ const Navbar = () => {
             <li>
               <div className="flex items-center cursor-pointer">
                 <Link
+                  to={token ? "/absen" : "/login"}
+                  className="hover:text-gray-800"
+                >
+                  Absensi
+                </Link>
+              </div>
+            </li>
+            <li>
+              <div className="flex items-center cursor-pointer">
+                <Link
+                  to={token ? "/kertas-suara" : "/login"}
+                  className="hover:text-gray-800"
+                >
+                  Surat Suara
+                </Link>
+              </div>
+            </li>
+            <li>
+              <div className="flex items-center cursor-pointer">
+                <Link
                   to={token ? "/kirim-suara" : "/login"}
                   className="hover:text-gray-800"
                 >
-                  Kirim Suara
+                  Suara Pilkada
                 </Link>
               </div>
             </li>
@@ -178,11 +196,29 @@ const Navbar = () => {
               <>
                 <li>
                   <Link
+                    to={token ? "/absen" : "/login"}
+                    className="hover:text-gray-400"
+                    onClick={toggleMobileMenu}
+                  >
+                    Absensi
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to={token ? "/kertas-suara" : "/login"}
+                    className="hover:text-gray-400"
+                    onClick={toggleMobileMenu}
+                  >
+                    Surat Suara
+                  </Link>
+                </li>
+                <li>
+                  <Link
                     to={token ? "/kirim-suara" : "/login"}
                     className="hover:text-gray-400"
                     onClick={toggleMobileMenu}
                   >
-                    Kirim Suara
+                    Suara Pilkada
                   </Link>
                 </li>
               </>

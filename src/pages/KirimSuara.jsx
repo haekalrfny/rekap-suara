@@ -1,38 +1,66 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNotif } from "../context/NotifContext";
 import Cookies from "js-cookie";
 import { useTokenContext } from "../context/TokenContext";
 import HeadingLoad from "../components/Load/HeadingLoad";
-import BackButton from "../components/BackButton";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useStateContext } from "../context/StateContext";
 import Pilbub from "./Pilbup";
 import Pilgub from "./Pilgub";
-import Switch from "../components/Switch";
+import Menu from "../components/Menu";
+import { LuScroll } from "react-icons/lu";
+import { fetchUserId } from "../functions/fetchData";
 
 export default function KirimSuara() {
-  const { token, attending } = useTokenContext();
-  const { loading } = useStateContext();
-  const [type, setType] = useState("pilbub");
-
+  const { token } = useTokenContext();
+  const { loading, setLoading } = useStateContext();
+  const [type, setType] = useState("");
+  const [user, setUser] = useState(null);
+  const [attending, setAttending] = useState(null);
+  const navigate = useNavigate();
   const showNotification = useNotif();
 
-  if ((!token && !Cookies.get("token")) || !attending) {
-    showNotification(
-      !token ? "Anda harus login terlebih dahulu" : "Anda belum mengisi absen",
-      "error"
-    );
-    return <Navigate to="/login" />;
-  }
+  const suratSuara =
+    user?.tps?.pilkada?.kertasSuara && user?.tps?.pilgub?.kertasSuara;
 
-  const menuSwitch = [
+  useEffect(() => {
+    if (attending === false) {
+      showNotification("Anda belum mengisi absen", "error");
+      navigate("/");
+    }
+  }, [attending, navigate, showNotification]);
+
+  useEffect(() => {
+    if (user && !suratSuara) {
+      showNotification("Surat Suara belum diisi", "error");
+      navigate("/");
+    }
+  }, [suratSuara, user, navigate, showNotification]);
+
+  useEffect(() => {
+    if (!token && !Cookies.get("token")) {
+      showNotification("Anda harus login terlebih dahulu", "error");
+      return navigate("/login");
+    }
+  }, [navigate, token]);
+
+  useEffect(() => {
+    const getData = async () => {
+      setLoading(true);
+      const item = await fetchUserId();
+      setUser(item.data);
+      setAttending(item.attandance);
+      setLoading(false);
+    };
+    getData();
+  }, [setLoading]);
+
+  const menuData = [
+    { label: "Pilkada KBB", icon: <LuScroll />, link: () => setType("pilbub") },
     {
-      name: "Pilkada KBB",
-      value: "pilbub",
-    },
-    {
-      name: "Pilkada Jabar",
-      value: "pilgub",
+      label: "Pilkada Jabar",
+      icon: <LuScroll />,
+      link: () => setType("pilgub"),
     },
   ];
 
@@ -51,8 +79,7 @@ export default function KirimSuara() {
             </p>
           </div>
         )}
-        <Switch menu={menuSwitch} value={type} setValue={setType} />
-
+        {!type && <Menu data={menuData} isFull={true} type="click" />}
         {type === "pilbub" ? <Pilbub /> : type === "pilgub" ? <Pilgub /> : null}
       </div>
     </div>

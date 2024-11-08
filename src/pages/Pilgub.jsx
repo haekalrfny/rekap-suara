@@ -14,10 +14,11 @@ import {
   fetchUserId,
   fetchRiwayatPilgub,
 } from "../functions/fetchData";
+import Loading from "../components/Loading";
 
 export default function Pilgub() {
-  const { token, attending } = useTokenContext();
-  const { setLoadingButton, setLoading } = useStateContext();
+  const { token } = useTokenContext();
+  const { setLoadingButton, setLoading, loading } = useStateContext();
   const [paslon, setPaslon] = useState([]);
   const [user, setUser] = useState(null);
   const [riwayat, setRiwayat] = useState([]);
@@ -27,6 +28,7 @@ export default function Pilgub() {
   const [suaraPaslon, setSuaraPaslon] = useState([]);
   const [image, setImage] = useState(null);
   const [jumlahSuara, setJumlahSuara] = useState(Array(paslon.length).fill(""));
+  const [jumlahSuaraSah, setJumlahSuaraSah] = useState(0);
   const [jumlahSuaraTidakSah, setJumlahSuaraTidakSah] = useState(0);
   const [jumlahSuaraTercatat, setJumlahSuaraTercatat] = useState(0);
 
@@ -37,17 +39,17 @@ export default function Pilgub() {
     setJumlahSuaraTercatat(
       jumlahSuaraNum.reduce((a, b) => a + b, 0) + jumlahSuaraTidakSahNum
     );
-  }, [jumlahSuara, jumlahSuaraTidakSah]);
+    setJumlahSuaraSah(jumlahSuaraNum.reduce((a, b) => a + b, 0));
+  }, [jumlahSuara, jumlahSuaraSah, jumlahSuaraTidakSah]);
 
   const showNotification = useNotif();
 
-  if ((!token && !Cookies.get("token")) || !attending) {
-    showNotification(
-      !token ? "Anda harus login terlebih dahulu" : "Anda belum mengisi absen",
-      "error"
-    );
-    return <Navigate to="/login" />;
-  }
+  useEffect(() => {
+    if (!token && !Cookies.get("token")) {
+      showNotification("Anda harus login terlebih dahulu", "error");
+      return navigate("/login");
+    }
+  }, [navigate, token]);
 
   useEffect(() => {
     const getData = async () => {
@@ -141,10 +143,10 @@ export default function Pilgub() {
   const updateTps = () => {
     const dataJson = {
       pilgub: {
-        suaraSah: jumlahSuaraTercatat,
+        suaraSah: jumlahSuaraSah,
         suaraTidakSah: jumlahSuaraTidakSah,
         suaraTidakTerpakai:
-          user?.tps?.pilgub?.kertasSuara - jumlahSuaraTercatat,
+          user?.tps?.pilkada?.kertasSuara - jumlahSuaraTercatat,
         kertasSuara: user?.tps?.pilgub?.kertasSuara,
         user: user?._id,
       },
@@ -157,12 +159,17 @@ export default function Pilgub() {
       .then(() => {
         setTimeout(() => {
           window.location.reload();
+          navigate("/");
         }, 500);
       })
       .catch((err) => console.log(err));
   };
 
-  return riwayat.length >= 1 ? (
+  return loading ? (
+    <div className="w-full h-64">
+      <Loading />
+    </div>
+  ) : riwayat.length >= 1 ? (
     <div className="space-y-6">
       <div>
         <h1 className="font-medium text-lg">Anda telah mengirim suara</h1>

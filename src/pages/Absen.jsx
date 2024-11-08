@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useTokenContext } from "../context/TokenContext";
 import { useStateContext } from "../context/StateContext";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import HeadingLoad from "../components/Load/HeadingLoad";
-import Input from "../components/Input";
 import Button from "../components/Button";
 import instance from "../api/api";
 import { useNotif } from "../context/NotifContext";
 import Cookies from "js-cookie";
 import BackButton from "../components/BackButton";
 import { fetchUserId } from "../functions/fetchData";
+import InputImage from "../components/InputImage";
+import Loading from "../components/Loading";
+
 export default function Absen() {
   const { token } = useTokenContext();
   const { setLoadingButton, loading, setLoading } = useStateContext();
@@ -18,10 +20,12 @@ export default function Absen() {
   const showNotification = useNotif();
   const navigate = useNavigate();
 
-  if (!token) {
-    showNotification("Anda harus login terlebih dahulu", "error");
-    return <Navigate to="/login" />;
-  }
+  useEffect(() => {
+    if (!token && !Cookies.get("token")) {
+      showNotification("Anda harus login terlebih dahulu", "error");
+      return navigate("/login");
+    }
+  }, [navigate, token]);
 
   useEffect(() => {
     const getData = async () => {
@@ -56,6 +60,7 @@ export default function Absen() {
       .then((res) => {
         showNotification("Absen Berhasil", "success");
         setLoadingButton(false);
+        navigate("/");
       })
       .catch((err) => {
         showNotification("Absen Gagal", "error");
@@ -77,7 +82,11 @@ export default function Absen() {
             </p>
           </div>
         )}
-        {attending ? (
+        {loading ? (
+          <div className="w-full h-64">
+            <Loading />
+          </div>
+        ) : attending ? (
           <div className="space-y-6">
             <div>
               <h1 className="font-medium text-lg">Anda telah absen</h1>
@@ -95,14 +104,8 @@ export default function Absen() {
             <BackButton url={"/"} />
           </div>
         ) : (
-          <form className="flex flex-col gap-3" onSubmit={handleAbsen}>
-            <Input
-              name="image"
-              label="Bukti Kehadiran"
-              type="file"
-              setValue={setImage}
-              required
-            />
+          <form className="flex flex-col gap-6" onSubmit={handleAbsen}>
+            <InputImage value={image} setValue={setImage} required={true} />
             <Button text={"Kirim"} onClick={handleAbsen} />
           </form>
         )}

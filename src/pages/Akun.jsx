@@ -60,7 +60,9 @@ export default function Akun() {
               <h1 className="font-semibold text-xl">Profile</h1>
             </div>
             {loading ? (
-              <Loading />
+              <div className="w-full h-64">
+                <Loading />
+              </div>
             ) : (
               <div className="flex flex-col gap-6">
                 <div className="flex items-center justify-between">

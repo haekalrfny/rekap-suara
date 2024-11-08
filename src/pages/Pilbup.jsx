@@ -6,7 +6,7 @@ import Cookies from "js-cookie";
 import instance from "../api/api";
 import { useTokenContext } from "../context/TokenContext";
 import Label from "../components/Label";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useStateContext } from "../context/StateContext";
 import BackButton from "../components/BackButton";
 import {
@@ -14,10 +14,11 @@ import {
   fetchUserId,
   fetchRiwayatPilbub,
 } from "../functions/fetchData";
+import Loading from "../components/Loading";
 
 export default function Pilbub() {
-  const { token, attending } = useTokenContext();
-  const { setLoadingButton, setLoading } = useStateContext();
+  const { token } = useTokenContext();
+  const { setLoadingButton, setLoading, loading } = useStateContext();
   const [paslon, setPaslon] = useState([]);
   const [user, setUser] = useState(null);
   const [riwayat, setRiwayat] = useState([]);
@@ -25,6 +26,7 @@ export default function Pilbub() {
   const [suaraPaslon, setSuaraPaslon] = useState([]);
   const [image, setImage] = useState(null);
   const [jumlahSuara, setJumlahSuara] = useState(Array(paslon.length).fill(""));
+  const [jumlahSuaraSah, setJumlahSuaraSah] = useState(0);
   const [jumlahSuaraTidakSah, setJumlahSuaraTidakSah] = useState(0);
   const [jumlahSuaraTercatat, setJumlahSuaraTercatat] = useState(0);
 
@@ -35,17 +37,18 @@ export default function Pilbub() {
     setJumlahSuaraTercatat(
       jumlahSuaraNum.reduce((a, b) => a + b, 0) + jumlahSuaraTidakSahNum
     );
-  }, [jumlahSuara, jumlahSuaraTidakSah]);
+    setJumlahSuaraSah(jumlahSuaraNum.reduce((a, b) => a + b, 0));
+  }, [jumlahSuara, jumlahSuaraSah, jumlahSuaraTidakSah]);
 
   const showNotification = useNotif();
+  const navigate = useNavigate();
 
-  if ((!token && !Cookies.get("token")) || !attending) {
-    showNotification(
-      !token ? "Anda harus login terlebih dahulu" : "Anda belum mengisi absen",
-      "error"
-    );
-    return <Navigate to="/login" />;
-  }
+  useEffect(() => {
+    if (!token && !Cookies.get("token")) {
+      showNotification("Anda harus login terlebih dahulu", "error");
+      return navigate("/login");
+    }
+  }, [navigate, token]);
 
   useEffect(() => {
     const getData = async () => {
@@ -139,7 +142,7 @@ export default function Pilbub() {
   const updateTps = () => {
     const dataJson = {
       pilkada: {
-        suaraSah: jumlahSuaraTercatat,
+        suaraSah: jumlahSuaraSah,
         suaraTidakSah: jumlahSuaraTidakSah,
         suaraTidakTerpakai:
           user?.tps?.pilkada?.kertasSuara - jumlahSuaraTercatat,
@@ -155,12 +158,17 @@ export default function Pilbub() {
       .then(() => {
         setTimeout(() => {
           window.location.reload();
+          navigate("/");
         }, 500);
       })
       .catch((err) => console.log(err));
   };
 
-  return riwayat.length >= 1 ? (
+  return loading ? (
+    <div className="w-full h-64">
+      <Loading />
+    </div>
+  ) : riwayat.length >= 1 ? (
     <div className="space-y-6">
       <div>
         <h1 className="font-medium text-lg">Anda telah mengirim suara</h1>
