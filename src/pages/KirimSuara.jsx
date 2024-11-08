@@ -71,9 +71,9 @@ export default function KirimSuara() {
           <HeadingLoad />
         ) : (
           <div className="space-y-3">
-            <h1 className="font-bold text-3xl">Suara Pilkada</h1>
+            <h1 className="font-bold text-3xl">Hasil Pilkada</h1>
             <p className="font-light text-gray-600">
-              Silakan Inputkan Suara Pilkada dari Setiap Tempat Pemungutan Suara
+              Silakan Inputkan Hasil Pilkada dari Setiap Tempat Pemungutan Suara
               (TPS) dengan Cermat dan Sesuai Data Asli untuk Memastikan Akurasi
               dalam Penghitungan Suara
             </p>

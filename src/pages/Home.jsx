@@ -90,7 +90,7 @@ export default function Home() {
       link: "/kertas-suara",
     },
     {
-      label: "Suara Pilkada",
+      label: "Hasil Pilkada",
       icon: <BsSendFill />,
       link: "/kirim-suara",
     },

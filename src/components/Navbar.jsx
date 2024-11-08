@@ -112,7 +112,7 @@ const Navbar = () => {
                   to={token ? "/kirim-suara" : "/login"}
                   className="hover:text-gray-800"
                 >
-                  Suara Pilkada
+                  Hasil Pilkada
                 </Link>
               </div>
             </li>
@@ -218,7 +218,7 @@ const Navbar = () => {
                     className="hover:text-gray-400"
                     onClick={toggleMobileMenu}
                   >
-                    Suara Pilkada
+                    Hasil Pilkada
                   </Link>
                 </li>
               </>
