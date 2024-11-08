@@ -12,11 +12,11 @@ import BackButton from "../components/BackButton";
 import {
   fetchPaslonData,
   fetchUserId,
-  fetchRiwayatPilbub,
+  fetchRiwayatPilbup,
 } from "../functions/fetchData";
 import Loading from "../components/Loading";
 
-export default function Pilbub() {
+export default function Pilbup() {
   const { token } = useTokenContext();
   const { setLoadingButton, setLoading, loading } = useStateContext();
   const [paslon, setPaslon] = useState([]);
@@ -73,7 +73,7 @@ export default function Pilbub() {
   useEffect(() => {
     const getData = async () => {
       setLoading(true);
-      const item = await fetchRiwayatPilbub();
+      const item = await fetchRiwayatPilbup();
       setRiwayat(item);
       setLoading(false);
     };

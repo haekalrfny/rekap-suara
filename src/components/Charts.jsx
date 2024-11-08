@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   BarChart,
   Bar,
@@ -30,10 +30,22 @@ import {
 import { useStateContext } from "../context/StateContext";
 import ChartLoading from "./Load/ChartLoading";
 
-const colors = ["#C2410C", "#1D4ED8", "#B91C1C", "#15803D", "#374151"];
+const pilbupColors = ["#C2410C", "#1D4ED8", "#B91C1C", "#15803D", "#374151"];
+const pilgubColors = ["#15803D", "#B91C1C", "#1D4ED8", "#d97706", "#374151"];
 
-export default function Charts({ title, subtitle, data, name, value, type }) {
+export default function Charts({
+  title,
+  subtitle,
+  data,
+  name,
+  value,
+  type,
+  color,
+}) {
   const { loading } = useStateContext();
+  const [colors, setColors] = useState(
+    color === "pilbup" ? pilbupColors : pilgubColors
+  );
 
   return (
     <>

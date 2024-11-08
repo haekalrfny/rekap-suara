@@ -17,9 +17,8 @@ import {
   fetchSuaraByPaslon,
   fetchSuaraByDapil,
   fetchUserId,
+  fetchSuaraKecamatan,
 } from "../functions/fetchData";
-import Cookies from "js-cookie";
-import instance from "../api/api";
 import Menu from "../components/Menu";
 import Loading from "../components/Loading";
 
@@ -29,41 +28,43 @@ export default function Home() {
   const navigate = useNavigate();
   const { token, admin } = useTokenContext();
   const { loading, setLoading } = useStateContext();
-  const [user, setUser] = useState(null);
   const [data, setData] = useState(null);
+  const [user, setUser] = useState(null);
   const [suaraPaslon, setSuaraPaslon] = useState([]);
+  const [suaraPaslonPilgub, setSuaraPaslonPilgub] = useState([]);
   const [suaraDapil, setSuaraDapil] = useState([]);
+  const [suaraDapilPilgub, setSuaraDapilPilgub] = useState([]);
   const [suaraByPaslonByKecamatan, setSuaraByPaslonByKecamatan] = useState([]);
+  const [suaraByPaslonByKecamatnPilgub, setSuaraByPaslonByKecamatanPilgub] =
+    useState([]);
 
   useEffect(() => {
     const getData = async () => {
       setLoading(true);
-      const paslon = await fetchSuaraByPaslon();
-      setSuaraPaslon(paslon);
+      const pilkadaPaslon = await fetchSuaraByPaslon("pilkada");
+      setSuaraPaslon(pilkadaPaslon);
+      const pilgubPaslon = await fetchSuaraByPaslon("pilgub");
+      setSuaraPaslonPilgub(pilgubPaslon);
+      const pilkadaDapil = await fetchSuaraByDapil("pilkada");
+      setSuaraDapil(pilkadaDapil);
+      const pilgubDapil = await fetchSuaraByDapil("pilgub");
+      setSuaraDapilPilgub(pilgubDapil);
+      const pilkadaSuaraKecamatan = await fetchSuaraKecamatan(
+        "pilkada",
+        user?.district
+      );
+      setSuaraByPaslonByKecamatan(pilkadaSuaraKecamatan);
+      const pilgubSuaraKecamatan = await fetchSuaraKecamatan(
+        "pilgub",
+        user?.district
+      );
+      setSuaraByPaslonByKecamatanPilgub(pilgubSuaraKecamatan);
+      const myUser = await fetchUserId();
+      setUser(myUser.data);
       setLoading(false);
     };
     getData();
-  }, [setLoading]);
-
-  useEffect(() => {
-    const getData = async () => {
-      setLoading(true);
-      const dapil = await fetchSuaraByDapil();
-      setSuaraDapil(dapil);
-      setLoading(false);
-    };
-    getData();
-  }, [setLoading]);
-
-  useEffect(() => {
-    const getData = async () => {
-      setLoading(true);
-      const item = await fetchUserId();
-      setUser(item.data);
-      setLoading(false);
-    };
-    getData();
-  }, [setLoading]);
+  }, [setLoading, user?.district]);
 
   const lastUpdated = user?.district
     ? suaraByPaslonByKecamatan[0]?.["Last Updated"]
@@ -80,23 +81,6 @@ export default function Home() {
       outline
     />
   );
-
-  const handleSetData = useCallback((newData) => {
-    setData(newData);
-  }, []);
-
-  useEffect(() => {
-    if (user?.district) {
-      setSuaraByPaslonByKecamatan([]);
-      instance
-        .get("/suara/pilkada/paslon/kecamatan", {
-          params: { kecamatan: user.district },
-          headers: { Authorization: `Bearer ${Cookies.get("token")}` },
-        })
-        .then((res) => setSuaraByPaslonByKecamatan(res.data))
-        .catch((err) => console.error("Error fetching data", err));
-    }
-  }, [user?.district]);
 
   const menuData = [
     { label: "Absensi", icon: <FaUserCheck />, link: "/absen" },
@@ -119,7 +103,7 @@ export default function Home() {
 
   return (
     <div className="w-full flex flex-col items-center py-10">
-      <div className="w-[90%] sm:w-2/3 flex flex-col gap-12">
+      <div className="w-[90%] sm:w-2/4 flex flex-col gap-12">
         {loading ? (
           <JumbotronLoading />
         ) : (
@@ -157,37 +141,71 @@ export default function Home() {
             )}
           {admin && (
             <>
-              <div className="flex flex-col lg:flex-row justify-between gap-4">
+              <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
                 <Charts
-                  title={`Suara Paslon ${user?.district || "Seluruh"}`}
+                  title={`Suara Paslon ${user?.district || "Pilkada KBB"}`}
                   subtitle="Total suara paslon yang Telah Diterima"
                   data={user?.district ? suaraByPaslonByKecamatan : suaraPaslon}
                   name="Panggilan"
                   value="Total Suara"
                   type="bar"
+                  color="pilbup"
                 />
+
                 {user?.district ? (
                   loading ? (
                     <ChartLoading />
                   ) : (
-                    <DataPerDaerah setValue={handleSetData} />
+                    <DataPerDaerah setValue={setData} />
                   )
                 ) : (
                   <Charts
-                    title="Suara Tiap Dapil"
+                    title={`Suara Paslon ${user?.district || "Pilkada Jabar"}`}
+                    subtitle="Total suara paslon yang Telah Diterima"
+                    data={
+                      user?.district
+                        ? suaraByPaslonByKecamatnPilgub
+                        : suaraPaslonPilgub
+                    }
+                    name="Panggilan"
+                    value="Total Suara"
+                    type="bar"
+                    color="pilgub"
+                  />
+                )}
+              </div>
+              {!user?.district && !loading && (
+                <div className="w-full flex items-center justify-center md:w-2/3">
+                  <Charts
+                    title="Suara Tiap Dapil Pilkada KBB"
                     subtitle="Total suara tiap dapil"
                     data={suaraDapil}
                     name="dapil"
                     value="suara"
                     type="pie"
+                    color={"pilbup"}
                   />
-                )}
-              </div>
-              {!user?.district && !loading && (
-                <div className="w-full md:w-2/3">
-                  <DataPerDaerah setValue={handleSetData} />
+                  <Charts
+                    title="Suara Tiap Dapil Pilkada Jabar"
+                    subtitle="Total suara tiap dapil"
+                    data={suaraDapilPilgub}
+                    name="dapil"
+                    value="suara"
+                    type="pie"
+                    color={"pilgub"}
+                  />
                 </div>
               )}
+              {!user?.district && !loading && (
+                <div className="w-full flex items-center justify-center md:w-2/3">
+                  {loading ? (
+                    <ChartLoading />
+                  ) : (
+                    <DataPerDaerah setValue={setData} />
+                  )}
+                </div>
+              )}
+
               {loading ? (
                 <SaksiTextLoading />
               ) : (
@@ -204,7 +222,7 @@ export default function Home() {
               )}
             </>
           )}
-          {token && !admin && <Menu data={menuData} />}
+          {token && !admin && <Menu data={menuData} isFull={true} />}
         </div>
       </div>
     </div>

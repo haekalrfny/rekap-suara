@@ -8,11 +8,11 @@ import { useTokenContext } from "../context/TokenContext";
 import { HiOutlineExternalLink } from "react-icons/hi";
 import Image from "../components/Image";
 import Switch from "../components/Switch";
-import { fetchRiwayatPilbub, fetchRiwayatPilgub } from "../functions/fetchData";
+import { fetchRiwayatPilbup, fetchRiwayatPilgub } from "../functions/fetchData";
 
 export default function Riwayat() {
   const { token } = useTokenContext();
-  const [riwayatPilbub, setRiwayatPilbub] = useState([]);
+  const [riwayatPilbup, setRiwayatPilbup] = useState([]);
   const [riwayatPilgub, setRiwayatPilgub] = useState([]);
   const [image, setImage] = useState(null);
   const [showImage, setShowImage] = useState(false);
@@ -28,8 +28,8 @@ export default function Riwayat() {
   useEffect(() => {
     const getData = async () => {
       setLoading(true);
-      const item = await fetchRiwayatPilbub();
-      setRiwayatPilbub(item);
+      const item = await fetchRiwayatPilbup();
+      setRiwayatPilbup(item);
       setLoading(false);
     };
     getData();
@@ -148,7 +148,7 @@ export default function Riwayat() {
     </div>
   );
 
-  const displayedRiwayat = type === "pilkada" ? riwayatPilbub : riwayatPilgub;
+  const displayedRiwayat = type === "pilkada" ? riwayatPilbup : riwayatPilgub;
 
   return (
     <>

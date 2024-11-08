@@ -43,9 +43,9 @@ export const fetchPilgubPaslon = async () => {
   }
 };
 
-export const fetchSuaraByPaslon = async () => {
+export const fetchSuaraByPaslon = async (type) => {
   try {
-    const res = await instance.get("/suara/pilkada/paslon", {
+    const res = await instance.get(`/suara/${type}/paslon`, {
       headers: { Authorization: `Bearer ${Cookies.get("token")}` },
     });
     return res.data;
@@ -55,9 +55,9 @@ export const fetchSuaraByPaslon = async () => {
   }
 };
 
-export const fetchSuaraByDapil = async () => {
+export const fetchSuaraByDapil = async (type) => {
   try {
-    const res = await instance.get("/tps/dapil/pilkada", {
+    const res = await instance.get(`/tps/dapil/${type}`, {
       headers: { Authorization: `Bearer ${Cookies.get("token")}` },
     });
     return res.data;
@@ -80,7 +80,20 @@ export const fetchSuaraByPaslonKecamatan = async (kecamatan) => {
   }
 };
 
-export const fetchRiwayatPilbub = async () => {
+export const fetchSuaraKecamatan = async (type, kecamatan) => {
+  try {
+    const res = await instance.get(`/suara/${type}/paslon/kecamatan`, {
+      headers: { Authorization: `Bearer ${Cookies.get("token")}` },
+      params: { kecamatan },
+    });
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching Suara by Dapil data:", error);
+    return [];
+  }
+};
+
+export const fetchRiwayatPilbup = async () => {
   try {
     const res = await instance.get(
       `/suara/pilkada/user/${Cookies.get("_id")}`,

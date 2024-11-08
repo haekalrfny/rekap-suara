@@ -5,7 +5,7 @@ import { useTokenContext } from "../context/TokenContext";
 import HeadingLoad from "../components/Load/HeadingLoad";
 import { useNavigate } from "react-router-dom";
 import { useStateContext } from "../context/StateContext";
-import Pilbub from "./Pilbup";
+import Pilbup from "./Pilbup";
 import Pilgub from "./Pilgub";
 import Menu from "../components/Menu";
 import { LuScroll } from "react-icons/lu";
@@ -56,7 +56,7 @@ export default function KirimSuara() {
   }, [setLoading]);
 
   const menuData = [
-    { label: "Pilkada KBB", icon: <LuScroll />, link: () => setType("pilbub") },
+    { label: "Pilkada KBB", icon: <LuScroll />, link: () => setType("pilbup") },
     {
       label: "Pilkada Jabar",
       icon: <LuScroll />,
@@ -80,7 +80,7 @@ export default function KirimSuara() {
           </div>
         )}
         {!type && <Menu data={menuData} isFull={true} type="click" />}
-        {type === "pilbub" ? <Pilbub /> : type === "pilgub" ? <Pilgub /> : null}
+        {type === "pilbup" ? <Pilbup /> : type === "pilgub" ? <Pilgub /> : null}
       </div>
     </div>
   );
