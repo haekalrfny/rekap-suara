@@ -14,7 +14,7 @@ export default function Button({
   return (
     <button
       onClick={onClick}
-      className={`border font-medium w-${isFull ? "full" : "auto"} ${
+      className={`border font-medium ${isFull ? "w-full" : "w-max"} ${
         isCancel
           ? "bg-red-500 text-white border-red-500 hover:bg-red-600"
           : outline

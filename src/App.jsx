@@ -23,6 +23,7 @@ import { TokenContext } from "./context/TokenContext";
 import Riwayat from "./pages/Riwayat";
 import Absen from "./pages/Absen";
 import KertasSuara from "./pages/KertasSuara";
+import Users from "./pages/Users";
 
 export default function App() {
   return (
@@ -39,6 +40,7 @@ export default function App() {
                 <Route index path="/paslon" element={<Paslon />} />
                 <Route index path="/paslon/:id" element={<PaslonDetail />} />
                 <Route index path="/akun" element={<Akun />} />
+                <Route index path="/users" element={<Users />} />
                 <Route index path="/riwayat" element={<Riwayat />} />
                 <Route index path="/absen" element={<Absen />} />
               </Route>

@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import Paginate from "../components/Paginate";
-import Search from "../components/Search";
-import DesktopTPS from "../components/TPS/DesktopTPS";
-import MobileTPS from "../components/TPS/MobileTPS";
 import { useTokenContext } from "../context/TokenContext";
 import Cookies from "js-cookie";
 import instance from "../api/api";
@@ -13,6 +10,8 @@ import HeadingLoad from "../components/Load/HeadingLoad";
 import Button from "../components/Button";
 import { useNotif } from "../context/NotifContext";
 import { fetchUserId } from "../functions/fetchData";
+import Table from "../components/Table";
+import Filters from "../components/Filters";
 
 export default function TPS() {
   const [data, setData] = useState([]);
@@ -20,12 +19,79 @@ export default function TPS() {
   const [pages, setPages] = useState(0);
   const [rows, setRows] = useState(0);
   const [user, setUser] = useState(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showModal, setShowModal] = useState(false);
   const [id, setId] = useState(null);
   const { token } = useTokenContext();
   const { setLoading, loading, setLoadingButton } = useStateContext();
   const showNotification = useNotif();
+  const [showModal, setShowModal] = useState(false);
+  const [filters, setFilters] = useState({});
+  const [showFilters, setShowFilters] = useState(false);
+
+  const openModal = (_id) => {
+    setId(_id);
+    setShowModal(true);
+  };
+
+  const filterConfig = [
+    {
+      label: "Nomor TPS",
+      type: "text",
+      key: "kodeTPS",
+    },
+    {
+      label: "Desa",
+      type: "text",
+      key: "desa",
+    },
+    ...(user?.district
+      ? []
+      : [
+          {
+            label: "Kecamatan",
+            type: "text",
+            key: "kecamatan",
+          },
+          {
+            label: "Dapil",
+            type: "text",
+            key: "dapil",
+          },
+        ]),
+    {
+      label: "Pilkada KBB",
+      type: "select",
+      key: "pilbup",
+      options: [
+        { value: true, label: "Ya" },
+        { value: false, label: "Tidak" },
+      ],
+    },
+    {
+      label: "Pilkada Jabar",
+      type: "select",
+      key: "pilgub",
+      options: [
+        { value: true, label: "Ya" },
+        { value: false, label: "Tidak" },
+      ],
+    },
+  ];
+
+  const tableConfig = {
+    columns: [
+      { label: "Nomor TPS", key: "kodeTPS" },
+      { label: "Desa", key: "desa" },
+      { label: "Kecamatan", key: "kecamatan" },
+      { label: "Dapil", key: "dapil" },
+      {
+        label: "Aksi",
+        key: "Detail",
+        type: "action",
+        actions: openModal,
+        primary: "_id",
+      },
+    ],
+  };
 
   if (!token && !Cookies.get("token")) {
     showNotification("Anda harus login terlebih dahulu", "error");
@@ -37,8 +103,37 @@ export default function TPS() {
   };
 
   useEffect(() => {
+    const getTPS = () => {
+      setLoading(true);
+      let config = {
+        method: "get",
+        url: `/tps/page`,
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+        params: {
+          page,
+          limit: 12,
+          ...filters,
+        },
+      };
+      instance
+        .request(config)
+        .then((res) => {
+          setData(res.data.results);
+          setPage(res.data.page);
+          setPages(res.data.totalPage);
+          setRows(res.data.totalRows);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+        })
+        .finally(() => setLoading(false));
+    };
     getTPS();
-  }, [page, searchQuery, user]);
+  }, [page, pages, rows, filters]);
 
   useEffect(() => {
     const getData = async () => {
@@ -46,54 +141,25 @@ export default function TPS() {
       const item = await fetchUserId();
       setUser(item.data);
       setLoading(false);
+      if (item.data?.district) {
+        setFilters((prevFilters) => ({
+          ...prevFilters,
+          kecamatan: item.data.district,
+        }));
+      }
     };
     getData();
   }, [setLoading]);
-
-  const getTPS = () => {
-    setLoading(true);
-    let config = {
-      method: "get",
-      url: `/tps${user?.district ? "/kecamatan" : ""}/page`,
-      headers: {
-        Authorization: `Bearer ${Cookies.get("token")}`,
-      },
-      params: {
-        page,
-        filter: searchQuery,
-        kecamatan: user?.district,
-      },
-    };
-    instance
-      .request(config)
-      .then((res) => {
-        setData(res.data.result);
-        setPage(res.data.page);
-        setPages(res.data.totalPage);
-        setRows(res.data.totalRows);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoading(false);
-      })
-      .finally(() => setLoading(false));
-  };
-
-  const openModal = (_id) => {
-    setId(_id);
-    setShowModal(true);
-  };
 
   const downloadTPS = () => {
     setLoadingButton(true);
     let config = {
       method: "get",
       url: `/tps/excel/${user?.district ? "kecamatan" : "tps"}`,
+      params: { ...filters },
       headers: {
         Authorization: `Bearer ${Cookies.get("token")}`,
       },
-      params: { kecamatan: user?.district },
       responseType: "blob",
     };
 
@@ -107,7 +173,6 @@ export default function TPS() {
         link.setAttribute("download", "TPS.xlsx");
         document.body.appendChild(link);
         link.click();
-
         link.parentNode.removeChild(link);
         setLoadingButton(false);
       })
@@ -136,22 +201,24 @@ export default function TPS() {
                 </p>
               </>
             )}
-            <Button
-              text={"Download TPS"}
-              onClick={downloadTPS}
-              isFull={false}
-              size={"sm"}
-            />
-            <Search
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              setCurrentPage={setPage}
-            />
+            <div className="flex gap-1.5">
+              <Button
+                text={"Filters"}
+                onClick={() => setShowFilters(true)}
+                isFull={false}
+                size={"sm"}
+              />
+              <Button
+                text={"Download"}
+                onClick={downloadTPS}
+                isFull={false}
+                size={"sm"}
+              />
+            </div>
           </div>
         </div>
         <div className="w-full flex flex-col max-w-[90%] gap-3">
-          <DesktopTPS data={data} openModal={openModal} />
-          <MobileTPS data={data} openModal={openModal} />
+          <Table data={data} config={tableConfig} />
           <Paginate
             page={page}
             pages={pages}
@@ -161,6 +228,14 @@ export default function TPS() {
           />
         </div>
       </div>
+      {showFilters && (
+        <Filters
+          filters={filters}
+          setFilters={setFilters}
+          filterConfig={filterConfig}
+          setShowModal={setShowFilters}
+        />
+      )}
       {showModal && (
         <ModalDetail id={id} onCancel={() => setShowModal(false)} />
       )}

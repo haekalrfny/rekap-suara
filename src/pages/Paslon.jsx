@@ -88,7 +88,7 @@ export default function Paslon() {
             </div>
           )}
           <Button
-            text={"Download Paslon"}
+            text={"Download"}
             onClick={downloadPaslonByTPS}
             isFull={false}
             size={"sm"}

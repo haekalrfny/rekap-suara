@@ -153,6 +153,16 @@ const Navbar = () => {
                 >
                   Paslon
                 </Link>
+                <Link
+                  to="/users"
+                  className="block px-4 py-2 hover:bg-gray-100"
+                  onClick={() => {
+                    setDropdownOpen(false);
+                    setMobileMenuOpen(false);
+                  }}
+                >
+                  Users
+                </Link>
               </div>
             )}
           </li>
@@ -257,6 +267,16 @@ const Navbar = () => {
                       }}
                     >
                       - Paslon
+                    </Link>
+                    <Link
+                      to="/users"
+                      className="block  py-1.5 rounded hover:bg-gray-100"
+                      onClick={() => {
+                        setMobileDropdownOpen(false);
+                        setMobileMenuOpen(false);
+                      }}
+                    >
+                      - Users
                     </Link>
                   </div>
                 )}

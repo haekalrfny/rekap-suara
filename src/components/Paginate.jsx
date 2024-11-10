@@ -9,7 +9,7 @@ export default function Paginate({ handlePageClick, data, page, pages, rows }) {
         !data ? "hidden" : "flex"
       }`}
     >
-      <div className="flex gap-2 text-lg md:text-sm">
+      <div className="flex gap-2 text-base md:text-sm">
         <p>
           Page :{" "}
           <span className="font-medium">
@@ -28,7 +28,7 @@ export default function Paginate({ handlePageClick, data, page, pages, rows }) {
         marginPagesDisplayed={1}
         pageRangeDisplayed={2}
         onPageChange={handlePageClick}
-        containerClassName="flex space-x-3 justify-center md:justify-start items-center text-xl md:text-sm"
+        containerClassName="flex space-x-3 justify-center md:justify-start items-center text-base md:text-sm"
         pageLinkClassName="px-2 py-1 hover:bg-gray-200 hover:text-black rounded-md duration-150"
         previousLinkClassName="px-2 py-1 text-black duration-150"
         nextLinkClassName="px-2 md:px-3 py-1 text-black duration-150"
