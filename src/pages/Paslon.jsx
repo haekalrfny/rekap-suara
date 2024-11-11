@@ -8,49 +8,56 @@ import Button from "../components/Button";
 import Cookies from "js-cookie";
 import instance from "../api/api";
 import { useNotif } from "../context/NotifContext";
-import { fetchPaslonData, fetchUserId } from "../functions/fetchData";
+import {
+  fetchPaslonData,
+  fetchUserId,
+  fetchPilgubPaslon,
+} from "../functions/fetchData";
+import Switch from "../components/Switch";
 
 export default function Paslon() {
   const { token } = useTokenContext();
   const { loading, setLoadingButton, setLoading } = useStateContext();
   const [user, setUser] = useState(null);
+  const [type, setType] = useState("pilgub");
   const [paslon, setPaslon] = useState([]);
+  const [pilgub, setPilgub] = useState([]);
   const showNotification = useNotif();
 
-  if (!token && !Cookies.get("token")) {
-    showNotification("Anda harus login terlebih dahulu", "error");
-    return <Navigate to="/login" />;
-  }
+  useEffect(() => {
+    if (!token && !Cookies.get("token")) {
+      showNotification("Anda harus login terlebih dahulu", "error");
+    }
+  }, [token, showNotification]);
 
   useEffect(() => {
     const getData = async () => {
-      setLoading(true);
-      const paslon = await fetchPaslonData();
-      setPaslon(paslon);
-      setLoading(false);
-    };
-    getData();
-  }, [setLoading]);
-
-  useEffect(() => {
-    const getData = async () => {
-      setLoading(true);
-      const item = await fetchUserId();
-      setUser(item.data);
-      setLoading(false);
+      try {
+        setLoading(true);
+        const [paslonData, pilgubData, userData] = await Promise.all([
+          fetchPaslonData(),
+          fetchPilgubPaslon(),
+          fetchUserId(),
+        ]);
+        setPaslon(paslonData);
+        setPilgub(pilgubData);
+        setUser(userData.data);
+      } finally {
+        setLoading(false);
+      }
     };
     getData();
   }, [setLoading]);
 
   const downloadPaslonByTPS = () => {
     setLoadingButton(true);
-    let config = {
+    const config = {
       method: "get",
-      url: `/tps/excel/paslon${user?.district ? "/kecamatan" : ""}/pilkada`,
+      url: `/tps/excel/paslon${user?.district ? "/kecamatan" : ""}/${type}`,
       headers: {
         Authorization: `Bearer ${Cookies.get("token")}`,
       },
-      params: { kecamatan: user?.district ? user?.district : "" },
+      params: { kecamatan: user?.district || "" },
       responseType: "blob",
     };
 
@@ -60,7 +67,6 @@ export default function Paslon() {
         const url = window.URL.createObjectURL(new Blob([res.data]));
         const link = document.createElement("a");
         link.href = url;
-
         link.setAttribute("download", "TPS Paslon.xlsx");
         document.body.appendChild(link);
         link.click();
@@ -68,10 +74,27 @@ export default function Paslon() {
         setLoadingButton(false);
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
         setLoadingButton(false);
       });
   };
+
+  const menuSwitch = [
+    {
+      name: "Pilkada Jabar",
+      value: "pilgub",
+    },
+    {
+      name: "Pilkada KBB",
+      value: "pilkada",
+    },
+  ];
+
+  if (!token && !Cookies.get("token")) {
+    return <Navigate to="/login" />;
+  }
+
+  const displayedPaslon = type === "pilgub" ? pilgub : paslon;
 
   return (
     <div className="w-full flex flex-col items-center md:pt-6 pb-10 gap-6">
@@ -88,17 +111,18 @@ export default function Paslon() {
             </div>
           )}
           <Button
-            text={"Download"}
+            text="Download"
             onClick={downloadPaslonByTPS}
             isFull={false}
-            size={"sm"}
+            size="sm"
           />
+          <Switch menu={menuSwitch} value={type} setValue={setType} />
         </div>
       </div>
       <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-[90%]">
-        {paslon.map((item, index) => {
-          return <PaslonCard item={item} key={index} />;
-        })}
+        {displayedPaslon.map((item, index) => (
+          <PaslonCard item={item} key={index} type={type} />
+        ))}
       </div>
     </div>
   );

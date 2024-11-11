@@ -16,7 +16,7 @@ export default function Riwayat() {
   const [riwayatPilgub, setRiwayatPilgub] = useState([]);
   const [image, setImage] = useState(null);
   const [showImage, setShowImage] = useState(false);
-  const [type, setType] = useState("pilkada");
+  const [type, setType] = useState("pilgub");
   const { loading, setLoading } = useStateContext();
   const showNotification = useNotif();
 
@@ -47,12 +47,12 @@ export default function Riwayat() {
 
   const menuSwitch = [
     {
-      name: "Pilkada KBB",
-      value: "pilkada",
-    },
-    {
       name: "Pilkada Jabar",
       value: "pilgub",
+    },
+    {
+      name: "Pilkada KBB",
+      value: "pilkada",
     },
   ];
 

@@ -1,20 +1,32 @@
-import React, { useState } from "react";
+import React from "react";
 import Button from "../Button";
 import { useStateContext } from "../../context/StateContext";
 import PaslonCardLoad from "../Load/PaslonCardLoad";
 
-export default function PaslonCard({ item }) {
+export default function PaslonCard({ item, type }) {
   const { loading } = useStateContext();
-  const bgColor =
-    item.noUrut === 1
-      ? "bg-orange-100 text-orange-500"
-      : item.noUrut === 2
-      ? "bg-blue-100 text-blue-500"
-      : item.noUrut === 3
-      ? "bg-red-100 text-red-500"
-      : item.noUrut === 4
-      ? "bg-green-100 text-green-500"
-      : "bg-gray-100 text-gray-500";
+
+  const getColorClass = (noUrut, type) => {
+    const colors = {
+      1:
+        type === "pilkada"
+          ? "bg-orange-100 text-orange-500"
+          : "bg-green-100 text-green-500",
+      2:
+        type === "pilkada"
+          ? "bg-blue-100 text-blue-500"
+          : "bg-red-100 text-red-500",
+      3:
+        type === "pilkada"
+          ? "bg-red-100 text-red-500"
+          : "bg-blue-100 text-blue-500",
+      4:
+        type === "pilkada"
+          ? "bg-green-100 text-green-500"
+          : "bg-yellow-100 text-yellow-500",
+    };
+    return colors[noUrut] || "bg-gray-100 text-gray-500";
+  };
 
   return (
     <>
@@ -25,13 +37,16 @@ export default function PaslonCard({ item }) {
           <div className="space-y-3">
             <div>
               <p
-                className={`text-xs py-0.5 px-3 w-max rounded-full ${bgColor} font-semibold`}
+                className={`text-xs py-0.5 px-3 w-max rounded-full ${getColorClass(
+                  item.noUrut,
+                  type
+                )} font-semibold`}
               >
                 No Urut {item.noUrut}
               </p>
             </div>
             <div>
-              <p className="font-medium text-lg">
+              <p className="font-medium text-lg break-words">
                 {item.ketua} - {item.wakilKetua}
               </p>
             </div>
@@ -40,9 +55,12 @@ export default function PaslonCard({ item }) {
             <div className="space-y-3">
               <p className="font-medium">Partai Pengusung :</p>
               {item.partai && item.partai.length > 0 ? (
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap">
                   {item.partai.map((i, idx) => (
-                    <div key={idx} className="aspect-square w-8">
+                    <div
+                      key={idx}
+                      className="aspect-square w-8 h-8 overflow-hidden flex-shrink-0"
+                    >
                       <img
                         src={i.image}
                         alt={i.nama}
@@ -58,7 +76,7 @@ export default function PaslonCard({ item }) {
             <Button
               text={"Detail"}
               onClick={() => {
-                window.location.href = `/paslon/${item._id}`;
+                window.location.href = `/paslon/${type}/${item._id}`;
               }}
               outline={true}
               size={"sm"}

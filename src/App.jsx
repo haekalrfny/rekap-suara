@@ -38,7 +38,11 @@ export default function App() {
                 <Route index path="/kertas-suara" element={<KertasSuara />} />
                 <Route index path="/tps" element={<TPS />} />
                 <Route index path="/paslon" element={<Paslon />} />
-                <Route index path="/paslon/:id" element={<PaslonDetail />} />
+                <Route
+                  index
+                  path="/paslon/:type/:id"
+                  element={<PaslonDetail />}
+                />
                 <Route index path="/akun" element={<Akun />} />
                 <Route index path="/users" element={<Users />} />
                 <Route index path="/riwayat" element={<Riwayat />} />

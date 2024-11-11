@@ -114,7 +114,7 @@ export default function Akun() {
                 <div className="flex items-center justify-between">
                   <p className="font-medium">Role</p>
                   <p
-                    className={`py-0.5 px-3 font-medium text-sm rounded-xl ${
+                    className={`py-0.5 px-3 font-medium text-sm rounded-md ${
                       user?.role === "admin"
                         ? "bg-red-100 text-red-500"
                         : "bg-gray-100 text-gray-500"

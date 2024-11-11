@@ -10,6 +10,7 @@ import Filters from "../components/Filters";
 import Button from "../components/Button";
 import Table from "../components/Table";
 import Paginate from "../components/Paginate";
+import { fetchUserId } from "../functions/fetchData";
 
 export default function Saksi() {
   const [data, setData] = useState([]);
@@ -21,21 +22,46 @@ export default function Saksi() {
   const showNotification = useNotif();
   const [filters, setFilters] = useState({ role: "user" });
   const [showFilters, setShowFilters] = useState(false);
+  const [user, setUser] = useState(null);
 
   const filterConfig = [
+    {
+      label: "Nomor TPS",
+      type: "text",
+      key: "kodeTPS",
+    },
+    {
+      label: "Desa",
+      type: "text",
+      key: "desa",
+    },
+    ...(user?.district
+      ? []
+      : [
+          {
+            label: "Kecamatan",
+            type: "text",
+            key: "kecamatan",
+          },
+          {
+            label: "Dapil",
+            type: "text",
+            key: "dapil",
+          },
+          {
+            label: "Role",
+            type: "select",
+            key: "role",
+            options: [
+              { value: "admin", label: "Admin" },
+              { value: "user", label: "User" },
+            ],
+          },
+        ]),
     {
       label: "Username",
       type: "text",
       key: "username",
-    },
-    {
-      label: "Role",
-      type: "select",
-      key: "role",
-      options: [
-        { value: "admin", label: "Admin" },
-        { value: "user", label: "User" },
-      ],
     },
     {
       label: "Kehadiran",
@@ -98,7 +124,6 @@ export default function Saksi() {
           setPages(res.data.totalPage);
           setRows(res.data.totalRows);
           setLoading(false);
-          console.log(res.data);
         })
         .catch((err) => {
           setLoading(false);
@@ -108,6 +133,22 @@ export default function Saksi() {
     };
     getUsers();
   }, [page, pages, rows, filters]);
+
+  useEffect(() => {
+    const getData = async () => {
+      setLoading(true);
+      const item = await fetchUserId();
+      setUser(item.data);
+      setLoading(false);
+      if (item.data?.district) {
+        setFilters((prevFilters) => ({
+          ...prevFilters,
+          kecamatan: item.data.district,
+        }));
+      }
+    };
+    getData();
+  }, [setLoading]);
 
   return (
     <>

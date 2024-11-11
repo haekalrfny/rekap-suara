@@ -115,20 +115,22 @@ export default function Home() {
             </p>
           </div>
         )}
-        {loading ? (
-          <div className="w-full h-64">
-            <Loading />
-          </div>
-        ) : (
-          !admin && (
-            <div className="flex items-center justify-center">
-              <img
-                src="./people.svg"
-                alt="people"
-                className="w-[90%] md:w-[350px]"
-              />
-            </div>
-          )
+        {!admin && (
+          <>
+            {loading ? (
+              <div className="w-full h-64">
+                <Loading />
+              </div>
+            ) : (
+              <div className="flex items-center justify-center">
+                <img
+                  src="./people.svg"
+                  alt="people"
+                  className="w-[90%] md:w-[350px]"
+                />
+              </div>
+            )}
+          </>
         )}
         <div className="flex flex-col justify-center items-center gap-10">
           {!token &&
@@ -142,38 +144,47 @@ export default function Home() {
           {admin && (
             <>
               <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
-                <Charts
-                  title={`Suara Paslon ${user?.district || "Pilkada KBB"}`}
-                  subtitle="Total suara paslon yang Telah Diterima"
-                  data={user?.district ? suaraByPaslonByKecamatan : suaraPaslon}
-                  name="Panggilan"
-                  value="Total Suara"
-                  type="bar"
-                  color="pilbup"
-                />
-
-                {user?.district ? (
-                  loading ? (
-                    <ChartLoading />
-                  ) : (
-                    <DataPerDaerah setValue={setData} />
-                  )
-                ) : (
+                <div className="w-1/2">
                   <Charts
-                    title={`Suara Paslon ${user?.district || "Pilkada Jabar"}`}
+                    title={`Suara Paslon ${user?.district || "Pilkada KBB"}`}
                     subtitle="Total suara paslon yang Telah Diterima"
                     data={
-                      user?.district
-                        ? suaraByPaslonByKecamatnPilgub
-                        : suaraPaslonPilgub
+                      user?.district ? suaraByPaslonByKecamatan : suaraPaslon
                     }
                     name="Panggilan"
                     value="Total Suara"
                     type="bar"
-                    color="pilgub"
+                    color="pilbup"
                   />
-                )}
+                </div>
+
+                <div className="w-1/2">
+                  {user?.district ? (
+                    loading ? (
+                      <ChartLoading />
+                    ) : (
+                      <DataPerDaerah setValue={setData} />
+                    )
+                  ) : (
+                    <Charts
+                      title={`Suara Paslon ${
+                        user?.district || "Pilkada Jabar"
+                      }`}
+                      subtitle="Total suara paslon yang Telah Diterima"
+                      data={
+                        user?.district
+                          ? suaraByPaslonByKecamatnPilgub
+                          : suaraPaslonPilgub
+                      }
+                      name="Panggilan"
+                      value="Total Suara"
+                      type="bar"
+                      color="pilgub"
+                    />
+                  )}
+                </div>
               </div>
+
               {!user?.district && !loading && (
                 <div className="w-full flex items-center justify-center md:w-2/3">
                   <Charts
@@ -196,6 +207,7 @@ export default function Home() {
                   />
                 </div>
               )}
+
               {!user?.district && !loading && (
                 <div className="w-full flex items-center justify-center md:w-2/3">
                   {loading ? (

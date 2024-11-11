@@ -56,12 +56,12 @@ export default function KirimSuara() {
   }, [setLoading]);
 
   const menuData = [
-    { label: "Pilkada KBB", icon: <LuScroll />, link: () => setType("pilbup") },
     {
       label: "Pilkada Jabar",
       icon: <LuScroll />,
       link: () => setType("pilgub"),
     },
+    { label: "Pilkada KBB", icon: <LuScroll />, link: () => setType("pilbup") },
   ];
 
   return (
