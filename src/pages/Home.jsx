@@ -103,7 +103,7 @@ export default function Home() {
 
   return (
     <div className="w-full flex flex-col items-center py-10">
-      <div className="w-[90%] sm:w-2/4 flex flex-col gap-12">
+      <div className="w-full   sm:w-2/4 flex flex-col gap-12">
         {loading ? (
           <JumbotronLoading />
         ) : (
