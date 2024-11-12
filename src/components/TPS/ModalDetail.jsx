@@ -10,21 +10,28 @@ export default function ModalDetail({ id, onCancel }) {
   const [data, setData] = useState(null);
   const [openImage, setOpenImage] = useState(false);
   const [type, setType] = useState("pilkada");
+
   useEffect(() => {
-    getDataById();
-  }, [id]);
-  const getDataById = () => {
-    let config = {
-      method: "get",
-      url: `/suara/${type}/tps/${id}`,
-      headers: {
-        Authorization: `Bearer ${Cookies.get("token")}`,
-      },
+    const getDataById = () => {
+      let config = {
+        method: "get",
+        url: `/suara/${type}/tps/${id}`,
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      };
+      instance
+        .request(config)
+        .then((res) => {
+          setData(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+          setData(null);
+        });
     };
-    instance.request(config).then((res) => {
-      setData(res.data);
-    });
-  };
+    getDataById();
+  }, [id, type]);
 
   const menuSwitch = [
     {
@@ -48,7 +55,7 @@ export default function ModalDetail({ id, onCancel }) {
           </div>
           {data ? (
             <>
-              <div className="space-y-1.5">
+              <div className="space-y-1">
                 <div className="flex justify-between items-center">
                   <span className="font-medium">Kecamatan</span>
                   <span className="text-gray-600">{data?.tps?.kecamatan}</span>
