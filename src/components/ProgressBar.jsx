@@ -25,14 +25,14 @@ const ProgressBar = ({ text, current, total, size }) => {
       </p>
 
       <div
-        className={`relative w-full bg-gray-300 rounded-full overflow-hidden ${
+        className={`relative w-full bg-gray-300 rounded-md overflow-hidden ${
           size === "xs" ? "h-3" : "h-5"
         }`}
       >
         <div
           className={`bg-black ${
             size === "xs" ? "h-3" : "h-5"
-          } rounded-full transition-all duration-1000 flex items-center justify-center`}
+          } rounded-md transition-all duration-1000 flex items-center justify-center`}
           style={{ width: `${percentage}%` }}
         >
           <span

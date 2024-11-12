@@ -56,7 +56,7 @@ export default function Charts({
           <h2 className="text-2xl font-semibold mb-2">{title}</h2>
           <p className="text-gray-600 mb-4">{subtitle}</p>
           {!data || data.length === 0 ? (
-            <div className="w-full h-full flex items-center justify-center">
+            <div className="w-full h-64 flex items-center justify-center">
               <p className="text-gray-500 text-sm">Data tidak ada</p>
             </div>
           ) : (
@@ -69,7 +69,7 @@ export default function Charts({
                     <YAxis domain={[0, "dataMax + 10%"]} />
                     <Tooltip />
                     <Legend />
-                    <Bar dataKey={value}>
+                    <Bar dataKey={value} radius={[5, 5, 0, 0]}>
                       <LabelList dataKey={value} position="top" />
                       {data.map((entry, index) => (
                         <Cell

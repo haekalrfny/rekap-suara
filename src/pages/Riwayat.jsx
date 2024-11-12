@@ -84,37 +84,44 @@ export default function Riwayat() {
           "Suara Tidak Terpakai",
           "Kertas Suara",
           "Formulir C1 Plano",
-        ].map((label, idx) => (
-          <div key={idx} className="flex items-center justify-between">
-            <p className="font-medium text-gray-700">{label}</p>
-            <p className="text-gray-600">
-              {label === "TPS" ? (
-                `TPS ${item.tps?.kodeTPS}`
-              ) : label === "Suara Sah" ? (
-                `${item.tps?.[type]?.suaraSah} Suara`
-              ) : label === "Suara Tidak Sah" ? (
-                `${item.tps?.[type]?.suaraTidakSah} Suara`
-              ) : label === "Suara Tidak Terpakai" ? (
-                `${item.tps?.[type]?.suaraTidakTerpakai} Suara`
-              ) : label === "Kertas Suara" ? (
-                `${item.tps?.[type]?.kertasSuara} Kertas`
-              ) : label === "Formulir C1 Plano" ? (
-                <div className="flex items-center gap-1">
-                  <a>Lihat</a>
-                  <div
-                    onClick={() => renderImage(item?.image, item)}
-                    className="p-0.5 rounded-md cursor-pointer hover:bg-gray-100"
-                  >
-                    <HiOutlineExternalLink />
+        ].map((label, idx, array) => (
+          <div key={idx}>
+            <div className="flex items-center justify-between">
+              <p className="font-medium text-gray-700">{label}</p>
+              <p className="text-gray-600">
+                {label === "TPS" ? (
+                  `TPS ${item.tps?.kodeTPS}`
+                ) : label === "Suara Sah" ? (
+                  `${item.tps?.[type]?.suaraSah} Suara`
+                ) : label === "Suara Tidak Sah" ? (
+                  `${item.tps?.[type]?.suaraTidakSah} Suara`
+                ) : label === "Suara Tidak Terpakai" ? (
+                  `${item.tps?.[type]?.suaraTidakTerpakai} Suara`
+                ) : label === "Kertas Suara" ? (
+                  `${item.tps?.[type]?.kertasSuara} Kertas`
+                ) : label === "Formulir C1 Plano" ? (
+                  <div className="flex items-center gap-1">
+                    <a>Lihat</a>
+                    <div
+                      onClick={() => renderImage(item?.image, item)}
+                      className="p-0.5 rounded-md cursor-pointer hover:bg-gray-100"
+                    >
+                      <HiOutlineExternalLink />
+                    </div>
                   </div>
-                </div>
-              ) : (
-                item.tps?.[label.toLowerCase()]
-              )}
-            </p>
+                ) : (
+                  item.tps?.[label.toLowerCase()]
+                )}
+              </p>
+            </div>
+            {/* Add an HR except for the last item */}
+            {idx !== array.length - 1 && (
+              <hr className="border-gray-300 my-2" />
+            )}
           </div>
         ))}
       </div>
+
       <div className="overflow-hidden rounded-xl border">
         <table className="table-auto w-full text-justify text-base md:text-sm">
           <thead>

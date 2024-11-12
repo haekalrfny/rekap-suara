@@ -9,13 +9,19 @@ import Pilbup from "./Pilbup";
 import Pilgub from "./Pilgub";
 import Menu from "../components/Menu";
 import { LuScroll } from "react-icons/lu";
-import { fetchUserId } from "../functions/fetchData";
+import {
+  fetchUserId,
+  fetchRiwayatPilbup,
+  fetchRiwayatPilgub,
+} from "../functions/fetchData";
 
 export default function KirimSuara() {
   const { token } = useTokenContext();
   const { loading, setLoading } = useStateContext();
   const [type, setType] = useState("");
   const [user, setUser] = useState(null);
+  const [pilgub, setPilgub] = useState([]);
+  const [pilbup, setPilbup] = useState([]);
   const [attending, setAttending] = useState(null);
   const navigate = useNavigate();
   const showNotification = useNotif();
@@ -55,17 +61,71 @@ export default function KirimSuara() {
     getData();
   }, [setLoading]);
 
+  useEffect(() => {
+    const getData = async () => {
+      setLoading(true);
+      const item = await fetchRiwayatPilgub();
+      setPilgub(item);
+      setLoading(false);
+    };
+    getData();
+  }, [setLoading]);
+
+  useEffect(() => {
+    const getData = async () => {
+      setLoading(true);
+      const item = await fetchRiwayatPilbup();
+      setPilbup(item);
+      setLoading(false);
+    };
+    getData();
+  }, [setLoading]);
+
   const menuData = [
     {
       label: "Pilkada Jabar",
-      icon: <LuScroll />,
+      icon: (
+        <div
+          className={`flex font-medium items-center gap-2 py-0.5 px-2 ${
+            pilgub.length > 0
+              ? "bg-green-100 text-green-500"
+              : "bg-red-100 text-red-500"
+          }  rounded-md text-sm md:text-xs`}
+        >
+          <div
+            className={`${
+              pilgub.length > 0 ? "bg-green-500" : "bg-red-500"
+            } h-2 w-2 rounded-full`}
+          />
+          <p>{pilgub.length > 0 ? "Sudah" : "Belum"}</p>
+        </div>
+      ),
       link: () => setType("pilgub"),
     },
-    { label: "Pilkada KBB", icon: <LuScroll />, link: () => setType("pilbup") },
+    {
+      label: "Pilkada KBB",
+      icon: (
+        <div
+          className={`flex font-medium  items-center gap-2 py-0.5 px-2 ${
+            pilbup.length > 0
+              ? "bg-green-100 text-green-500"
+              : "bg-red-100 text-red-500"
+          }  rounded-md text-sm md:text-xs`}
+        >
+          <div
+            className={`${
+              pilbup.length > 0 ? "bg-green-500" : "bg-red-500"
+            } h-2 w-2 rounded-full`}
+          />
+          <p>{pilbup.length > 0 ? "Sudah" : "Belum"}</p>
+        </div>
+      ),
+      link: () => setType("pilbup"),
+    },
   ];
 
   return (
-    <div className="w-full flex justify-center md:pt-6 pb-10">
+    <div className="w-full flex  justify-center md:pt-6 pb-10">
       <div className="w-[90%] sm:w-2/4 flex flex-col gap-6">
         {loading ? (
           <HeadingLoad />
@@ -79,7 +139,34 @@ export default function KirimSuara() {
             </p>
           </div>
         )}
-        {!type && <Menu data={menuData} isFull={true} type="click" />}
+        {!type && (
+          <div className="space-y-6">
+            <Menu data={menuData} isFull={true} type="click" />
+            <div className="space-y-3">
+              <h1 className="font-medium">Keterangan</h1>
+              <div className="flex items-center gap-3">
+                <div className="py-0.5 px-2 text-sm md:text-xs flex items-center font-medium gap-2 bg-green-100 text-green-500 rounded-md w-max">
+                  <div className="h-2 w-2 rounded-full bg-green-500" />
+                  <p>Sudah</p>
+                </div>
+                <p>:</p>
+                <p className=" text-base md:text-sm">
+                  Sudah Mengirim Hasil Pilkada
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="py-0.5 px-2 text-sm md:text-xs flex items-center font-medium gap-2 bg-red-100 text-red-500 rounded-md w-max">
+                  <div className="h-2 w-2 rounded-full bg-red-500" />
+                  <p>Belum</p>
+                </div>
+                <p>:</p>
+                <p className=" text-base md:text-sm">
+                  Belum Mengirim Hasil Pilkada
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
         {type === "pilbup" ? <Pilbup /> : type === "pilgub" ? <Pilgub /> : null}
       </div>
     </div>

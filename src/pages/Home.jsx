@@ -144,7 +144,7 @@ export default function Home() {
           {admin && (
             <>
               <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
-                <div className="w-1/2">
+                <div className="w-full md:w-1/2">
                   <Charts
                     title={`Suara Paslon ${user?.district || "Pilkada KBB"}`}
                     subtitle="Total suara paslon yang Telah Diterima"
@@ -158,7 +158,7 @@ export default function Home() {
                   />
                 </div>
 
-                <div className="w-1/2">
+                <div className="w-full md:w-1/2">
                   {user?.district ? (
                     loading ? (
                       <ChartLoading />
@@ -186,7 +186,7 @@ export default function Home() {
               </div>
 
               {!user?.district && !loading && (
-                <div className="w-full flex items-center justify-center md:w-2/3">
+                <div className="w-full flex flex-col md:flex-row items-center justify-center md:w-2/3">
                   <Charts
                     title="Suara Tiap Dapil Pilkada KBB"
                     subtitle="Total suara tiap dapil"

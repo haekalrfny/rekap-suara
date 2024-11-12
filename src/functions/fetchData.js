@@ -174,3 +174,65 @@ export const fetchReportTPSDaerah = async () => {
     return [];
   }
 };
+
+export const fetchDapil = async () => {
+  try {
+    const res = await instance.get("/tps/dapil", {
+      headers: {
+        Authorization: `Bearer ${Cookies.get("token")}`,
+      },
+    });
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching TPS Kecamatan data:", error);
+    return [];
+  }
+};
+
+export const fetchKecamatan = async (dapil) => {
+  try {
+    const res = await instance.get(`/tps/kecamatan?dapil=${dapil}`, {
+      headers: {
+        Authorization: `Bearer ${Cookies.get("token")}`,
+      },
+    });
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching TPS Kecamatan data:", error);
+    return [];
+  }
+};
+
+export const fetchDesa = async (dapil, kecamatan) => {
+  try {
+    const res = await instance.get(
+      `/tps/desa?dapil=${dapil}&kecamatan=${kecamatan}`,
+      {
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching TPS Kecamatan data:", error);
+    return [];
+  }
+};
+
+export const fetchKodeTPS = async (dapil, kecamatan, desa) => {
+  try {
+    const res = await instance.get(
+      `/tps/kodeTPS?dapil=${dapil}&kecamatan=${kecamatan}&desa=${desa}`,
+      {
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching TPS Kecamatan data:", error);
+    return [];
+  }
+};

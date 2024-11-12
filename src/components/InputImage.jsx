@@ -2,7 +2,13 @@ import React, { useRef, useState } from "react";
 import Button from "./Button";
 import Image from "./Image";
 import imageCompression from "browser-image-compression";
-export default function InputImage({ value, setValue, required }) {
+export default function InputImage({
+  value,
+  setValue,
+  isMobile,
+  label,
+  required,
+}) {
   const fileInputRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
   const [showImage, setShowImage] = useState(false);
@@ -45,14 +51,21 @@ export default function InputImage({ value, setValue, required }) {
   };
 
   return (
-    <>
+    <div>
+      <label
+        className={`${
+          isMobile ? "text-xl md:text-sm uppercase" : "text-sm"
+        } font-medium text-black`}
+      >
+        {label} {required && <span className="text-red-500">*</span>}
+      </label>
       <div
         onClick={value ? null : handleClick}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className="relative flex items-center justify-center w-full h-64 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer overflow-hidden"
+        className="relative flex items-center justify-center w-full h-64 border-2 mt-3 border-dashed border-gray-300 rounded-lg cursor-pointer overflow-hidden"
       >
         {value ? (
           <>
@@ -69,7 +82,7 @@ export default function InputImage({ value, setValue, required }) {
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      handleClick()
+                      handleClick();
                     }}
                     outline
                   />
@@ -102,6 +115,6 @@ export default function InputImage({ value, setValue, required }) {
         />
       </div>
       {showImage && <Image url={value} onCancel={() => setShowImage(false)} />}
-    </>
+    </div>
   );
 }

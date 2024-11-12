@@ -8,7 +8,7 @@ export default function Filters({
   setShowModal,
 }) {
   const [localFilters, setLocalFilters] = useState(filters);
-  const firstInputRef = useRef(null); // Reference for the first input
+  const firstInputRef = useRef(null);
 
   const handleFilterChange = (e, key) => {
     const { value } = e.target;
@@ -20,6 +20,8 @@ export default function Filters({
 
   const handleReset = () => {
     setLocalFilters({});
+    setFilters({});
+    setShowModal(false);
   };
 
   const handleSubmit = () => {
@@ -37,7 +39,9 @@ export default function Filters({
   useEffect(() => {
     if (firstInputRef.current) {
       firstInputRef.current.focus();
-      firstInputRef.current.select();
+      if (firstInputRef.current.tagName === "INPUT") {
+        firstInputRef.current.select();
+      }
     }
   }, [setShowModal]);
 
@@ -49,9 +53,13 @@ export default function Filters({
           <p className="text-sm text-gray-600">Pilih kriteria untuk filter</p>
         </div>
 
-        <form onKeyDown={handleKeyDown} className="space-y-3">
+        <form
+          onKeyDown={handleKeyDown}
+          onSubmit={(e) => e.preventDefault()}
+          className="space-y-3"
+        >
           {filterConfig.map((filter, index) => {
-            const { label, type, key, options } = filter;
+            const { label, type, key, options, disabled } = filter;
 
             if (type === "select") {
               return (
@@ -66,6 +74,7 @@ export default function Filters({
                     onChange={(e) => handleFilterChange(e, key)}
                     className="p-2 border rounded-md w-full"
                     ref={index === 0 ? firstInputRef : null}
+                    disabled={disabled}
                   >
                     <option value="">Semua {label}</option>
                     {options.map((option) => (
@@ -78,9 +87,35 @@ export default function Filters({
               );
             }
 
+            if (type === "array") {
+              return (
+                <div key={key} className="text-base md:text-sm">
+                  <label htmlFor={key} className="block font-medium mb-1">
+                    {label}
+                  </label>
+                  <select
+                    id={key}
+                    name={key}
+                    value={localFilters[key] || ""}
+                    onChange={(e) => handleFilterChange(e, key)}
+                    className="p-2 border rounded-md w-full"
+                    ref={index === 0 ? firstInputRef : null}
+                    disabled={disabled}
+                  >
+                    <option value="">Semua {label}</option>
+                    {options.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              );
+            }
+
             if (type === "text") {
               return (
-                <div key={key} className=" text-base md:text-sm ">
+                <div key={key} className="text-base md:text-sm">
                   <label htmlFor={key} className="block font-medium mb-1">
                     {label}
                   </label>
@@ -93,6 +128,7 @@ export default function Filters({
                     className="py-2 px-3 border rounded-md w-full"
                     placeholder="Masukkan kata kunci"
                     ref={index === 0 ? firstInputRef : null}
+                    disabled={disabled}
                   />
                 </div>
               );

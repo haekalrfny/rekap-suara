@@ -15,6 +15,7 @@ import {
   fetchRiwayatPilbup,
 } from "../functions/fetchData";
 import Loading from "../components/Loading";
+import InputImage from "../components/InputImage";
 
 export default function Pilbup() {
   const { token } = useTokenContext();
@@ -216,11 +217,10 @@ export default function Pilbup() {
         placeholder="Suara Tidak Sah"
       />
 
-      <Input
-        name="image"
-        label="Formulir C1 Plano"
-        type="file"
+      <InputImage
+        value={image}
         setValue={setImage}
+        label={"Formulir C1 Plano"}
         required
       />
 

@@ -22,22 +22,30 @@ export default function Saksi() {
   const showNotification = useNotif();
   const [filters, setFilters] = useState({ role: "user" });
   const [showFilters, setShowFilters] = useState(false);
-  const [user, setUser] = useState(null);
 
   const filterConfig = [
-    {
-      label: "Nomor TPS",
-      type: "text",
-      key: "kodeTPS",
-    },
-    {
-      label: "Desa",
-      type: "text",
-      key: "desa",
-    },
-    ...(user?.district
+    ...(filters?.role === "admin"
       ? []
       : [
+          {
+            label: "Kehadiran",
+            type: "select",
+            key: "attandance",
+            options: [
+              { value: true, label: "Ya" },
+              { value: false, label: "Tidak" },
+            ],
+          },
+          {
+            label: "Nomor TPS",
+            type: "text",
+            key: "kodeTPS",
+          },
+          {
+            label: "Desa",
+            type: "text",
+            key: "desa",
+          },
           {
             label: "Kecamatan",
             type: "text",
@@ -48,15 +56,6 @@ export default function Saksi() {
             type: "text",
             key: "dapil",
           },
-          {
-            label: "Role",
-            type: "select",
-            key: "role",
-            options: [
-              { value: "admin", label: "Admin" },
-              { value: "user", label: "User" },
-            ],
-          },
         ]),
     {
       label: "Username",
@@ -64,12 +63,12 @@ export default function Saksi() {
       key: "username",
     },
     {
-      label: "Kehadiran",
+      label: "Role",
       type: "select",
-      key: "attandance",
+      key: "role",
       options: [
-        { value: true, label: "Ya" },
-        { value: false, label: "Tidak" },
+        { value: "admin", label: "Admin" },
+        { value: "user", label: "User" },
       ],
     },
   ];
@@ -138,7 +137,6 @@ export default function Saksi() {
     const getData = async () => {
       setLoading(true);
       const item = await fetchUserId();
-      setUser(item.data);
       setLoading(false);
       if (item.data?.district) {
         setFilters((prevFilters) => ({
@@ -149,6 +147,8 @@ export default function Saksi() {
     };
     getData();
   }, [setLoading]);
+
+  console.log(data);
 
   return (
     <>

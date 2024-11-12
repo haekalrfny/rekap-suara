@@ -9,40 +9,63 @@ import { useNotif } from "../context/NotifContext";
 import HeadingLoad from "../components/Load/HeadingLoad";
 import Button from "../components/Button";
 import Filters from "../components/Filters";
+import {
+  fetchDapil,
+  fetchKecamatan,
+  fetchDesa,
+  fetchKodeTPS,
+} from "../functions/fetchData";
+import Loading from "../components/Loading";
 
 export default function PaslonDetail() {
   const { token } = useTokenContext();
   const { setLoading, loading } = useStateContext();
   const { id, type } = useParams();
   const [item, setItem] = useState({});
+  const [suara, setSuara] = useState(null);
+  const [dapil, setDapil] = useState([]);
+  const [kecamatan, setKecamatan] = useState([]);
+  const [desa, setDesa] = useState([]);
+  const [kodeTPS, setKodeTPS] = useState([]);
   const showNotification = useNotif();
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState({});
 
-  const filterConfig = []
-
-  useEffect(() => {
-    getDataById();
-  }, [id]);
+  const filterConfig = [
+    {
+      label: "Dapil",
+      type: "array",
+      key: "dapil",
+      options: dapil,
+    },
+    {
+      label: "Kecamatan",
+      type: "array",
+      key: "kecamatan",
+      options: kecamatan,
+      disabled: filters.dapil ? false : true,
+    },
+    {
+      label: "Desa",
+      type: "array",
+      key: "desa",
+      options: desa,
+      disabled: filters.dapil && filters.kecamatan ? false : true,
+    },
+    {
+      label: "Kode TPS",
+      type: "array",
+      key: "kodeTPS",
+      options: kodeTPS,
+      disabled:
+        filters.dapil && filters.kecamatan && filters.desa ? false : true,
+    },
+  ];
 
   if (!token && !Cookies.get("token")) {
     showNotification("Anda harus login terlebih dahulu", "error");
     return <Navigate to="/login" />;
   }
-
-  const getDataById = () => {
-    setLoading(true);
-    instance({
-      method: "get",
-      url: `/paslon/${type}/${id}`,
-      headers: { Authorization: `Bearer ${Cookies.get("token")}` },
-    })
-      .then((res) => {
-        setLoading(false);
-        setItem(res.data);
-      })
-      .catch(() => setLoading(false));
-  };
 
   const getColorClass = (noUrut, type) => {
     const colors = {
@@ -65,6 +88,59 @@ export default function PaslonDetail() {
     };
     return colors[noUrut] || "bg-gray-100 text-gray-500";
   };
+
+  useEffect(() => {
+    const getDataById = () => {
+      setLoading(true);
+      instance({
+        method: "get",
+        url: `/paslon/${type}/${id}`,
+        headers: { Authorization: `Bearer ${Cookies.get("token")}` },
+      })
+        .then((res) => {
+          setLoading(false);
+          setItem(res.data);
+        })
+        .catch(() => setLoading(false));
+    };
+    getDataById();
+  }, [id, type]);
+
+  useEffect(() => {
+    const getSuaraByPaslon = () => {
+      setLoading(true);
+      instance({
+        method: "get",
+        url: `/suara/${type}/paslon/detail/${id}`,
+        headers: { Authorization: `Bearer ${Cookies.get("token")}` },
+        params: { ...filters },
+      })
+        .then((res) => {
+          setLoading(false);
+          setSuara(res.data);
+        })
+        .catch(() => setLoading(false));
+    };
+    getSuaraByPaslon();
+  }, [id, type, filters]);
+
+  useEffect(() => {
+    const getData = async () => {
+      const dapil = await fetchDapil();
+      const kecamatan = await fetchKecamatan(filters.dapil);
+      const desa = await fetchDesa(filters.dapil, filters.kecamatan);
+      const kodeTPS = await fetchKodeTPS(
+        filters.dapil,
+        filters.kecamatan,
+        filters.desa
+      );
+      setDapil(dapil);
+      setKecamatan(kecamatan);
+      setDesa(desa);
+      setKodeTPS(kodeTPS);
+    };
+    getData();
+  }, [setLoading, filters]);
 
   return (
     <>
@@ -109,6 +185,61 @@ export default function PaslonDetail() {
               size={"sm"}
             />
           </div>
+          {!suara ? (
+            <p>belum ada suara</p>
+          ) : (
+            <div className="space-y-1.5">
+              {filters.dapil && (
+                <>
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Dapil</span>
+                    <span className="text-gray-600">{filters?.dapil}</span>
+                  </div>
+                </>
+              )}
+              {filters.kecamatan && (
+                <>
+                  <hr />
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Kecamatan</span>
+                    <span className="text-gray-600">{filters?.kecamatan}</span>
+                  </div>
+                </>
+              )}
+              {filters.desa && (
+                <>
+                  <hr />
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Desa</span>
+                    <span className="text-gray-600">{filters?.desa}</span>
+                  </div>
+                </>
+              )}
+              {filters.kodeTPS && (
+                <>
+                  <hr />
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Nomor TPS</span>
+                    <span className="text-gray-600">{filters?.kodeTPS}</span>
+                  </div>
+                </>
+              )}
+
+              <>
+                {filters.dapil && <hr />}
+                <div className="flex justify-between items-center">
+                  <span className="font-medium">Total</span>
+                  {loading ? (
+                    <span>
+                      <Loading />
+                    </span>
+                  ) : (
+                    <span className="text-gray-600">{suara?.total} Suara</span>
+                  )}
+                </div>
+              </>
+            </div>
+          )}
           <BackButton url={"/paslon"} />
         </div>
       </div>

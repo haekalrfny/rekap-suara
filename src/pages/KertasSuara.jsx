@@ -18,7 +18,8 @@ export default function KertasSuara() {
   const { loading, setLoading, setLoadingButton } = useStateContext();
   const [user, setUser] = useState(null);
   const [attending, setAttending] = useState(null);
-  const [suratSuara, setSuratSuara] = useState("");
+  const [suratPilbup, setSuratPilbup] = useState("");
+  const [suratPilgub, setSuratPilgub] = useState("");
   const showNotification = useNotif();
   const navigate = useNavigate();
 
@@ -52,11 +53,11 @@ export default function KertasSuara() {
     setLoadingButton(true);
     const dataJson = {
       pilkada: {
-        kertasSuara: Number(suratSuara),
+        kertasSuara: Number(suratPilbup),
         user: user?._id,
       },
       pilgub: {
-        kertasSuara: Number(suratSuara),
+        kertasSuara: Number(suratPilgub),
         user: user?._id,
       },
     };
@@ -128,14 +129,21 @@ export default function KertasSuara() {
             <Label title="Desa" value={user?.tps?.desa} isAuto={true} />
             <Label title="TPS" value={user?.tps?.kodeTPS} isAuto={true} />
             <Input
-              name="suratSuara"
-              value={suratSuara}
-              setValue={setSuratSuara}
+              name="suratPilbup"
+              value={suratPilbup}
+              setValue={setSuratPilbup}
               type="number"
-              label="Kertas/Surat Suara Pilkada"
-              placeholder="Kertas/Surat Suara Pilkada"
+              label="Pilkada KBB"
+              placeholder="Kertas/Surat Suara Pilkada KBB"
             />
-
+            <Input
+              name="suratPilgub"
+              value={suratPilgub}
+              setValue={setSuratPilgub}
+              type="number"
+              label="Pilkada Jabar"
+              placeholder="Kertas/Surat Suara Pilkada Jabar"
+            />
             <Button text="Kirim" onClick={updateTps} />
           </form>
         )}

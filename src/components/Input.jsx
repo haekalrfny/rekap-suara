@@ -28,8 +28,8 @@ export default function Input({
     };
     try {
       const compressedFile = await imageCompression(file, options);
-      setValue(compressedFile); // Set the compressed file as the value
-      setFileName(compressedFile.name); // Update the file name for display
+      setValue(compressedFile);
+      setFileName(compressedFile.name);
     } catch (error) {
       console.error("Error compressing image", error);
     }
@@ -38,9 +38,9 @@ export default function Input({
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
-      compressImage(file); // Compress the image before setting it
+      compressImage(file);
     } else {
-      setValue(file); // Set the file as it is if it's not an image
+      setValue(file);
       setFileName(file ? file.name : "Tidak ada file yang dipilih");
     }
   };
@@ -67,7 +67,7 @@ export default function Input({
             />
             <label
               htmlFor={name}
-              className="border-b text-base md:text-sm border-gray-300 w-full py-2 flex justify-between items-center cursor-pointer focus:outline-none focus:border-gray-900"
+              className="border-b text-base md:text-sm border-gray-300 w-full py-3 flex justify-between items-center cursor-pointer focus:outline-none focus:border-gray-900"
             >
               <span className={`${fileName ? "text-black" : "text-gray-600"}`}>
                 {fileName || "Pilih file"}
@@ -91,7 +91,7 @@ export default function Input({
             }
             placeholder={placeholder}
             required={required}
-            className="border-b text-base md:text-sm border-gray-300 w-full py-2 focus:outline-none focus:border-gray-900"
+            className="border-b text-base md:text-sm border-gray-300 w-full py-3 focus:outline-none focus:border-gray-900"
           />
         )}
         {type === "password" && (

@@ -15,6 +15,7 @@ import {
   fetchRiwayatPilgub,
 } from "../functions/fetchData";
 import Loading from "../components/Loading";
+import InputImage from "../components/InputImage";
 
 export default function Pilgub() {
   const { token } = useTokenContext();
@@ -146,7 +147,7 @@ export default function Pilgub() {
         suaraSah: jumlahSuaraSah,
         suaraTidakSah: jumlahSuaraTidakSah,
         suaraTidakTerpakai:
-          user?.tps?.pilkada?.kertasSuara - jumlahSuaraTercatat,
+          user?.tps?.pilgub?.kertasSuara - jumlahSuaraTercatat,
         kertasSuara: user?.tps?.pilgub?.kertasSuara,
         user: user?._id,
       },
@@ -217,11 +218,10 @@ export default function Pilgub() {
         placeholder="Suara Tidak Sah"
       />
 
-      <Input
-        name="image"
-        label="Formulir C1 Plano"
-        type="file"
+      <InputImage
+        value={image}
         setValue={setImage}
+        label={"Formulir C1 Plano"}
         required
       />
 
