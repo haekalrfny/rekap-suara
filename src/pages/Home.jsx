@@ -159,29 +159,19 @@ export default function Home() {
                 </div>
 
                 <div className="w-full md:w-1/2">
-                  {user?.district ? (
-                    loading ? (
-                      <ChartLoading />
-                    ) : (
-                      <DataPerDaerah setValue={setData} />
-                    )
-                  ) : (
-                    <Charts
-                      title={`Suara Paslon ${
-                        user?.district || "Pilkada Jabar"
-                      }`}
-                      subtitle="Total suara paslon yang Telah Diterima"
-                      data={
-                        user?.district
-                          ? suaraByPaslonByKecamatnPilgub
-                          : suaraPaslonPilgub
-                      }
-                      name="Panggilan"
-                      value="Total Suara"
-                      type="bar"
-                      color="pilgub"
-                    />
-                  )}
+                  <Charts
+                    title={`Suara Paslon ${user?.district || "Pilkada Jabar"}`}
+                    subtitle="Total suara paslon yang Telah Diterima"
+                    data={
+                      user?.district
+                        ? suaraByPaslonByKecamatnPilgub
+                        : suaraPaslonPilgub
+                    }
+                    name="Panggilan"
+                    value="Total Suara"
+                    type="bar"
+                    color="pilgub"
+                  />
                 </div>
               </div>
 
@@ -208,7 +198,7 @@ export default function Home() {
                 </div>
               )}
 
-              {!user?.district && !loading && (
+              {admin && !loading && (
                 <div className="w-full flex items-center justify-center md:w-2/3">
                   {loading ? (
                     <ChartLoading />
