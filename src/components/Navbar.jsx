@@ -143,7 +143,7 @@ const Navbar = () => {
                 >
                   TPS
                 </Link>
-                <Link
+                {/* <Link
                   to="/paslon"
                   className="block px-4 py-2 hover:bg-gray-100"
                   onClick={() => {
@@ -152,7 +152,7 @@ const Navbar = () => {
                   }}
                 >
                   Paslon
-                </Link>
+                </Link> */}
                 <Link
                   to="/users"
                   className="block px-4 py-2 hover:bg-gray-100"
@@ -258,7 +258,7 @@ const Navbar = () => {
                     >
                       - TPS
                     </Link>
-                    <Link
+                    {/* <Link
                       to="/paslon"
                       className="block  py-1.5 rounded hover:bg-gray-100"
                       onClick={() => {
@@ -267,7 +267,7 @@ const Navbar = () => {
                       }}
                     >
                       - Paslon
-                    </Link>
+                    </Link> */}
                     <Link
                       to="/users"
                       className="block  py-1.5 rounded hover:bg-gray-100"

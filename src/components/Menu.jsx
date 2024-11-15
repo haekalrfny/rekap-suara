@@ -4,7 +4,6 @@ import { useStateContext } from "../context/StateContext";
 import MenuLoading from "./Load/MenuLoading";
 
 export default function Menu({ data, isFull = false, type = "link" }) {
-  const { loading } = useStateContext();
   return (
     <div className="flex flex-col  items-center gap-4 w-full">
       <div
@@ -14,9 +13,7 @@ export default function Menu({ data, isFull = false, type = "link" }) {
       >
         {data.map((button, index) => (
           <React.Fragment key={index}>
-            {loading ? (
-              <MenuLoading />
-            ) : type === "link" ? (
+            {type === "link" ? (
               <NavLink
                 to={button.link}
                 className="hover:bg-gray-100 py-2 px-3 rounded-md flex items-center justify-between"
@@ -30,7 +27,7 @@ export default function Menu({ data, isFull = false, type = "link" }) {
                 className="hover:bg-gray-100 py-2 px-3 rounded-md flex items-center justify-between"
               >
                 <p>{button.label}</p>
-                {button.icon}
+                {button.icon && button.icon}
               </button>
             )}
             {index < 3 && <hr />}

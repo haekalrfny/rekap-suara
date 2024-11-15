@@ -143,68 +143,95 @@ export default function Home() {
             )}
           {admin && (
             <>
-              <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
-                <div className="w-full md:w-1/2">
-                  <Charts
-                    title={`Suara Paslon ${user?.district || "Pilkada KBB"}`}
-                    subtitle="Total suara paslon yang Telah Diterima"
-                    data={
-                      user?.district ? suaraByPaslonByKecamatan : suaraPaslon
-                    }
-                    name="Panggilan"
-                    value="Total Suara"
-                    type="bar"
-                    color="pilbup"
-                  />
-                </div>
+              <div className="flex flex-col lg:flex-row bg-slate-50 rounded-xl items-center justify-between gap-4">
+                {(user?.district ? suaraByPaslonByKecamatan : suaraPaslon)
+                  ?.length > 0 ? (
+                  <div className="w-full md:w-1/2">
+                    <Charts
+                      title={`Tabulasi ${user?.district || "Pilkada KBB"}`}
+                      subtitle="Total suara paslon yang Telah Diterima"
+                      data={
+                        user?.district ? suaraByPaslonByKecamatan : suaraPaslon
+                      }
+                      name="Panggilan"
+                      value="Total Suara"
+                      type="bar"
+                      color="pilbup"
+                    />
+                  </div>
+                ) : null}
 
-                <div className="w-full md:w-1/2">
-                  <Charts
-                    title={`Suara Paslon ${user?.district || "Pilkada Jabar"}`}
-                    subtitle="Total suara paslon yang Telah Diterima"
-                    data={
-                      user?.district
-                        ? suaraByPaslonByKecamatnPilgub
-                        : suaraPaslonPilgub
-                    }
-                    name="Panggilan"
-                    value="Total Suara"
-                    type="bar"
-                    color="pilgub"
-                  />
-                </div>
+                {(user?.district
+                  ? suaraByPaslonByKecamatnPilgub
+                  : suaraPaslonPilgub
+                )?.length > 0 ? (
+                  <div className="w-full md:w-1/2">
+                    <Charts
+                      title={`Tabulasi ${user?.district || "Pilkada Jabar"}`}
+                      subtitle="Total suara paslon yang Telah Diterima"
+                      data={
+                        user?.district
+                          ? suaraByPaslonByKecamatnPilgub
+                          : suaraPaslonPilgub
+                      }
+                      name="Panggilan"
+                      value="Total Suara"
+                      type="bar"
+                      color="pilgub"
+                    />
+                  </div>
+                ) : null}
               </div>
 
-              {!user?.district && !loading && (
-                <div className="w-full flex flex-col md:flex-row items-center justify-center md:w-2/3">
-                  <Charts
-                    title="Suara Tiap Dapil Pilkada KBB"
-                    subtitle="Total suara tiap dapil"
-                    data={suaraDapil}
-                    name="dapil"
-                    value="suara"
-                    type="pie"
-                    color={"pilbup"}
-                  />
-                  <Charts
-                    title="Suara Tiap Dapil Pilkada Jabar"
-                    subtitle="Total suara tiap dapil"
-                    data={suaraDapilPilgub}
-                    name="dapil"
-                    value="suara"
-                    type="pie"
-                    color={"pilgub"}
-                  />
-                </div>
-              )}
+              {!user?.district &&
+                !loading &&
+                (suaraDapil?.length > 0 || suaraDapilPilgub?.length > 0) && (
+                  <div className="flex flex-col lg:flex-row bg-slate-50 rounded-xl items-center justify-between gap-4">
+                    {suaraDapil?.length > 0 && (
+                      <div className="w-full md:w-1/2">
+                        <Charts
+                          title="Rekap Per Dapil Pilkada KBB"
+                          subtitle="Total suara tiap dapil"
+                          data={suaraDapil}
+                          name="dapil"
+                          value="suara"
+                          type="pie"
+                          color={"pilbup"}
+                        />
+                      </div>
+                    )}
+                    {suaraDapilPilgub?.length > 0 && (
+                      <div className="w-full md:w-1/2">
+                        <Charts
+                          title="Rekap Per Dapil Pilkada Jabar"
+                          subtitle="Total suara tiap dapil"
+                          data={suaraDapilPilgub}
+                          name="dapil"
+                          value="suara"
+                          type="pie"
+                          color={"pilgub"}
+                        />
+                      </div>
+                    )}
+                  </div>
+                )}
 
               {admin && !loading && (
-                <div className="w-full flex items-center justify-center md:w-2/3">
-                  {loading ? (
-                    <ChartLoading />
-                  ) : (
-                    <DataPerDaerah setValue={setData} />
-                  )}
+                <div className="flex flex-col lg:flex-row  items-center justify-between gap-4">
+                  <div className="w-full md:w-1/2">
+                    {loading ? (
+                      <ChartLoading />
+                    ) : (
+                      <DataPerDaerah setValue={setData} type="pilkada" />
+                    )}
+                  </div>
+                  <div className="w-full md:w-1/2">
+                    {loading ? (
+                      <ChartLoading />
+                    ) : (
+                      <DataPerDaerah setValue={setData} type="pilgub" />
+                    )}
+                  </div>
                 </div>
               )}
 

@@ -6,7 +6,7 @@ import {
   fetchReportTPSDaerah,
 } from "../../functions/fetchData";
 
-export default function DataPerDaerah({ setValue }) {
+export default function DataPerDaerah({ setValue, type }) {
   const [data, setData] = useState(null);
   const [user, setUser] = useState(null);
 
@@ -34,31 +34,32 @@ export default function DataPerDaerah({ setValue }) {
   return (
     <div className="w-full flex flex-col gap-2 p-6 md:min-w-[400px]">
       <h2 className="text-2xl font-semibold">
-        Suara {user?.district || "Kab. Bandung Barat"}
+        {type === "pilkada" ? "Pilkada KBB" : "Pilkada Jabar"}{" "}
+        {user?.district || ""}
       </h2>
       <p className="text-gray-600 mb-4">Jumlah Suara yang Telah Diterima</p>
       {!user?.district && (
         <>
           <ProgressBar
             text="Dapil"
-            current={data?.dapil.withSuara.pilkada}
+            current={data?.dapil.withSuara[type]}
             total={data?.dapil.total}
           />
           <ProgressBar
             text="Kecamatan"
-            current={data?.kecamatan.withSuara.pilkada}
+            current={data?.kecamatan.withSuara[type]}
             total={data?.kecamatan.total}
           />
         </>
       )}
       <ProgressBar
         text="Desa"
-        current={data?.desa.withSuara.pilkada}
+        current={data?.desa.withSuara[type]}
         total={data?.desa.total}
       />
       <ProgressBar
         text="TPS"
-        current={data?.tps.withSuara.pilkada}
+        current={data?.tps.withSuara[type]}
         total={data?.tps.total}
       />
       <p className="text-sm mt-1 lowercase">

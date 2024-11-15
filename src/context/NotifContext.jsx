@@ -47,7 +47,7 @@ export const NotifProvider = ({ children }) => {
       {visible && (
         <div
           id="toast-simple"
-          className={`fixed top-4 left-1/2 transform -translate-x-1/2 flex items-center w-max p-4 space-x-4 rtl:space-x-reverse text-gray-500 ${
+          className={`fixed z-10 top-4 left-1/2 transform -translate-x-1/2 flex items-center w-max p-4 space-x-4 rtl:space-x-reverse text-gray-500 ${
             notificationTypes[type].bgColor
           }  rounded-lg shadow-lg transition-transform duration-300 ease-in-out
             transform-gpu  ${

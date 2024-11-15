@@ -191,22 +191,8 @@ export const fetchDapil = async () => {
 
 export const fetchKecamatan = async (dapil) => {
   try {
-    const res = await instance.get(`/tps/kecamatan?dapil=${dapil}`, {
-      headers: {
-        Authorization: `Bearer ${Cookies.get("token")}`,
-      },
-    });
-    return res.data;
-  } catch (error) {
-    console.error("Error fetching TPS Kecamatan data:", error);
-    return [];
-  }
-};
-
-export const fetchDesa = async (dapil, kecamatan) => {
-  try {
     const res = await instance.get(
-      `/tps/desa?dapil=${dapil}&kecamatan=${kecamatan}`,
+      `/tps/kecamatan${dapil ? `?dapil=${dapil}` : ""}`,
       {
         headers: {
           Authorization: `Bearer ${Cookies.get("token")}`,
@@ -216,6 +202,30 @@ export const fetchDesa = async (dapil, kecamatan) => {
     return res.data;
   } catch (error) {
     console.error("Error fetching TPS Kecamatan data:", error);
+    return [];
+  }
+};
+
+export const fetchDesa = async (dapil, kecamatan) => {
+  try {
+    const queryParams = [
+      dapil ? `dapil=${dapil}` : "",
+      kecamatan ? `kecamatan=${kecamatan}` : "",
+    ]
+      .filter(Boolean)
+      .join("&");
+
+    const res = await instance.get(
+      `/tps/desa${queryParams ? `?${queryParams}` : ""}`,
+      {
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching TPS Desa data:", error);
     return [];
   }
 };

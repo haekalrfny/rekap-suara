@@ -8,7 +8,6 @@ import { useStateContext } from "../context/StateContext";
 import Pilbup from "./Pilbup";
 import Pilgub from "./Pilgub";
 import Menu from "../components/Menu";
-import { LuScroll } from "react-icons/lu";
 import {
   fetchUserId,
   fetchRiwayatPilbup,

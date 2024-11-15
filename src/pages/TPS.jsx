@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
-import Paginate from "../components/Paginate";
+import { fetchUserId, fetchKecamatan, fetchDesa } from "../functions/fetchData";
+import { useStateContext } from "../context/StateContext";
 import { useTokenContext } from "../context/TokenContext";
+import { useNotif } from "../context/NotifContext";
+import BackButton from "../components/BackButton";
+import Paginate from "../components/Paginate";
 import Cookies from "js-cookie";
 import instance from "../api/api";
 import ModalDetail from "../components/TPS/ModalDetail";
-import { useStateContext } from "../context/StateContext";
-import HeadingLoad from "../components/Load/HeadingLoad";
 import Button from "../components/Button";
-import { useNotif } from "../context/NotifContext";
-import { fetchUserId } from "../functions/fetchData";
 import Table from "../components/Table";
 import Filters from "../components/Filters";
+import Menu from "../components/Menu";
 
 export default function TPS() {
   const [data, setData] = useState([]);
@@ -21,11 +22,15 @@ export default function TPS() {
   const [user, setUser] = useState(null);
   const [id, setId] = useState(null);
   const { token } = useTokenContext();
-  const { setLoading, loading, setLoadingButton } = useStateContext();
+  const { setLoading, setLoadingButton } = useStateContext();
   const showNotification = useNotif();
   const [showModal, setShowModal] = useState(false);
   const [filters, setFilters] = useState({});
   const [showFilters, setShowFilters] = useState(false);
+  const [type, setType] = useState("");
+  const [localType, setLocalType] = useState("");
+  const [kecamatan, setKecamatan] = useState([]);
+  const [desa, setDesa] = useState([]);
 
   const openModal = (_id) => {
     setId(_id);
@@ -33,56 +38,36 @@ export default function TPS() {
   };
 
   const filterConfig = [
-    {
-      label: "Nomor TPS",
-      type: "text",
-      key: "kodeTPS",
-    },
-    {
-      label: "Desa",
-      type: "text",
-      key: "desa",
-    },
     ...(user?.district
       ? []
       : [
           {
             label: "Kecamatan",
-            type: "text",
+            type: "array",
             key: "kecamatan",
-          },
-          {
-            label: "Dapil",
-            type: "text",
-            key: "dapil",
+            options: kecamatan,
           },
         ]),
     {
-      label: "Pilkada KBB",
-      type: "select",
-      key: "pilbup",
-      options: [
-        { value: true, label: "Ya" },
-        { value: false, label: "Tidak" },
-      ],
-    },
-    {
-      label: "Pilkada Jabar",
-      type: "select",
-      key: "pilgub",
-      options: [
-        { value: true, label: "Ya" },
-        { value: false, label: "Tidak" },
-      ],
+      label: "Desa",
+      type: "array",
+      key: "desa",
+      options: desa,
+      disabled: filters.kecamatan ? false : true,
     },
   ];
+
+  const paslonCount = type === "pilgub" ? 4 : 5;
 
   const tableConfig = {
     columns: [
       { label: "Nomor TPS", key: "kodeTPS" },
-      { label: "Desa", key: "desa" },
-      { label: "Kecamatan", key: "kecamatan" },
-      { label: "Dapil", key: "dapil" },
+      ...Array.from({ length: paslonCount }, (_, i) => ({
+        label: `${i + 1}`,
+        key: `${
+          type === "pilgub" ? "pilgubSuara" : "pilkadaSuara"
+        }.suaraPaslon[${i}].suaraSah`,
+      })),
       {
         label: "Aksi",
         key: "Detail",
@@ -97,6 +82,19 @@ export default function TPS() {
     showNotification("Anda harus login terlebih dahulu", "error");
     return <Navigate to="/login" />;
   }
+
+  useEffect(() => {
+    const getData = async () => {
+      const kecamatan = await fetchKecamatan();
+      const desa = await fetchDesa(
+        null,
+        user?.district ? user.district : filters.kecamatan
+      );
+      setDesa(desa);
+      setKecamatan(kecamatan);
+    };
+    getData();
+  }, [setLoading, filters]);
 
   const handlePageClick = ({ selected }) => {
     setPage(selected);
@@ -151,15 +149,44 @@ export default function TPS() {
     getData();
   }, [setLoading]);
 
-  const downloadTPS = () => {
+  const menuData = [
+    {
+      label: "Pilkada Jabar",
+      link: () => handleSelectType("pilgub"),
+    },
+    {
+      label: "Pilkada KBB",
+      link: () => handleSelectType("pilkada"),
+    },
+  ];
+
+  const handleSelectType = (i) => {
+    setLocalType(i);
+    setShowFilters(true);
+  };
+
+  const handleSelect = () => {
+    if (!filters.kecamatan) {
+      showNotification("Pilih Kecamatan terlebih dahulu", "error");
+      return;
+    } else if (!filters.desa) {
+      showNotification("Pilih Desa terlebih dahulu", "error");
+      return;
+    } else {
+      setType(localType);
+      setShowFilters(false);
+    }
+  };
+
+  const downloadPaslonByTPS = () => {
     setLoadingButton(true);
-    let config = {
+    const config = {
       method: "get",
-      url: `/tps/excel/${user?.district ? "kecamatan" : "tps"}`,
-      params: { ...filters },
+      url: `/tps/excel/paslon${user?.district ? "/kecamatan" : ""}/${type}`,
       headers: {
         Authorization: `Bearer ${Cookies.get("token")}`,
       },
+      params: { kecamatan: user?.district || "", ...filters },
       responseType: "blob",
     };
 
@@ -169,7 +196,6 @@ export default function TPS() {
         const url = window.URL.createObjectURL(new Blob([res.data]));
         const link = document.createElement("a");
         link.href = url;
-
         link.setAttribute("download", "TPS.xlsx");
         document.body.appendChild(link);
         link.click();
@@ -177,7 +203,7 @@ export default function TPS() {
         setLoadingButton(false);
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
         setLoadingButton(false);
       });
   };
@@ -187,53 +213,60 @@ export default function TPS() {
       <div className="w-full flex flex-col items-center md:pt-6 pb-10 gap-6">
         <div className="w-[90%] sm:w-2/4 flex flex-col gap-6">
           <div className="space-y-3">
-            {loading ? (
-              <HeadingLoad />
-            ) : (
-              <>
-                <h1 className="font-bold text-3xl">
-                  TPS {user?.district ? user?.district : ""}
-                </h1>
-                <p className="font-light text-gray-600">
-                  Data rekapitulasi suara di Tempat Pemungutan Suara (TPS) dari{" "}
-                  {user?.district ? "Kecamatan " + user?.district : "Semua"}{" "}
-                  wilayah Kabupaten Bandung Barat
-                </p>
-              </>
-            )}
+            <h1 className="font-bold text-3xl">
+              TPS {user?.district ? user?.district : ""}
+            </h1>
+            <p className="font-light text-gray-600">
+              Data rekapitulasi suara di Tempat Pemungutan Suara (TPS) dari{" "}
+              {user?.district ? "Kecamatan " + user?.district : "Semua"} wilayah
+              Kabupaten Bandung Barat
+            </p>
             <div className="flex gap-1.5">
-              <Button
-                text={"Filters"}
-                onClick={() => setShowFilters(true)}
-                isFull={false}
-                size={"sm"}
-              />
-              <Button
-                text={"Download"}
-                onClick={downloadTPS}
-                isFull={false}
-                size={"sm"}
-              />
+              {type && (
+                <>
+                  <Button
+                    text={"Download"}
+                    onClick={downloadPaslonByTPS}
+                    isFull={false}
+                    size={"sm"}
+                  />
+                  <Button
+                    text={"Kembali"}
+                    onClick={() => window.location.reload()}
+                    size={"sm"}
+                    outline={true}
+                    isFull={false}
+                  />
+                </>
+              )}
             </div>
           </div>
+          {!type && <Menu data={menuData} isFull={true} type="click" />}
         </div>
-        <div className="w-full flex flex-col max-w-[90%] gap-3">
-          <Table data={data} config={tableConfig} />
-          <Paginate
-            page={page}
-            pages={pages}
-            rows={rows}
-            handlePageClick={handlePageClick}
-            data={data}
-          />
-        </div>
+        {type && (
+          <div className=" flex flex-col w-[90%]  gap-3">
+            <Table data={data} config={tableConfig} />
+            <Paginate
+              page={page}
+              pages={pages}
+              rows={rows}
+              handlePageClick={handlePageClick}
+              data={data}
+            />
+          </div>
+        )}
       </div>
+
       {showFilters && (
         <Filters
           filters={filters}
           setFilters={setFilters}
           filterConfig={filterConfig}
           setShowModal={setShowFilters}
+          title={`${user?.district ? "Desa" : "Kecamatan & Desa"}`}
+          button="Pilih"
+          simple={true}
+          handleSelect={handleSelect}
         />
       )}
       {showModal && (

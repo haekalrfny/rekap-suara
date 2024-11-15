@@ -17,6 +17,7 @@ export default function Saksi() {
   const [page, setPage] = useState(0);
   const [pages, setPages] = useState(0);
   const [rows, setRows] = useState(0);
+  const [user, setUser] = useState(null);
   const { setLoading, loading } = useStateContext();
   const { token } = useTokenContext();
   const showNotification = useNotif();
@@ -37,31 +38,20 @@ export default function Saksi() {
             ],
           },
           {
-            label: "Nomor TPS",
-            type: "text",
-            key: "kodeTPS",
-          },
-          {
             label: "Desa",
             type: "text",
             key: "desa",
           },
-          {
-            label: "Kecamatan",
-            type: "text",
-            key: "kecamatan",
-          },
-          {
-            label: "Dapil",
-            type: "text",
-            key: "dapil",
-          },
+          ...(user?.district
+            ? []
+            : [
+                {
+                  label: "Kecamatan",
+                  type: "text",
+                  key: "kecamatan",
+                },
+              ]),
         ]),
-    {
-      label: "Username",
-      type: "text",
-      key: "username",
-    },
     {
       label: "Role",
       type: "select",
@@ -82,11 +72,9 @@ export default function Saksi() {
 
   const saksiConfig = {
     columns: [
-      { label: "TPS", key: "tps.kodeTPS" },
+      { label: "Nomor TPS", key: "tps.kodeTPS" },
       { label: "Desa", key: "tps.desa" },
       { label: "Kecamatan", key: "tps.kecamatan" },
-      { label: "Dapil", key: "tps.dapil" },
-      { label: "Username", key: "username" },
       { label: "Role", key: "role" },
       {
         label: "Kehadiran",
@@ -143,12 +131,11 @@ export default function Saksi() {
           ...prevFilters,
           kecamatan: item.data.district,
         }));
+        setUser(item.data);
       }
     };
     getData();
-  }, [setLoading]);
-
-  console.log(data);
+  }, [setLoading, setFilters]);
 
   return (
     <>
