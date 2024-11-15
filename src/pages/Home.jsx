@@ -143,7 +143,7 @@ export default function Home() {
             )}
           {admin && (
             <>
-              <div className="flex flex-col lg:flex-row bg-slate-50 rounded-xl items-center justify-between gap-4">
+              <div className="flex flex-col lg:flex-row   items-center justify-between gap-4">
                 {(user?.district ? suaraByPaslonByKecamatan : suaraPaslon)
                   ?.length > 0 ? (
                   <div className="w-full md:w-1/2">

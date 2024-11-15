@@ -13,6 +13,7 @@ import Button from "../components/Button";
 import Table from "../components/Table";
 import Filters from "../components/Filters";
 import Menu from "../components/Menu";
+import Dropdown from "../components/Dropdown";
 
 export default function TPS() {
   const [data, setData] = useState([]);
@@ -160,6 +161,17 @@ export default function TPS() {
     },
   ];
 
+  const typeOptions = [
+    {
+      label: "Pilgub",
+      value: "pilgub",
+    },
+    {
+      label: "Pilbup",
+      value: "pilkada",
+    },
+  ];
+
   const handleSelectType = (i) => {
     setLocalType(i);
     setShowFilters(true);
@@ -210,8 +222,8 @@ export default function TPS() {
 
   return (
     <>
-      <div className="w-full flex flex-col items-center md:pt-6 pb-10 gap-6">
-        <div className="w-[90%] sm:w-2/4 flex flex-col gap-6">
+      <div className="w-full flex flex-col items-center md:pt-6 pb-10 gap-3">
+        <div className="w-[90%] sm:w-2/4 flex flex-col ">
           <div className="space-y-3">
             <h1 className="font-bold text-3xl">
               TPS {user?.district ? user?.district : ""}
@@ -245,6 +257,23 @@ export default function TPS() {
         </div>
         {type && (
           <div className=" flex flex-col w-[90%]  gap-3">
+            <div className="flex justify-between items-end">
+              <div className="w-max md:w-1/3">
+                <Dropdown
+                  value={type}
+                  setValue={setType}
+                  name={"tipe"}
+                  label={"Pilih Tipe"}
+                  options={typeOptions}
+                />
+              </div>
+              <div className="flex flex-col text-right">
+                <h1 className="font-semibold text-lg">
+                  {user?.district ? user?.district : filters.kecamatan}
+                </h1>
+                <p className="text-gray-500 font-light">{filters.desa}</p>
+              </div>
+            </div>
             <Table data={data} config={tableConfig} />
             <Paginate
               page={page}

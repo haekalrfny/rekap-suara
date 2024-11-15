@@ -32,7 +32,7 @@ export default function Dropdown({
   );
 
   return (
-    <div className="relative mb-4" ref={dropdownRef}>
+    <div className="relative" ref={dropdownRef}>
       <label
         htmlFor={name}
         className={`${
