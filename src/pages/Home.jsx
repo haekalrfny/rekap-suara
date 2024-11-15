@@ -183,7 +183,7 @@ export default function Home() {
                 ) : null}
               </div>
 
-              {!user?.district &&
+              {/* {!user?.district &&
                 !loading &&
                 (suaraDapil?.length > 0 || suaraDapilPilgub?.length > 0) && (
                   <div className="flex flex-col lg:flex-row bg-slate-50 rounded-xl items-center justify-between gap-4">
@@ -214,7 +214,7 @@ export default function Home() {
                       </div>
                     )}
                   </div>
-                )}
+                )} */}
 
               {admin && !loading && (
                 <div className="flex flex-col lg:flex-row  items-center justify-between gap-4">
