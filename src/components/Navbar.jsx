@@ -119,31 +119,42 @@ const Navbar = () => {
           </>
         )}
         {admin && (
-          <li className="relative" ref={desktopDropdownRef}>
-            <div
-              className="flex items-center cursor-pointer"
-              onClick={toggleDesktopDropdown}
-            >
-              <span className="hover:text-gray-800">Informasi</span>
-              <FiChevronDown
-                className={`ml-1 transition-transform ${
-                  dropdownOpen ? "rotate-180" : ""
-                }`}
-              />
-            </div>
-            {dropdownOpen && (
-              <div className="absolute left-0 mt-1 w-40 bg-white border rounded-md shadow-lg z-10">
+          <>
+            <li>
+              <div className="flex items-center cursor-pointer">
                 <Link
-                  to={token ? "/tps" : "/login"}
-                  className="block px-4 py-2 hover:bg-gray-100"
-                  onClick={() => {
-                    setDropdownOpen(false);
-                    setMobileMenuOpen(false);
-                  }}
+                  to={token ? "/kirim-suara/admin" : "/login"}
+                  className="hover:text-gray-800"
                 >
-                  TPS
+                  Hasil Pilkada
                 </Link>
-                {/* <Link
+              </div>
+            </li>
+            <li className="relative" ref={desktopDropdownRef}>
+              <div
+                className="flex items-center cursor-pointer"
+                onClick={toggleDesktopDropdown}
+              >
+                <span className="hover:text-gray-800">Informasi</span>
+                <FiChevronDown
+                  className={`ml-1 transition-transform ${
+                    dropdownOpen ? "rotate-180" : ""
+                  }`}
+                />
+              </div>
+              {dropdownOpen && (
+                <div className="absolute left-0 mt-1 w-40 bg-white border rounded-md shadow-lg z-10">
+                  <Link
+                    to={token ? "/tps" : "/login"}
+                    className="block px-4 py-2 hover:bg-gray-100"
+                    onClick={() => {
+                      setDropdownOpen(false);
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    TPS
+                  </Link>
+                  {/* <Link
                   to="/paslon"
                   className="block px-4 py-2 hover:bg-gray-100"
                   onClick={() => {
@@ -153,19 +164,20 @@ const Navbar = () => {
                 >
                   Paslon
                 </Link> */}
-                <Link
-                  to="/users"
-                  className="block px-4 py-2 hover:bg-gray-100"
-                  onClick={() => {
-                    setDropdownOpen(false);
-                    setMobileMenuOpen(false);
-                  }}
-                >
-                  Users
-                </Link>
-              </div>
-            )}
-          </li>
+                  <Link
+                    to="/users"
+                    className="block px-4 py-2 hover:bg-gray-100"
+                    onClick={() => {
+                      setDropdownOpen(false);
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    Users
+                  </Link>
+                </div>
+              )}
+            </li>
+          </>
         )}
         {!admin && (
           <li>
@@ -234,31 +246,41 @@ const Navbar = () => {
               </>
             )}
             {admin && (
-              <li className="relative" ref={mobileDropdownRef}>
-                <div
-                  className="flex items-center cursor-pointer"
-                  onClick={toggleMobileDropdown}
-                >
-                  <span className="hover:text-gray-400">Informasi</span>
-                  <FiChevronDown
-                    className={`ml-1 transition-transform ${
-                      mobileDropdownOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                </div>
-                {mobileDropdownOpen && (
-                  <div>
-                    <Link
-                      to={token ? "/tps" : "/login"}
-                      className="block  py-1.5 rounded hover:bg-gray-100"
-                      onClick={() => {
-                        setMobileDropdownOpen(false);
-                        setMobileMenuOpen(false);
-                      }}
-                    >
-                      - TPS
-                    </Link>
-                    {/* <Link
+              <>
+                <li>
+                  <Link
+                    to={token ? "/kirim-suara/admin" : "/login"}
+                    className="hover:text-gray-400"
+                    onClick={toggleMobileMenu}
+                  >
+                    Hasil Pilkada
+                  </Link>
+                </li>
+                <li className="relative" ref={mobileDropdownRef}>
+                  <div
+                    className="flex items-center cursor-pointer"
+                    onClick={toggleMobileDropdown}
+                  >
+                    <span className="hover:text-gray-400">Informasi</span>
+                    <FiChevronDown
+                      className={`ml-1 transition-transform ${
+                        mobileDropdownOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </div>
+                  {mobileDropdownOpen && (
+                    <div>
+                      <Link
+                        to={token ? "/tps" : "/login"}
+                        className="block  py-1.5 rounded hover:bg-gray-100"
+                        onClick={() => {
+                          setMobileDropdownOpen(false);
+                          setMobileMenuOpen(false);
+                        }}
+                      >
+                        - TPS
+                      </Link>
+                      {/* <Link
                       to="/paslon"
                       className="block  py-1.5 rounded hover:bg-gray-100"
                       onClick={() => {
@@ -268,19 +290,20 @@ const Navbar = () => {
                     >
                       - Paslon
                     </Link> */}
-                    <Link
-                      to="/users"
-                      className="block  py-1.5 rounded hover:bg-gray-100"
-                      onClick={() => {
-                        setMobileDropdownOpen(false);
-                        setMobileMenuOpen(false);
-                      }}
-                    >
-                      - Users
-                    </Link>
-                  </div>
-                )}
-              </li>
+                      <Link
+                        to="/users"
+                        className="block  py-1.5 rounded hover:bg-gray-100"
+                        onClick={() => {
+                          setMobileDropdownOpen(false);
+                          setMobileMenuOpen(false);
+                        }}
+                      >
+                        - Users
+                      </Link>
+                    </div>
+                  )}
+                </li>
+              </>
             )}
             {!admin && (
               <li>

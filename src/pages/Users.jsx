@@ -50,17 +50,17 @@ export default function Saksi() {
                   type: "text",
                   key: "kecamatan",
                 },
+                {
+                  label: "Role",
+                  type: "select",
+                  key: "role",
+                  options: [
+                    { value: "admin", label: "Admin" },
+                    { value: "user", label: "User" },
+                  ],
+                },
               ]),
         ]),
-    {
-      label: "Role",
-      type: "select",
-      key: "role",
-      options: [
-        { value: "admin", label: "Admin" },
-        { value: "user", label: "User" },
-      ],
-    },
   ];
 
   const adminConfig = {
@@ -129,7 +129,7 @@ export default function Saksi() {
       if (item.data?.district) {
         setFilters((prevFilters) => ({
           ...prevFilters,
-          kecamatan: item.data.district,
+          kecamatan: item.data?.district,
         }));
         setUser(item.data);
       }

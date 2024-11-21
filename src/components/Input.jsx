@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { GoEye, GoEyeClosed } from "react-icons/go";
 import { BsUpload } from "react-icons/bs";
-import imageCompression from "browser-image-compression"; // Import image compression library
+import imageCompression from "browser-image-compression";
 
 export default function Input({
   value,
@@ -10,6 +10,7 @@ export default function Input({
   label,
   type,
   placeholder,
+  isDisabled = false,
   required,
   isMobile,
 }) {
@@ -64,16 +65,27 @@ export default function Input({
               onChange={handleFileChange}
               required={required}
               className="hidden"
+              disabled={isDisabled}
             />
             <label
               htmlFor={name}
-              className="border-b text-base md:text-sm border-gray-300 w-full py-3 flex justify-between items-center cursor-pointer focus:outline-none focus:border-gray-900"
+              className={`border-b text-base md:text-sm border-gray-300 w-full py-3 flex justify-between items-center cursor-pointer focus:outline-none ${
+                isDisabled ? "cursor-not-allowed text-gray-500" : "text-black"
+              }`}
             >
-              <span className={`${fileName ? "text-black" : "text-gray-600"}`}>
+              <span
+                className={`${
+                  fileName
+                    ? "text-black"
+                    : isDisabled
+                    ? "text-gray-500"
+                    : "text-gray-600"
+                }`}
+              >
                 {fileName || "Pilih file"}
               </span>
-              <span className="text-black">
-                <BsUpload className="" />
+              <span className={isDisabled ? "text-gray-500" : "text-black"}>
+                <BsUpload />
               </span>
             </label>
           </>
@@ -91,14 +103,22 @@ export default function Input({
             }
             placeholder={placeholder}
             required={required}
-            className="border-b text-base md:text-sm border-gray-300 w-full py-3 focus:outline-none focus:border-gray-900"
+            disabled={isDisabled}
+            className={`border-b text-base md:text-sm border-gray-300 w-full py-3 focus:outline-none ${
+              isDisabled
+                ? "bg-gray-100 cursor-not-allowed text-gray-500"
+                : "focus:border-gray-900"
+            }`}
           />
         )}
         {type === "password" && (
           <button
             type="button"
             onClick={togglePasswordVisibility}
-            className="absolute right-2 top-3.5 text-lg"
+            disabled={isDisabled}
+            className={`absolute right-2 top-3.5 text-lg ${
+              isDisabled ? "text-gray-500 cursor-not-allowed" : ""
+            }`}
           >
             {passwordVisible ? <GoEyeClosed /> : <GoEye />}
           </button>

@@ -24,6 +24,7 @@ import Riwayat from "./pages/Riwayat";
 import Absen from "./pages/Absen";
 import KertasSuara from "./pages/KertasSuara";
 import Users from "./pages/Users";
+import KirimSuaraAdmin from "./pages/KirimSuaraAdmin";
 
 export default function App() {
   return (
@@ -37,6 +38,11 @@ export default function App() {
                 <Route index path="/kirim-suara" element={<KirimSuara />} />
                 <Route index path="/kertas-suara" element={<KertasSuara />} />
                 <Route index path="/tps" element={<TPS />} />
+                <Route
+                  index
+                  path="/kirim-suara/admin"
+                  element={<KirimSuaraAdmin />}
+                />
                 {/* <Route index path="/paslon" element={<Paslon />} /> */}
                 <Route
                   index

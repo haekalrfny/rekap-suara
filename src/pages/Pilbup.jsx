@@ -6,7 +6,7 @@ import Cookies from "js-cookie";
 import instance from "../api/api";
 import { useTokenContext } from "../context/TokenContext";
 import Label from "../components/Label";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useStateContext } from "../context/StateContext";
 import BackButton from "../components/BackButton";
 import {

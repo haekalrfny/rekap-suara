@@ -2,12 +2,14 @@ import React, { useRef, useState } from "react";
 import Button from "./Button";
 import Image from "./Image";
 import imageCompression from "browser-image-compression";
+
 export default function InputImage({
   value,
   setValue,
   isMobile,
   label,
   required,
+  isDisabled = false,
 }) {
   const fileInputRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -33,6 +35,7 @@ export default function InputImage({
 
   const handleDrop = (e) => {
     e.preventDefault();
+    if (isDisabled) return;
     const file = e.dataTransfer.files[0];
     if (file && file.type.startsWith("image/")) {
       compressImage(file);
@@ -47,6 +50,7 @@ export default function InputImage({
   };
 
   const handleClick = () => {
+    if (isDisabled) return;
     fileInputRef.current.click();
   };
 
@@ -60,12 +64,16 @@ export default function InputImage({
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       <div
-        onClick={value ? null : handleClick}
-        onDragOver={handleDragOver}
-        onDrop={handleDrop}
-        onMouseEnter={() => setIsHovered(true)}
+        onClick={value || isDisabled ? null : handleClick}
+        onDragOver={isDisabled ? null : handleDragOver}
+        onDrop={isDisabled ? null : handleDrop}
+        onMouseEnter={() => setIsHovered(!isDisabled && true)}
         onMouseLeave={() => setIsHovered(false)}
-        className="relative flex items-center justify-center w-full h-64 border-2 mt-3 border-dashed border-gray-300 rounded-lg cursor-pointer overflow-hidden"
+        className={`relative flex items-center justify-center w-full h-64 border-2 mt-3 border-dashed rounded-lg overflow-hidden ${
+          isDisabled
+            ? "border-gray-200 bg-gray-100 cursor-not-allowed"
+            : "border-gray-300 cursor-pointer"
+        }`}
       >
         {value ? (
           <>
@@ -74,8 +82,8 @@ export default function InputImage({
               alt="Selected"
               className="object-cover w-full h-full"
             />
-            {isHovered && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 ">
+            {isHovered && !isDisabled && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50">
                 <div className="space-y-2">
                   <Button
                     text={"Ganti Foto"}
@@ -85,6 +93,7 @@ export default function InputImage({
                       handleClick();
                     }}
                     outline
+                    disabled={isDisabled}
                   />
                   <Button
                     text={"Lihat Foto"}
@@ -93,14 +102,19 @@ export default function InputImage({
                       e.stopPropagation();
                       setShowImage(true);
                     }}
-                    outline={true}
+                    outline
+                    disabled={isDisabled}
                   />
                 </div>
               </div>
             )}
           </>
         ) : (
-          <p className="text-gray-500 text-sm text-center">
+          <p
+            className={`text-gray-500 text-sm text-center ${
+              isDisabled ? "text-gray-400" : ""
+            }`}
+          >
             {required && <span className="text-red-500">*</span>} Klik atau
             seret gambar ke sini untuk mengunggah
           </p>
@@ -112,6 +126,7 @@ export default function InputImage({
           className="hidden"
           accept="image/*"
           required={required}
+          disabled={isDisabled}
         />
       </div>
       {showImage && <Image url={value} onCancel={() => setShowImage(false)} />}

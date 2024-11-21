@@ -28,7 +28,7 @@ export default function Dropdown({
   }, []);
 
   const filteredOptions = options.filter((option) =>
-    option.label.toLowerCase().includes(searchTerm.toLowerCase())
+    String(option.label).toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -44,10 +44,12 @@ export default function Dropdown({
       <div className="relative">
         <div
           onClick={() => !isDisabled && setIsOpen(!isOpen)}
-          className={`border-b text-base md:text-sm border-gray-300 w-full py-2 focus:outline-none ${
+          className={`border-b text-base md:text-sm border-gray-300 w-full py-3 focus:outline-none ${
             value ? "text-black" : "text-gray-600"
-          } focus:border-gray-900 cursor-pointer ${
-            isDisabled ? " cursor-not-allowed" : ""
+          } focus:border-gray-900  ${
+            isDisabled
+              ? "bg-gray-100 cursor-not-allowed text-gray-500"
+              : "text-black cursor-pointer"
           }`}
         >
           {value

@@ -246,3 +246,34 @@ export const fetchKodeTPS = async (dapil, kecamatan, desa) => {
     return [];
   }
 };
+
+export const fetchUserByTPS = async (tpsId) => {
+  if (tpsId) {
+    try {
+      const res = await instance.get(`/user/tps/${tpsId}`, {
+        headers: { Authorization: `Bearer ${Cookies.get("token")}` },
+      });
+      return res.data;
+    } catch (error) {
+      console.error("Error fetch user", error);
+      return null;
+    }
+  }
+};
+
+export const fetchDapilByKecamatan = async (kecamatan) => {
+  if (kecamatan) {
+    try {
+      const res = await instance.get(
+        `/tps/dapil/kecamatan?kecamatan=${kecamatan}`,
+        {
+          headers: { Authorization: `Bearer ${Cookies.get("token")}` },
+        }
+      );
+      return res.data;
+    } catch (error) {
+      console.error("Error fetch user", error);
+      return null;
+    }
+  }
+};

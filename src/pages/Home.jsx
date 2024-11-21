@@ -68,7 +68,8 @@ export default function Home() {
 
   const lastUpdated = user?.district
     ? suaraByPaslonByKecamatan[0]?.["Last Updated"]
-    : suaraPaslon[0]?.["Last Updated"];
+    : suaraPaslon[0]?.["Last Updated"] ||
+      suaraPaslonPilgub[0]?.["Last Updated"];
   const formattedLastUpdated = lastUpdated
     ? formatDistanceToNow(parseISO(lastUpdated), { addSuffix: true })
     : "Belum ada data";
@@ -239,12 +240,13 @@ export default function Home() {
                 <SaksiTextLoading />
               ) : (
                 !user?.district && (
-                  <p className="text-center font-light mt-4 text-gray-600 max-w-[90%]">
+                  <p className="text-center text-gray-600 font-light mt-4 max-w-[90%]">
                     <b className="text-black">
-                      {data?.saksi?.withSuara?.pilkada} dari{" "}
-                      {data?.saksi?.total}
+                      {data?.saksi?.withSuara?.pilkada ||
+                        data?.saksi?.withSuara?.pilgub}{" "}
+                      dari {data?.saksi?.total}
                     </b>{" "}
-                    saksi telah menginput suara{" "}
+                    saksi menginput suara{" "}
                     <b className="text-black">{formattedLastUpdated}</b>
                   </p>
                 )
