@@ -27,12 +27,12 @@ import Label from "../components/Label";
 
 export default function KirimSuaraAdmin() {
   const { token } = useTokenContext();
-  const { loading, setLoading, setLoadingButton } = useStateContext();
+  const { loading, setLoadingButton } = useStateContext();
   const [type, setType] = useState("");
   const [user, setUser] = useState(null);
   const [myUser, setMyUser] = useState(null);
 
-  const [absen, setAbsen] = useState(null);
+  // const [absen, setAbsen] = useState(null);
   const [suratSuara, setSuratSuara] = useState("");
 
   const [dapil, setDapil] = useState(null);
@@ -57,10 +57,24 @@ export default function KirimSuaraAdmin() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (myUser) {
-      setKecamatan(myUser.district);
-    }
-  }, [myUser]);
+    const getUser = async () => {
+      try {
+        const data = await fetchUserId();
+        setMyUser(data.data);
+        if (data.data.district) {
+          setKecamatan(data.data.district);
+          const getDapilByKecamatan = async () => {
+            const dapil = await fetchDapilByKecamatan(data.data.district);
+            setDapil(dapil);
+          };
+          getDapilByKecamatan();
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+    getUser();
+  }, []);
 
   useEffect(() => {
     const jumlahSuaraTidakSahNum = parseInt(jumlahSuaraTidakSah) || 0;
@@ -91,20 +105,10 @@ export default function KirimSuaraAdmin() {
   ];
 
   useEffect(() => {
-    const getUser = async () => {
-      const data = await fetchUserId();
-      setMyUser(data.data);
-    };
-
     const getDapil = async () => {
       const data = await fetchDapil();
       const options = data.map((item) => ({ label: item, value: item }));
       setDapilOptions(options);
-    };
-
-    const getDapilByKecamatan = async () => {
-      const data = await fetchDapilByKecamatan(kecamatan);
-      setDapil(data);
     };
 
     const getKecamatan = async () => {
@@ -166,8 +170,6 @@ export default function KirimSuaraAdmin() {
     getTPS();
     getPaslon();
     getUserByTPS();
-    getUser();
-    getDapilByKecamatan();
   }, [type, dapil, kecamatan, desa, kodeTPS, tpsId]);
 
   const handleSuara = async (e) => {
@@ -175,7 +177,7 @@ export default function KirimSuaraAdmin() {
     setLoadingButton(true);
 
     // Step 1: Check if 'absen' is provided
-    if (!absen) {
+    if (!formulirC1) {
       showNotification("Data belum lengkap", "error");
       setLoadingButton(false);
       return;
@@ -190,7 +192,7 @@ export default function KirimSuaraAdmin() {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${Cookies.get("token")}`,
         },
-        data: { attandance: true, image: absen },
+        data: { attandance: true, image: formulirC1 },
       });
 
       // Step 3: Check if formulirC1 is provided
@@ -341,7 +343,7 @@ export default function KirimSuaraAdmin() {
                 required
               />
             </div>
-            <div className="space-y-3">
+            {/* <div className="space-y-3">
               <h1 className="font-semibold text-xl">2. Kehadiran</h1>
               <InputImage
                 value={absen}
@@ -350,9 +352,9 @@ export default function KirimSuaraAdmin() {
                 required={true}
                 isDisabled={!tpsId || !user}
               />
-            </div>
+            </div> */}
             <div className="space-y-3">
-              <h1 className="font-semibold text-xl">3. Surat Suara</h1>
+              <h1 className="font-semibold text-xl">2. Surat Suara</h1>
               <div>
                 <Input
                   name={type === "pilgub" ? "suratPilgub" : "suratPilbup"}
@@ -369,7 +371,7 @@ export default function KirimSuaraAdmin() {
               </div>
             </div>
             <div className="space-y-3">
-              <h1 className="font-semibold text-xl">4. Hasil Pilkada</h1>
+              <h1 className="font-semibold text-xl">3. Hasil Pilkada</h1>
               {paslon.map((item, index) => (
                 <div key={item._id} className="w-full flex flex-col gap-3">
                   <Input
