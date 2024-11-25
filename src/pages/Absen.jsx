@@ -93,11 +93,11 @@ export default function Absen() {
               <p className="text-gray-500 font-light">
                 Untuk perubahan data bisa hubungi nomor ini :{" "}
                 <a
-                  href="https://wa.me/6285797945972"
+                  href="https://wa.me/6283822121269"
                   target="_blank"
                   className="text-black underline"
                 >
-                  xxxx-xxxx-xxxx
+                  6283822121269
                 </a>
               </p>
             </div>
