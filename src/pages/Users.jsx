@@ -80,6 +80,7 @@ export default function Saksi() {
         label: "Kehadiran",
         key: "attandance",
       },
+      { label: "Foto Kehadiran", key: "image" },
     ],
   };
 

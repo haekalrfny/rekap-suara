@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import Button from "./Button";
 import Loading from "./Loading";
 import { useStateContext } from "../context/StateContext";
+import Image from "./Image";
 
 const getNestedValue = (obj, path) => {
   return path.split(".").reduce((acc, key) => {
@@ -29,6 +30,8 @@ const formatNomorTPS = (value) => {
 
 export default function Table({ data, config }) {
   const { loading } = useStateContext();
+  const [image, setImage] = useState(null);
+  const [showImage, setShowImage] = useState(false);
 
   return (
     <>
@@ -109,6 +112,17 @@ export default function Table({ data, config }) {
                               isFull={false}
                               onClick={() => col.actions(row[col.primary])}
                             />
+                          ) : col.key === "image" &&
+                            typeof cellValue === "string" ? (
+                            <button
+                              onClick={() => {
+                                setShowImage(true);
+                                setImage(cellValue);
+                              }}
+                              className=" underline text-black"
+                            >
+                              Lihat
+                            </button>
                           ) : (
                             cellValue?.toString()
                           )}
@@ -122,6 +136,7 @@ export default function Table({ data, config }) {
           </table>
         </div>
       )}
+      {showImage && <Image url={image} onCancel={() => setShowImage(false)} />}
     </>
   );
 }
