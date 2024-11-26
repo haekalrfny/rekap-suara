@@ -108,11 +108,11 @@ export default function KertasSuara() {
                 Anda hanya bisa mengisi surat suara satu kali, untuk perubahan
                 data bisa hubungi nomor ini :{" "}
                 <a
-                  href="https://wa.me/6283822121269"
+                  href="https://wa.me/6283181700081"
                   target="_blank"
                   className="text-black underline"
                 >
-                  6283822121269
+                  6283181700081
                 </a>
               </p>
             </div>

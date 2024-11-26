@@ -94,10 +94,12 @@ export default function KirimSuaraAdmin() {
   }, [navigate, token]);
 
   const menuData = [
-    {
-      label: "Pilkada Jabar",
-      link: () => setType("pilgub"),
-    },
+    myUser?.username === "BUPATI"
+      ? {}
+      : {
+          label: "Pilkada Jabar",
+          link: () => setType("pilgub"),
+        },
     {
       label: "Pilkada KBB",
       link: () => setType("pilkada"),

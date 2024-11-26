@@ -145,11 +145,11 @@ export default function Riwayat() {
       <p className="font-light text-gray-500">
         Ada kesalahan data? hubungi nomor ini :{" "}
         <a
-          href={`https://wa.me/6283822121269?text=Username%20:%20${item?.user?.username}`}
+          href={`https://wa.me/6283181700081?text=Username%20:%20${item?.user?.username}`}
           target="_blank"
           className="text-black underline"
         >
-          6283822121269
+          6283181700081
         </a>
       </p>
     </div>

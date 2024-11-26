@@ -165,7 +165,7 @@ export default function Home() {
                 {(user?.district
                   ? suaraByPaslonByKecamatnPilgub
                   : suaraPaslonPilgub
-                )?.length > 0 ? (
+                )?.length > 0 && user?.username !== "BUPATI" ? (
                   <div className="w-full md:w-1/2">
                     <Charts
                       title={`Tabulasi ${user?.district || "Pilkada Jabar"}`}
@@ -229,9 +229,9 @@ export default function Home() {
                   <div className="w-full md:w-1/2">
                     {loading ? (
                       <ChartLoading />
-                    ) : (
+                    ) : user?.username !== "BUPATI" ? (
                       <DataPerDaerah setValue={setData} type="pilgub" />
-                    )}
+                    ) : null}
                   </div>
                 </div>
               )}

@@ -151,10 +151,12 @@ export default function TPS() {
   }, [setLoading]);
 
   const menuData = [
-    {
-      label: "Pilkada Jabar",
-      link: () => handleSelectType("pilgub"),
-    },
+    user?.username === "BUPATI"
+      ? {}
+      : {
+          label: "Pilkada Jabar",
+          link: () => handleSelectType("pilgub"),
+        },
     {
       label: "Pilkada KBB",
       link: () => handleSelectType("pilkada"),
