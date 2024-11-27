@@ -31,6 +31,8 @@ export default function DataPerDaerah({ setValue, type }) {
     loadUser();
   }, []);
 
+  console.log(data)
+
   return (
     <div className="w-full flex flex-col gap-2 p-6 md:min-w-[400px]">
       <h2 className="text-2xl font-semibold">

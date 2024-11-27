@@ -154,6 +154,16 @@ const Navbar = () => {
                   >
                     TPS
                   </Link>
+                  <Link
+                    to={token ? "/tps/all" : "/login"}
+                    className="block px-4 py-2 hover:bg-gray-100"
+                    onClick={() => {
+                      setDropdownOpen(false);
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    Semua TPS
+                  </Link>
                   {/* <Link
                   to="/paslon"
                   className="block px-4 py-2 hover:bg-gray-100"
@@ -279,6 +289,16 @@ const Navbar = () => {
                         }}
                       >
                         - TPS
+                      </Link>
+                      <Link
+                        to={token ? "/tps/all" : "/login"}
+                        className="block  py-1.5 rounded hover:bg-gray-100"
+                        onClick={() => {
+                          setMobileDropdownOpen(false);
+                          setMobileMenuOpen(false);
+                        }}
+                      >
+                        - Semua TPS
                       </Link>
                       {/* <Link
                       to="/paslon"
