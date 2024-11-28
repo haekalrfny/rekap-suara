@@ -8,6 +8,7 @@ import Paginate from "../components/Paginate";
 import { fetchDesa, fetchKecamatan } from "../functions/fetchData";
 import Filters from "../components/Filters";
 import ModalDetail from "../components/TPS/ModalDetail";
+import Dropdown from "../components/Dropdown";
 
 export default function TPSAll() {
   const { setLoading, loading, setLoadingButton } = useStateContext();
@@ -16,6 +17,7 @@ export default function TPSAll() {
   const [page, setPage] = useState(0);
   const [pages, setPages] = useState(0);
   const [rows, setRows] = useState(0);
+  const [type, setType] = useState("pilgub");
   const [filters, setFilters] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -46,27 +48,51 @@ export default function TPSAll() {
       type: "text",
       key: "kodeTPS",
     },
-    {
-      label: "Pilgub",
-      type: "select",
-      key: "pilgub",
-      options: [
-        { value: true, label: "Ya" },
-        { value: false, label: "Tidak" },
-      ],
-    },
-    {
-      label: "Pilbup",
-      type: "select",
-      key: "pilbup",
-      options: [
-        { value: true, label: "Ya" },
-        { value: false, label: "Tidak" },
-      ],
-    },
+    type === "pilgub"
+      ? {
+          label: "Pilgub",
+          type: "select",
+          key: "pilgub",
+          options: [
+            { value: true, label: "Ya" },
+            { value: false, label: "Tidak" },
+          ],
+        }
+      : {
+          label: "Pilbup",
+          type: "select",
+          key: "pilbup",
+          options: [
+            { value: true, label: "Ya" },
+            { value: false, label: "Tidak" },
+          ],
+        },
   ];
 
-  const tableConfig = {
+  const pilgubConfig = {
+    columns: [
+      { label: "Kode TPS", key: "kodeTPS" },
+      { label: "Desa", key: "desa" },
+      { label: "Kecamatan", key: "kecamatan" },
+      { label: "Dapil", key: "dapil" },
+      ...Array.from({ length: 4 }, (_, i) => ({
+        label: `${i + 1}`,
+        key: `pilgubSuara.suaraPaslon[${i}].suaraSah`,
+      })),
+      {label:'Suara Sah', key:'pilgub.suaraSah'},
+      {label:'Suara Tidak Sah', key:'pilgub.suaraTidakSah'},
+      {label:'Suara Tidak Terpakai', key:'pilgub.suaraTidakTerpakai'},
+      {
+        label: "Aksi",
+        key: "Detail",
+        type: "action",
+        actions: openModal,
+        primary: "_id",
+      },
+    ],
+  };
+
+  const pilbupConfig = {
     columns: [
       { label: "Kode TPS", key: "kodeTPS" },
       { label: "Desa", key: "desa" },
@@ -76,10 +102,9 @@ export default function TPSAll() {
         label: `${i + 1}`,
         key: `pilkadaSuara.suaraPaslon[${i}].suaraSah`,
       })),
-      ...Array.from({ length: 4 }, (_, i) => ({
-        label: `${i + 1}`,
-        key: `pilgubSuara.suaraPaslon[${i}].suaraSah`,
-      })),
+      {label:'Suara Sah', key:'pilkada.suaraSah'},
+      {label:'Suara Tidak Sah', key:'pilkada.suaraTidakSah'},
+      {label:'Suara Tidak Terpakai', key:'pilkada.suaraTidakTerpakai'},
       {
         label: "Aksi",
         key: "Detail",
@@ -182,6 +207,17 @@ export default function TPSAll() {
       });
   };
 
+  const typeOptions = [
+    {
+      label: "Pilgub",
+      value: "pilgub",
+    },
+    {
+      label: "Pilbup",
+      value: "pilkada",
+    },
+  ];
+
   return (
     <>
       <div className="w-full flex flex-col items-center md:pt-6 pb-10 gap-3">
@@ -192,6 +228,7 @@ export default function TPSAll() {
               Data seluruh rekapitulasi suara di Tempat Pemungutan Suara (TPS)
               dari wilayah Kabupaten Bandung Barat
             </p>
+
             <div className="flex gap-1.5">
               <>
                 <Button
@@ -201,22 +238,9 @@ export default function TPSAll() {
                   size={"sm"}
                 />
                 <Button
-                  text={"Download Pilgub"}
-                  onClick={downloadPilgub}
+                  text={"Download"}
+                  onClick={type === "pilgub" ? downloadPilgub : downloadPilbup}
                   size={"sm"}
-                  isFull={false}
-                />
-                <Button
-                  text={"Download Pilbup"}
-                  onClick={downloadPilbup}
-                  size={"sm"}
-                  isFull={false}
-                />
-                <Button
-                  text={"Kembali"}
-                  onClick={() => {}}
-                  size={"sm"}
-                  outline={true}
                   isFull={false}
                 />
               </>
@@ -224,7 +248,19 @@ export default function TPSAll() {
           </div>
         </div>
         <div className="w-[90%]">
-          <Table data={data} config={tableConfig} />
+          <div className="w-max md:w-1/3">
+            <Dropdown
+              value={type}
+              setValue={setType}
+              name={"tipe"}
+              label={"Pilih Tipe"}
+              options={typeOptions}
+            />
+          </div>
+          <Table
+            data={data}
+            config={type === "pilgub" ? pilgubConfig : pilbupConfig}
+          />
           <Paginate
             page={page}
             pages={pages}
