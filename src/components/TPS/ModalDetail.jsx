@@ -8,9 +8,9 @@ import Image from "../Image";
 import Switch from "../Switch";
 import NoData from "../../../public/no_data.svg";
 import Input from "../Input";
-import InputImage from "../InputImage";
 import { useStateContext } from "../../context/StateContext";
 import Loading from "../Loading";
+import { fetchUserId } from "../../functions/fetchData";
 
 export default function ModalDetail({ id, onCancel }) {
   const { loading, setLoading } = useStateContext();
@@ -18,6 +18,7 @@ export default function ModalDetail({ id, onCancel }) {
   const [dataById, setDataById] = useState(null);
   const [openImage, setOpenImage] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
+  const [user, setUser] = useState(null);
   const [type, setType] = useState("pilkada");
 
   const [kertasSuara, setKertasSuara] = useState("");
@@ -27,6 +28,15 @@ export default function ModalDetail({ id, onCancel }) {
   const [paslon, setPaslon] = useState([]);
 
   const showNotification = useNotif();
+
+  useEffect(() => {
+    const getData = async () => {
+      const data = await fetchUserId();
+      setUser(data.data);
+      console.log(data)
+    };
+    getData();
+  }, []);
 
   useEffect(() => {
     const getSuaraById = () => {
@@ -133,12 +143,14 @@ export default function ModalDetail({ id, onCancel }) {
               {!isEdit && (
                 <Switch menu={menuSwitch} value={type} setValue={setType} />
               )}
-              <button
-                onClick={() => setIsEdit(!isEdit)}
-                className="underline mt-3 "
-              >
-                {isEdit ? "Batal" : "Edit"}
-              </button>
+              {user?.username === "ADMIN4" && (
+                <button
+                  onClick={() => setIsEdit(!isEdit)}
+                  className="underline mt-3 "
+                >
+                  {isEdit ? "Batal" : "Edit"}
+                </button>
+              )}
             </div>
           </div>
           {loading ? (
