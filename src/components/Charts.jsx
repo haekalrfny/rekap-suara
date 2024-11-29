@@ -65,7 +65,19 @@ export default function Charts({
                   <Tooltip />
                   <Legend />
                   <Bar dataKey={value} radius={[5, 5, 0, 0]}>
-                    <LabelList dataKey={value} position="top" />
+                    <LabelList
+                      dataKey={value}
+                      position="center"
+                      formatter={(val) => {
+                        const total = data.reduce(
+                          (sum, item) => sum + item[value],
+                          0
+                        );
+                        const percentage = ((val / total) * 100).toFixed(1);
+                        return `${percentage}%`;
+                      }}
+                      style={{ fill: "#ffffff", fontSize: 12 }}
+                    />
                     {data.map((entry, index) => (
                       <Cell
                         key={`cell-${index}`}

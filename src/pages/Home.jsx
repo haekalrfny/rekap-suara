@@ -21,12 +21,14 @@ import {
 } from "../functions/fetchData";
 import Menu from "../components/Menu";
 import Loading from "../components/Loading";
+import Dropdown from "../components/Dropdown";
 
 setDefaultOptions({ locale: id });
 
 export default function Home() {
   const navigate = useNavigate();
   const { token, admin } = useTokenContext();
+  const [kec, setKec] = useState("");
   const { loading, setLoading } = useStateContext();
   const [data, setData] = useState(null);
   const [user, setUser] = useState(null);
@@ -51,12 +53,12 @@ export default function Home() {
       setSuaraDapilPilgub(pilgubDapil);
       const pilkadaSuaraKecamatan = await fetchSuaraKecamatan(
         "pilkada",
-        user?.district
+        user?.district || kec
       );
       setSuaraByPaslonByKecamatan(pilkadaSuaraKecamatan);
       const pilgubSuaraKecamatan = await fetchSuaraKecamatan(
         "pilgub",
-        user?.district
+        user?.district || kec
       );
       setSuaraByPaslonByKecamatanPilgub(pilgubSuaraKecamatan);
       const myUser = await fetchUserId();
@@ -64,7 +66,7 @@ export default function Home() {
       setLoading(false);
     };
     getData();
-  }, [setLoading, user?.district]);
+  }, [setLoading, user?.district, kec]);
 
   const lastUpdated = user?.district
     ? suaraByPaslonByKecamatan[0]?.["Last Updated"]
@@ -100,6 +102,24 @@ export default function Home() {
       icon: <LuHistory />,
       link: "/riwayat",
     },
+  ];
+
+  const kecamatanOptions = [
+    { label: "BATUJAJAR", value: "BATUJAJAR" },
+    { label: "CIHAMPELAS", value: "CIHAMPELAS" },
+    { label: "CIKALONGWETAN", value: "CIKALONGWETAN" },
+    { label: "CILILIN", value: "CILILIN" },
+    { label: "CIPATAT", value: "CIPATAT" },
+    { label: "CIPEUNDEUY", value: "CIPEUNDEUY" },
+    { label: "CIPONGKOR", value: "CIPONGKOR" },
+    { label: "CISARUA", value: "CISARUA" },
+    { label: "GUNUNGHALU", value: "GUNUNG HALU" },
+    { label: "LEMBANG", value: "LEMBANG" },
+    { label: "NGAMPRAH", value: "NGAMPRAH" },
+    { label: "PADALARANG", value: "PARONGPONG" },
+    { label: "RONGGA", value: "RONGGA" },
+    { label: "SAGULING", value: "SAGULING" },
+    { label: "SINDANGKERTA", value: "SINDANG KERTA" },
   ];
 
   return (
@@ -144,15 +164,28 @@ export default function Home() {
             )}
           {admin && (
             <>
+               <div className="w-[90%]">
+                <Dropdown
+                  value={kec}
+                  setValue={setKec}
+                  name={"Kecamatan"}
+                  label={"Pilih Kecamatan"}
+                  options={kecamatanOptions}
+                />
+              </div>
               <div className="flex flex-col lg:flex-row   items-center justify-between gap-4">
-                {(user?.district ? suaraByPaslonByKecamatan : suaraPaslon)
-                  ?.length > 0 ? (
+                {(user?.district || kec
+                  ? suaraByPaslonByKecamatan
+                  : suaraPaslon
+                )?.length > 0 ? (
                   <div className="w-full md:w-1/2">
                     <Charts
                       title={`Tabulasi ${user?.district || "Pilkada KBB"}`}
                       subtitle="Total suara paslon yang Telah Diterima"
                       data={
-                        user?.district ? suaraByPaslonByKecamatan : suaraPaslon
+                        user?.district || kec
+                          ? suaraByPaslonByKecamatan
+                          : suaraPaslon
                       }
                       name="Panggilan"
                       value="Total Suara"
@@ -162,7 +195,7 @@ export default function Home() {
                   </div>
                 ) : null}
 
-                {(user?.district
+                {(user?.district || kec
                   ? suaraByPaslonByKecamatnPilgub
                   : suaraPaslonPilgub
                 )?.length > 0 && user?.username !== "BUPATI" ? (
@@ -171,7 +204,7 @@ export default function Home() {
                       title={`Tabulasi ${user?.district || "Pilkada Jabar"}`}
                       subtitle="Total suara paslon yang Telah Diterima"
                       data={
-                        user?.district
+                        user?.district || kec
                           ? suaraByPaslonByKecamatnPilgub
                           : suaraPaslonPilgub
                       }
