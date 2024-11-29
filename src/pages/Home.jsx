@@ -164,15 +164,17 @@ export default function Home() {
             )}
           {admin && (
             <>
-               <div className="w-[90%]">
-                <Dropdown
-                  value={kec}
-                  setValue={setKec}
-                  name={"Kecamatan"}
-                  label={"Pilih Kecamatan"}
-                  options={kecamatanOptions}
-                />
-              </div>
+              {!user?.district && (
+                <div className="w-[90%]">
+                  <Dropdown
+                    value={kec}
+                    setValue={setKec}
+                    name={"Kecamatan"}
+                    label={"Pilih Kecamatan"}
+                    options={kecamatanOptions}
+                  />
+                </div>
+              )}
               <div className="flex flex-col lg:flex-row   items-center justify-between gap-4">
                 {(user?.district || kec
                   ? suaraByPaslonByKecamatan
